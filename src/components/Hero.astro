@@ -1,5 +1,6 @@
 ---
 import GeneratedText from './GeneratedText.astro';
+import Lens from './Lens.astro';
 import { alternativas } from '../data/alternativas';
 import { resolveFrase } from '../lib/tokenize';
 import { ptBR as s } from '../i18n/pt-BR';
@@ -8,38 +9,65 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
 ---
 
 <header class="hero wide">
-  <p class="label meta" aria-hidden="true">saída · {n} tokens · temperatura 0</p>
+  <p class="label meta" data-hero-meta aria-hidden="true">{s.lente.metaFim(n)}</p>
   <h1>
     <span class="name">{s.nome}</span>
-    <GeneratedText id="abertura" text={s.frases.abertura} as="span" class="line" trigger="load" keepCursor seed={3} />
+    <GeneratedText
+      id="abertura"
+      text={s.frases.abertura}
+      as="span"
+      class="line"
+      trigger="load"
+      keepCursor
+      flicker
+      lens
+      seed={3}
+    />
   </h1>
-  <p class="sub mono">{s.subtitulo}</p>
-  <ul class="links mono">
-    <li><a href={s.links.github} rel="me">GitHub ↗</a></li>
-    <li><a href={s.links.linkedin} rel="me">LinkedIn ↗</a></li>
-    {
-      s.links.email ? (
-        <li>
-          <a href={`mailto:${s.links.email}`}>{s.links.email}</a>
-        </li>
-      ) : (
-        <li class="todo">TODO: e-mail de contato</li>
-      )
-    }
-  </ul>
-  <p class="hint label">↳ {s.painel.dica}</p>
+  <div class="side">
+    <Lens />
+  </div>
+  <div class="info">
+    <p class="sub mono">{s.subtitulo}</p>
+    <ul class="links mono">
+      <li><a href={s.links.github} rel="me">GitHub ↗</a></li>
+      <li><a href={s.links.linkedin} rel="me">LinkedIn ↗</a></li>
+      {
+        s.links.email ? (
+          <li>
+            <a href={`mailto:${s.links.email}`}>{s.links.email}</a>
+          </li>
+        ) : (
+          <li class="todo">TODO: e-mail de contato</li>
+        )
+      }
+    </ul>
+  </div>
 </header>
 
 <style>
   .hero {
-    padding-top: clamp(5rem, 16vh, 9rem);
+    padding-top: clamp(5rem, 14vh, 8rem);
     padding-bottom: 3rem;
+    display: grid;
+    grid-template-areas: 'meta' 'h1' 'side' 'info';
+    column-gap: 4rem;
   }
   .meta {
+    grid-area: meta;
     margin-bottom: 1.25rem;
+    font-variant-numeric: tabular-nums;
   }
   h1 {
+    grid-area: h1;
     display: block;
+  }
+  .side {
+    grid-area: side;
+    margin-top: 2.5rem;
+  }
+  .info {
+    grid-area: info;
   }
   .name {
     display: block;
@@ -58,7 +86,7 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
     font-variation-settings: 'opsz' 72;
   }
   .sub {
-    margin: 2rem 0 1.25rem;
+    margin: 2.5rem 0 1rem;
     color: var(--ink-2);
     font-size: 0.8125rem;
     line-height: 1.6;
@@ -81,13 +109,24 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
     color: var(--ink-2);
     border-bottom: 1px dashed var(--bar);
   }
-  .hint {
-    margin-top: 2.5rem;
-    max-width: 34rem;
-  }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
+    .hero {
+      grid-template-columns: minmax(0, 1.8fr) minmax(18rem, 1fr);
+      grid-template-areas:
+        'meta meta'
+        'h1 side'
+        'info side';
+      align-items: end;
+      min-height: min(100svh, 56rem);
+      align-content: center;
+    }
+    .side {
+      margin-top: 0;
+      align-self: end;
+    }
     h1 :global(.line) {
-      max-width: 17ch;
+      font-size: clamp(3.25rem, 5.2vw, 4.75rem);
+      max-width: 16ch;
     }
   }
 </style>

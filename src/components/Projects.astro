@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import GeneratedText from './GeneratedText.astro';
+import SectionHead from './SectionHead.astro';
 import ProjectMcp from './ProjectMcp.astro';
 import ProjectShort from './ProjectShort.astro';
 import MenuToJson from './MenuToJson.astro';
@@ -19,7 +19,7 @@ const capturas = [
 
 <section class="section" id="projetos">
   <div class="wide">
-    <GeneratedText id="projetos" text={s.frases.projetos} as="h2" class="section-title" />
+    <SectionHead id="projetos" />
   </div>
   <ProjectMcp />
 

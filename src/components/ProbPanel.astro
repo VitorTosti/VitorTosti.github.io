@@ -219,7 +219,10 @@ const fonte =
     else fechar();
   }
 
-  const tokOf = (el: EventTarget | null) => (el as Element | null)?.closest?.<HTMLElement>('.tok[data-alts]') ?? null;
+  // Tokens da abertura (data-lens) alimentam o painel lateral dela; este painel cuida dos outros títulos.
+  const tokOf = (el: EventTarget | null) =>
+    (el as Element | null)?.closest?.<HTMLElement>('.tok[data-alts]:not([data-lens])') ?? null;
+  const tokNav = (el: EventTarget | null) => (el as Element | null)?.closest?.<HTMLElement>('.tok[data-alts]') ?? null;
 
   document.addEventListener('pointerover', (e) => {
     if (e.pointerType !== 'mouse') return;
@@ -257,7 +260,7 @@ const fonte =
       hide();
       return;
     }
-    const tok = tokOf(e.target);
+    const tok = tokNav(e.target);
     if (!tok || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'Home' && e.key !== 'End')) return;
     // Tabindex móvel: uma parada de Tab por título, setas andam entre os tokens.
     const host = tok.closest('[data-gen]')!;

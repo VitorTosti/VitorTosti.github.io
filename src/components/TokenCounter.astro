@@ -1,0 +1,136 @@
+---
+// A página inteira como uma geração: contador fixo de tokens lidos até o fim da tela.
+// Contagem pelo tokenizador de reserva do site (aproximada), feita no navegador sobre o texto visível de <main>.
+---
+
+<div class="tc" aria-hidden="true" title="Contagem aproximada, pelo tokenizador do site">
+  <span class="txt">token <b data-n>0</b> / <span data-total>—</span></span>
+  <span class="trk"><i data-bar></i></span>
+</div>
+
+<style>
+  .tc {
+    position: fixed;
+    left: var(--gutter);
+    bottom: 1rem;
+    z-index: 5;
+    display: grid;
+    gap: 0.375rem;
+    padding: 0.5rem 0.625rem;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--ink-2);
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+  }
+  b {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .trk {
+    display: block;
+    height: 2px;
+    background: var(--rule);
+    position: relative;
+    overflow: hidden;
+  }
+  .trk i {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+  /* No celular, só a barra de progresso no topo da tela, para não cobrir o texto. */
+  @media (max-width: 639px) {
+    .tc {
+      inset: 0 0 auto 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: none;
+    }
+    .txt {
+      display: none;
+    }
+    .trk {
+      background: transparent;
+    }
+  }
+</style>
+
+<script>
+  import { splitFallback } from '../lib/tokenize';
+
+  const nEl = document.querySelector<HTMLElement>('.tc [data-n]');
+  const totalEl = document.querySelector<HTMLElement>('.tc [data-total]');
+  const bar = document.querySelector<HTMLElement>('.tc [data-bar]');
+  const main = document.querySelector('main');
+  const fmt = new Intl.NumberFormat('pt-BR');
+  let marcos: { y: number; n: number }[] = [];
+  let total = 0;
+
+  function medir() {
+    if (!main) return;
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
+      acceptNode: (node) => {
+        const el = node.parentElement;
+        if (!el || !node.textContent?.trim()) return NodeFilter.FILTER_REJECT;
+        if (el.closest('[hidden], [aria-hidden="true"], script, style, .sr-only')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+    const itens: { y: number; n: number }[] = [];
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const r = node.parentElement!.getBoundingClientRect();
+      if (!r.height) continue;
+      itens.push({ y: r.top + scrollY, n: splitFallback(node.textContent!).length });
+    }
+    itens.sort((a, b) => a.y - b.y);
+    let acc = 0;
+    marcos = itens.map((m) => ({ y: m.y, n: (acc += m.n) }));
+    total = acc;
+    if (totalEl) totalEl.textContent = fmt.format(total);
+    atualizar();
+  }
+
+  function atualizar() {
+    const limite = scrollY + innerHeight * 0.85;
+    let lo = 0;
+    let hi = marcos.length - 1;
+    let n = 0;
+    while (lo <= hi) {
+      const mid = (lo + hi) >> 1;
+      if (marcos[mid].y <= limite) {
+        n = marcos[mid].n;
+        lo = mid + 1;
+      } else hi = mid - 1;
+    }
+    if (nEl) nEl.textContent = fmt.format(n);
+    if (bar) bar.style.transform = `scaleX(${total ? n / total : 0})`;
+  }
+
+  let pendente = false;
+  addEventListener(
+    'scroll',
+    () => {
+      if (pendente) return;
+      pendente = true;
+      requestAnimationFrame(() => {
+        pendente = false;
+        atualizar();
+      });
+    },
+    { passive: true },
+  );
+  let t = 0;
+  addEventListener('resize', () => {
+    clearTimeout(t);
+    t = window.setTimeout(medir, 200);
+  });
+  document.fonts?.ready.then(medir, medir);
+  addEventListener('load', medir);
+</script>

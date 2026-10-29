@@ -1,10 +1,10 @@
 ---
-import GeneratedText from './GeneratedText.astro';
+import SectionHead from './SectionHead.astro';
 import { ptBR as s } from '../i18n/pt-BR';
 ---
 
 <section class="section wide" id="contato">
-  <GeneratedText id="contato" text={s.frases.contato} as="h2" class="section-title big" />
+  <SectionHead id="contato" class="big" />
   <p class="frase">{s.contato}</p>
   <ul class="links mono">
     <li><a href={s.links.github} rel="me">GitHub ↗</a></li>
@@ -22,8 +22,8 @@ import { ptBR as s } from '../i18n/pt-BR';
 </section>
 
 <style>
-  :global(.big) {
-    font-size: clamp(2.5rem, 9vw, 4.5rem) !important;
+  :global(.big .section-title) {
+    font-size: clamp(2.5rem, 9vw, 4.5rem);
   }
   .frase {
     max-width: var(--col);

@@ -17,18 +17,34 @@ interface Props {
   mode?: 'texto' | 'numero';
   /** Mantém o cursor piscando no fim. */
   keepCursor?: boolean;
+  /** Antes de cada token fixar, os candidatos do top-5 piscam no lugar dele. */
+  flicker?: boolean;
+  /** Tokens alimentam o painel lateral da abertura em vez do painel flutuante. */
+  lens?: boolean;
   seed?: number;
 }
 
-const { id, text, as: Tag = 'span', class: cls, trigger = 'view', mode = 'texto', keepCursor = false, seed = 7 } = Astro.props;
+const {
+  id,
+  text,
+  as: Tag = 'span',
+  class: cls,
+  trigger = 'view',
+  mode = 'texto',
+  keepCursor = false,
+  flicker = false,
+  lens = false,
+  seed = 7,
+} = Astro.props;
 
 const tokens =
   mode === 'numero' ? splitNumber(text).map((t) => toRender(t)) : resolveFrase(id ?? '', text, id ? alternativas : null);
+// Com flicker cada posição precisa de tempo para os candidatos aparecerem antes do token fixar.
 const times = generationTimes(
   tokens.map((k) => k.lead + k.text),
   seed,
-  mode === 'numero' ? 70 : 42,
-  mode === 'numero' ? 40 : 58,
+  mode === 'numero' ? 70 : flicker ? 150 : 42,
+  mode === 'numero' ? 40 : flicker ? 70 : 58,
 );
 const uid = `g-${id ?? 'n'}-${Math.abs(text.split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 0)).toString(36)}`;
 const comAlts = tokens.map((k) => k.alts.length > 0 || k.foraDoTop);
@@ -48,6 +64,7 @@ const descricao = (i: number) => {
   data-trigger={trigger}
   data-times={times.join(',')}
   data-keep-cursor={keepCursor ? '' : undefined}
+  data-flicker={flicker ? '' : undefined}
 >
   {
     tokens.map((k, i) =>
@@ -56,6 +73,8 @@ const descricao = (i: number) => {
           {k.lead}
           <span
             class="tok"
+            data-i={i}
+            data-lens={lens ? '' : undefined}
             tabindex={i === primeiro ? '0' : '-1'}
             aria-describedby={`${uid}-${i}`}
             data-alts={JSON.stringify({ t: k.text, p: k.p, a: k.alts, f: k.foraDoTop })}
@@ -66,7 +85,9 @@ const descricao = (i: number) => {
       ) : (
         <Fragment>
           {k.lead}
-          <span class="tok">{k.text}</span>
+          <span class="tok" data-i={i}>
+            {k.text}
+          </span>
         </Fragment>
       ),
     )
@@ -103,8 +124,19 @@ const descricao = (i: number) => {
   }
 
   /* Antes de gerar: tokens escondidos (só com JS e sem movimento reduzido; ver Base.astro). */
-  .gen-on .gen:not(.gen-done) .tok:not(.on) {
+  .gen-on .gen:not(.gen-done) .tok:not(.on),
+  .gen.gen-replay:not(.gen-done) .tok:not(.on) {
     opacity: 0;
+  }
+  /* Candidato que pisca no lugar do token antes dele fixar; fora do fluxo, sem mexer no layout. */
+  .gen-flick {
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: pre;
+    color: var(--ink-2);
+    font-style: italic;
+    pointer-events: none;
   }
   .gen .tok.on {
     animation: tok-in var(--t-slow) var(--ease) both;
@@ -173,9 +205,31 @@ const descricao = (i: number) => {
     cursor.style.transform = `translate(${x}px, ${y}px)`;
   }
 
+  type Dados = { t: string; a: { t: string; p: number }[] };
+
+  /** Mostra 2 candidatos do top-5 (diferentes do escolhido) na posição do token, 60 ms cada. */
+  function flick(host: HTMLElement, tok: HTMLElement): number {
+    if (!host.hasAttribute('data-flicker') || !tok.dataset.alts) return 0;
+    const d: Dados = JSON.parse(tok.dataset.alts);
+    const outros = d.a.map((a) => a.t.trim()).filter((t) => t && t !== d.t.trim()).slice(0, 2);
+    if (!outros.length) return 0;
+    const hostBox = host.getBoundingClientRect();
+    const r = tok.getClientRects()[0];
+    if (!r) return 0;
+    const el = document.createElement('span');
+    el.className = 'gen-flick';
+    el.setAttribute('aria-hidden', 'true');
+    el.style.transform = `translate(${r.left - hostBox.left}px, ${r.top - hostBox.top}px)`;
+    host.append(el);
+    outros.forEach((t, j) => setTimeout(() => (el.textContent = t), j * 60));
+    setTimeout(() => el.remove(), outros.length * 60);
+    return outros.length * 60;
+  }
+
   function generate(host: HTMLElement) {
     const toks = [...host.querySelectorAll<HTMLElement>('.tok')];
     const times = (host.dataset.times ?? '').split(',').map(Number);
+    host.querySelector('.gen-cursor')?.remove();
     const cursor = document.createElement('span');
     cursor.className = 'gen-cursor typing';
     cursor.setAttribute('aria-hidden', 'true');
@@ -184,16 +238,22 @@ const descricao = (i: number) => {
 
     toks.forEach((tok, i) => {
       setTimeout(() => {
-        tok.classList.add('on');
-        placeCursor(host, cursor, tok);
-        if (i === toks.length - 1) finish(host, cursor, tok);
+        const espera = flick(host, tok);
+        setTimeout(() => {
+          tok.classList.add('on');
+          placeCursor(host, cursor, tok);
+          host.dispatchEvent(new CustomEvent('gen:token', { detail: { i, tok } }));
+          if (i === toks.length - 1) finish(host, cursor, tok);
+        }, espera);
       }, times[i] ?? i * 60);
     });
   }
 
   function finish(host: HTMLElement, cursor: HTMLElement, last: Element) {
     host.classList.add('gen-done');
+    host.classList.remove('gen-replay');
     cursor.classList.remove('typing');
+    host.dispatchEvent(new CustomEvent('gen:done'));
     if (host.hasAttribute('data-keep-cursor')) {
       addEventListener('resize', () => placeCursor(host, cursor, last), { passive: true });
     } else {
@@ -202,9 +262,32 @@ const descricao = (i: number) => {
     }
   }
 
+  // Gerar de novo a pedido de quem visita: funciona também com movimento reduzido, porque é a pessoa que pede.
+  document.addEventListener('gen:replay', (e) => {
+    const host = e.target as HTMLElement;
+    if (!host.matches?.('[data-gen]')) return;
+    host.querySelectorAll('.tok.on').forEach((t) => t.classList.remove('on'));
+    host.classList.remove('gen-done');
+    host.classList.add('gen-replay');
+    generate(host);
+  });
+
   const hosts = [...document.querySelectorAll<HTMLElement>('[data-gen]')];
   if (reduce) {
-    hosts.forEach((h) => h.classList.add('gen-done'));
+    hosts.forEach((h) => {
+      h.classList.add('gen-done');
+      // Cursor parado no fim, sem piscar: o sinal de "texto gerado" continua sem movimento.
+      if (h.hasAttribute('data-keep-cursor')) {
+        const cursor = document.createElement('span');
+        cursor.className = 'gen-cursor';
+        cursor.setAttribute('aria-hidden', 'true');
+        h.append(cursor);
+        const last = [...h.querySelectorAll('.tok')].at(-1) ?? null;
+        const pos = () => placeCursor(h, cursor, last);
+        document.fonts?.ready.then(pos, pos);
+        addEventListener('resize', pos, { passive: true });
+      }
+    });
   } else {
     const io = new IntersectionObserver(
       (entries) => {

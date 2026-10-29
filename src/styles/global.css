@@ -12,6 +12,7 @@
   --accent-text: #157a41;
   --accent-wash: color-mix(in srgb, var(--accent) 12%, transparent);
   --focus: var(--accent-text);
+  --sheet: color-mix(in srgb, var(--ink) 5%, transparent);
 
   --serif: 'Newsreader Variable', 'Iowan Old Style', Georgia, serif;
   --mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
@@ -67,7 +68,10 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  /* Folha de log: pauta fina a cada 2rem. A página inteira é uma geração. */
+  background-color: var(--paper);
+  background-image: linear-gradient(var(--sheet) 1px, transparent 1px);
+  background-size: 100% 2rem;
   color: var(--ink);
   font-family: var(--serif);
   font-size: 1.1875rem;
@@ -97,6 +101,17 @@ h5 {
 p {
   margin: 0 0 1em;
   text-wrap: pretty;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--ink);
+}
+
+html {
+  scrollbar-color: var(--bar) var(--paper);
+  caret-color: var(--accent);
+  accent-color: var(--accent);
 }
 
 a {

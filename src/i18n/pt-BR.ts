@@ -11,12 +11,32 @@ export const ptBR = {
   // Cada frase gerada token a token tem um id, usado para achar as alternativas em alternativas.json.
   frases: {
     abertura: 'Coloco IA em sistemas que as pessoas usam, e meço onde ela erra.',
-    numeros: 'Em uso, com números',
-    projetos: 'Projetos, contados como execuções',
+    numeros: '~300 máquinas por mês passam pelo que eu construí',
+    projetos: 'Cinco execuções, com os erros à mostra',
     latente: 'Projetos parecidos ficam perto',
-    metodo: 'Como trabalho',
-    trajetoria: 'Trajetória',
-    contato: 'Fale comigo',
+    metodo: 'Do problema ao teste que impede o erro de voltar',
+    trajetoria: 'Da usinagem CNC na Mercedes a IA em produção',
+    contato: 'Me mande um problema real',
+  },
+  // A pergunta que abre cada seção, como num rastro: o título gerado é a resposta.
+  perguntas: {
+    numeros: 'o que já está em uso?',
+    projetos: 'mostre o trabalho',
+    latente: 'o que esses projetos têm em comum?',
+    metodo: 'como você trabalha?',
+    trajetoria: 'de onde você veio?',
+    contato: 'e agora?',
+  },
+  lente: {
+    titulo: 'próximo token',
+    lista: 'Top-5 desta posição',
+    temperatura: 'temperatura',
+    ajuda: 'Redistribui o top-5: pᵢ^(1/T), mantendo a massa total dele. Em 1, os números originais; abaixo concentra, acima achata.',
+    denovo: 'gerar de novo',
+    quase: (topo: string, escolhido: string) => `Quase escrevi “${topo}”. Escolhi “${escolhido}”.`,
+    provavel: (t: string) => `“${t}” era o mais provável nesta posição.`,
+    metaGerando: (i: number, n: number) => `decodificando · ${i}/${n} tokens`,
+    metaFim: (n: number) => `${n} tokens · top-5 por posição`,
   },
   subtitulo: 'AI Builder · Ciência da Computação @ UFABC · São Bernardo do Campo, SP',
   links: {
@@ -66,7 +86,7 @@ export const ptBR = {
   idiomas: 'Inglês B2 (Cambridge PET, Grade A)',
   contato: 'Procuro estágio construindo com IA. Se quiser ver um desses rastros rodando de verdade, me chame.',
   painel: {
-    dica: 'Passe o mouse ou toque numa palavra do título para ver o que o modelo quase escreveu.',
+    dica: 'Passe o mouse ou toque numa palavra para ver o que o modelo quase escreveu.',
     foraDoTop: 'fora do top-5',
     escolhido: 'escolhido',
     fechar: 'Fechar',

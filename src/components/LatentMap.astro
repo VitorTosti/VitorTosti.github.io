@@ -1,6 +1,6 @@
 ---
 // Projetos como pontos num mapa 2D, como embeddings. No celular vira lista ordenada por semelhança.
-import GeneratedText from './GeneratedText.astro';
+import SectionHead from './SectionHead.astro';
 import { ordemPorSemelhanca, pontos, regioes, vizinhos } from '../lib/latent';
 import { ptBR as s } from '../i18n/pt-BR';
 
@@ -16,7 +16,7 @@ const ordem = ordemPorSemelhanca(pontos);
 ---
 
 <section class="section wide" id="latente">
-  <GeneratedText id="latente" text={s.frases.latente} as="h2" class="section-title" />
+  <SectionHead id="latente" />
   <p class="intro">
     Cada projeto é um ponto, posicionado à mão a partir das habilidades que usa: agentes, avaliação, ferramenta
     interna, dados e interface. Passe o mouse num ponto para ver os dois vizinhos mais próximos.

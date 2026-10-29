@@ -1,10 +1,10 @@
 ---
-import GeneratedText from './GeneratedText.astro';
+import SectionHead from './SectionHead.astro';
 import { ptBR as s } from '../i18n/pt-BR';
 ---
 
 <section class="section wide" id="trajetoria">
-  <GeneratedText id="trajetoria" text={s.frases.trajetoria} as="h2" class="section-title" />
+  <SectionHead id="trajetoria" />
   <ol class="tl">
     {
       s.trajetoria.map((t) => (
