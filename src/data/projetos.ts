@@ -166,7 +166,7 @@ export const infocaij: ProjetoCurto = {
     },
     {
       tipo: 'avaliacao',
-      itens: ['95 arquivos de teste', 'migração para VPS com plano de retorno', 'único desenvolvedor, com Claude Code'],
+      itens: ['95 arquivos de teste', 'migração para VPS com plano de retorno', 'desenvolvido com Claude Code'],
     },
   ],
   stack: 'React · TypeScript · Node.js · Express · Zod · SQLite/PostgreSQL · Vitest',

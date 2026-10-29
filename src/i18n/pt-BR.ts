@@ -39,18 +39,18 @@ export const ptBR = {
     metaFim: (n: number) => `${n} tokens · top-5 por posição`,
   },
   // As ferramentas que aparecem nos projetos e na trajetória; nada fora delas.
-  // Agrupadas pelo que um recrutador de IA procura primeiro. Cada item tem prova num projeto ou na trajetória.
+  // Agrupadas por IA, programação e ferramentas. Cada item tem prova num projeto ou na trajetória.
   skills: [
     {
       rot: 'IA',
       itens: ['Agentes com MCP (tool use)', 'Avaliação de LLMs com dados reais', 'Saída estruturada com esquema'],
     },
-    { rot: 'código', itens: ['Python', 'TypeScript', 'SQL · PostgreSQL', 'Node.js e Express', 'React', 'Streamlit'] },
-    { rot: 'entrega', itens: ['Git e GitHub', 'Testes e CI (Vitest, GitHub Actions)', 'Deploy em VPS', 'Automação com n8n'] },
+    { rot: 'programação', itens: ['Python', 'TypeScript', 'SQL · PostgreSQL', 'Node.js e Express', 'React', 'Streamlit'] },
+    { rot: 'ferramentas', itens: ['Git e GitHub', 'Testes e CI (Vitest, GitHub Actions)', 'Deploy em VPS', 'Automação com n8n'] },
   ],
   skillsRotulo: 'Skills',
   sobre:
-    'Trabalho como técnico de tecnologia na CAIJ Informática, onde sou o único desenvolvedor do InfoCAIJ: a plataforma que tirou a venda e a preparação de notebooks do WhatsApp e hoje acompanha cerca de 300 máquinas por mês. Em cima dela construí um servidor MCP que deixa o Claude responder onde a fila trava, e testei com o modelo e com os dados reais até achar onde ele errava. Antes, automatizei testes de iluminação automotiva na Genesis e programei máquinas CNC na Mercedes-Benz.',
+    'Trabalho como técnico de tecnologia na CAIJ Informática, onde desenvolvo o InfoCAIJ, a plataforma que tirou a venda e a preparação de notebooks do WhatsApp e hoje acompanha cerca de 300 máquinas por mês. Em cima dela construí um servidor MCP que deixa o Claude responder onde a fila trava, e testei com o modelo e com os dados reais até achar onde ele errava. Antes, automatizei testes de iluminação automotiva na Genesis e programei máquinas CNC na Mercedes-Benz.',
   avanco: {
     proximo: 'mostre o trabalho',
     em: (s: number) => `em ${s} s`,
