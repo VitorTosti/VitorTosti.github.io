@@ -43,10 +43,10 @@ export const ptBR = {
   skills: [
     {
       rot: 'IA',
-      itens: ['Agentes com MCP (tool use)', 'Avaliação de LLMs com dados reais', 'Saída estruturada com esquema', 'Claude e Gemini', 'Claude Code e Codex'],
+      itens: ['Agentes com MCP (tool use)', 'Avaliação de LLMs com dados reais', 'Saída estruturada com esquema'],
     },
-    { rot: 'código', itens: ['Python', 'TypeScript', 'SQL · PostgreSQL', 'Node.js e Express', 'React'] },
-    { rot: 'entrega', itens: ['Testes e CI (Vitest, GitHub Actions)', 'Deploy em VPS', 'Automação com n8n'] },
+    { rot: 'código', itens: ['Python', 'TypeScript', 'SQL · PostgreSQL', 'Node.js e Express', 'React', 'Streamlit'] },
+    { rot: 'entrega', itens: ['Git e GitHub', 'Testes e CI (Vitest, GitHub Actions)', 'Deploy em VPS', 'Automação com n8n'] },
   ],
   skillsRotulo: 'Skills',
   sobre:
