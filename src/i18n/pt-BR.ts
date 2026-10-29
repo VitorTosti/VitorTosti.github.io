@@ -59,7 +59,8 @@ export const ptBR = {
   ],
   skillsRotulo: 'Skills',
   sobre:
-    'Trabalho como técnico de tecnologia na CAIJ Informática, onde desenvolvo o InfoCAIJ, a plataforma que tirou a venda e a preparação de notebooks do WhatsApp e hoje acompanha cerca de 300 máquinas por mês. Em cima dela construí um servidor MCP que deixa o Claude responder onde a fila trava, e testei com o modelo e com os dados reais até achar onde ele errava. Antes, automatizei testes de iluminação automotiva na Genesis e programei máquinas CNC na Mercedes-Benz.',
+    // Quem é o Vitor, não o que ele fez (os trabalhos estão nos projetos e na trajetória). Rascunho para revisão.
+    'Sou o Vitor, estudante de Ciência da Computação na UFABC, em São Bernardo do Campo. Comecei pela eletrônica, no técnico da ETEC, e passei pela usinagem CNC antes de chegar ao software. Gosto de construir coisas que as pessoas usam de verdade e de entender onde elas falham. Hoje isso quer dizer colocar IA em sistemas reais e medir onde ela erra. Procuro um estágio para fazer isso junto de um time.',
   avanco: {
     proximo: 'mostre o trabalho',
     em: (s: number) => `em ${s} s`,

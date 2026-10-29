@@ -82,7 +82,7 @@ addEventListener(
 );
 addEventListener('resize', () => tarefas.forEach((t) => t()), { passive: true });
 
-/** As duas faixas de skills andam em sentidos opostos conforme a página rola. */
+/** As faixas de skills já correm sozinhas (CSS); a rolagem empurra cada uma no seu sentido. */
 function faixas() {
   const sec = document.querySelector<HTMLElement>('[data-marquee]');
   if (!sec || reduce) return;
@@ -95,8 +95,8 @@ function faixas() {
     const off = (scrollY - topo + innerHeight) * 0.3;
     rows.forEach((r) => {
       const dir = Number(r.dataset.dir) || 1;
-      // Começa deslocada para a faixa nunca mostrar a borda.
-      r.style.transform = `translate3d(${dir > 0 ? off - r.scrollWidth / 3 : -(off + 40)}px, 0, 0)`;
+      // A faixa já corre sozinha (CSS); a rolagem só empurra. A primeira começa deslocada para nunca mostrar a borda.
+      r.style.transform = `translate3d(${dir > 0 ? Math.min(off, 440) - 480 : -off}px, 0, 0)`;
     });
   });
 }

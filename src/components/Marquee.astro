@@ -1,6 +1,7 @@
 ---
-// Duas faixas de skills que andam com a rolagem, em sentidos opostos. A lista real (para leitor de tela)
-// é a primeira cópia; as repetições existem só para a faixa não ter fim visível.
+// Duas faixas com todas as skills, correndo sem parar em sentidos opostos; a rolagem da página
+// empurra um pouco mais. A lista real (para leitor de tela) é a primeira cópia; as repetições existem
+// só para a faixa não ter fim visível. Com movimento reduzido, as faixas param e quebram em linhas.
 import { ptBR as s } from '../i18n/pt-BR';
 
 const [ia, prog, ferr] = s.skills;
@@ -14,16 +15,18 @@ const linhas = [
   {
     linhas.map((l, k) => (
       <div class:list={['row', { vazada: k === 1 }]} data-dir={l.dir}>
-        {[0, 1, 2].map((c) => (
-          <ul class="faixa" aria-hidden={c > 0 ? 'true' : undefined}>
-            {l.itens.map((it) => (
-              <li>
-                {it}
-                <span class="sep" aria-hidden="true" />
-              </li>
-            ))}
-          </ul>
-        ))}
+        <div class:list={['trilho', { volta: l.dir < 0 }]}>
+          {[0, 1].map((c) => (
+            <ul class="faixa" aria-hidden={c > 0 ? 'true' : undefined}>
+              {l.itens.map((it) => (
+                <li>
+                  {it}
+                  <span class="sep" aria-hidden="true" />
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
       </div>
     ))
   }
@@ -37,9 +40,20 @@ const linhas = [
     gap: 0.25rem;
   }
   .row {
-    display: flex;
     width: max-content;
     will-change: transform;
+  }
+  /* Duas cópias idênticas: andar exatamente uma cópia (-50%) fecha o laço sem emenda. */
+  .trilho {
+    display: flex;
+    animation: corre 55s linear infinite;
+  }
+  .trilho.volta {
+    animation-direction: reverse;
+    animation-duration: 45s;
+  }
+  .marquee:hover .trilho {
+    animation-play-state: paused;
   }
   .faixa {
     list-style: none;
@@ -67,5 +81,30 @@ const linhas = [
     height: 0.36em;
     margin-inline: 0.45em;
     background: var(--accent);
+  }
+  @keyframes corre {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .row {
+      width: auto;
+      padding-inline: var(--gutter);
+    }
+    .trilho {
+      animation: none;
+      justify-content: center;
+    }
+    .faixa {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .faixa[aria-hidden] {
+      display: none;
+    }
+    li {
+      font-size: clamp(1.75rem, 4vw, 3rem);
+    }
   }
 </style>
