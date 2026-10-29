@@ -2,6 +2,7 @@
 import GeneratedText from './GeneratedText.astro';
 import Lens from './Lens.astro';
 import AutoAdvance from './AutoAdvance.astro';
+import HeroField from './HeroField.astro';
 import { alternativas } from '../data/alternativas';
 import { resolveFrase } from '../lib/tokenize';
 import { ptBR as s } from '../i18n/pt-BR';
@@ -10,6 +11,7 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
 ---
 
 <header class="hero wide">
+  <HeroField />
   <p class="label meta" data-hero-meta aria-hidden="true">{s.lente.metaFim(n)}</p>
   <h1>
     <span class="name">{s.nome}</span>
@@ -77,6 +79,8 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
 
 <style>
   .hero {
+    position: relative;
+    isolation: isolate;
     padding-top: clamp(5rem, 14vh, 8rem);
     padding-bottom: 3rem;
     display: grid;

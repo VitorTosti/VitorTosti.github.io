@@ -68,6 +68,8 @@ html {
 
 body {
   margin: 0;
+  /* O fundo da abertura vai de borda a borda (100vw); a barra de rolagem não pode gerar rolagem lateral. */
+  overflow-x: clip;
   /* Folha de log: pauta fina a cada 2rem. A página inteira é uma geração. */
   background-color: var(--paper);
   background-image: linear-gradient(var(--sheet) 1px, transparent 1px);
