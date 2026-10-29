@@ -1,0 +1,65 @@
+---
+import GeneratedText from './GeneratedText.astro';
+import { ptBR as s } from '../i18n/pt-BR';
+---
+
+<section class="section wide">
+  <GeneratedText id="numeros" text={s.frases.numeros} as="h2" class="section-title" />
+  <dl class="nums">
+    {
+      s.numeros.map((n, i) => (
+        <div class="num">
+          <dt class="v">
+            <GeneratedText text={n.valor} mode="numero" seed={11 + i} />
+          </dt>
+          <dd>{n.rotulo}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</section>
+
+<style>
+  .nums {
+    margin: 0;
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .num {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .v {
+    font-family: var(--mono);
+    font-size: clamp(1.625rem, 6vw, 2.125rem);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+  }
+  dd {
+    margin: 0.375rem 0 0;
+    color: var(--ink-2);
+    font-size: 1rem;
+    line-height: 1.4;
+    max-width: 22rem;
+  }
+  @media (min-width: 768px) {
+    .nums {
+      grid-template-columns: repeat(4, 1fr);
+      border-bottom: 1px solid var(--rule);
+    }
+    .num {
+      border-bottom: 0;
+      padding: 1.5rem 1.5rem 1.75rem 0;
+    }
+    .v {
+      font-size: clamp(1.125rem, 1.75vw, 1.625rem);
+      white-space: nowrap;
+    }
+    .num + .num {
+      padding-left: 1.5rem;
+      border-left: 1px solid var(--rule);
+    }
+  }
+</style>

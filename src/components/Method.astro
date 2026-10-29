@@ -1,0 +1,83 @@
+---
+// Como trabalho: quatro etapas de pipeline, reveladas em sequência.
+import GeneratedText from './GeneratedText.astro';
+import { ptBR as s } from '../i18n/pt-BR';
+
+const nomes = ['levantar', 'construir', 'avaliar', 'corrigir'];
+---
+
+<section class="section wide" id="metodo">
+  <GeneratedText id="metodo" text={s.frases.metodo} as="h2" class="section-title" />
+  <ol class="pipe run" data-run>
+    {
+      s.metodo.map((passo, i) => (
+        <li data-step data-at={i * 220}>
+          <span class="k">
+            {i + 1}/{s.metodo.length} · {nomes[i]}
+          </span>
+          <p>{passo}</p>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .pipe {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+  li {
+    position: relative;
+    padding: 1rem 0 1rem 1.5rem;
+    border-left: 1px solid var(--rule);
+  }
+  li::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 1.35rem;
+    width: 7px;
+    height: 7px;
+    background: var(--paper);
+    border: 1px solid var(--ink-2);
+  }
+  li:nth-child(3)::before {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .k {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+  li:nth-child(3) .k {
+    color: var(--accent-text);
+  }
+  p {
+    margin: 0.25rem 0 0;
+    font-size: 1.1875rem;
+    line-height: 1.4;
+  }
+  @media (min-width: 900px) {
+    .pipe {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    li {
+      border-left: 0;
+      border-top: 1px solid var(--rule);
+      padding: 1.5rem 1.5rem 0 0;
+    }
+    li::before {
+      left: 0;
+      top: -4px;
+    }
+  }
+</style>
+
+<script>
+  import '../lib/reveal-client';
+</script>

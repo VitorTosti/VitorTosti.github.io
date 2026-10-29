@@ -1,0 +1,74 @@
+{
+  "fonte": {
+    "tipo": "ilustrativa",
+    "modelo": null,
+    "metodo": "Escritas à mão. Rode `npm run alternativas` com GEMINI_API_KEY para gerar as reais.",
+    "geradoEm": null
+  },
+  "frases": {
+    "abertura": {
+      "texto": "Coloco IA em sistemas que as pessoas usam, e meço onde ela erra.",
+      "tokens": [
+        { "t": "Coloco", "p": 0.27, "alts": [{ "t": "Construo", "p": 0.38 }, { "t": "Coloco", "p": 0.27 }, { "t": "Desenvolvo", "p": 0.17 }, { "t": "Crio", "p": 0.09 }, { "t": "Uso", "p": 0.05 }] },
+        { "t": " IA", "p": 0.71, "alts": [{ "t": " IA", "p": 0.71 }, { "t": " inteligência", "p": 0.14 }, { "t": " modelos", "p": 0.08 }, { "t": " agentes", "p": 0.04 }, { "t": " software", "p": 0.02 }] },
+        { "t": " em", "p": 0.83, "alts": [{ "t": " em", "p": 0.83 }, { "t": " para", "p": 0.07 }, { "t": " dentro", "p": 0.04 }, { "t": " no", "p": 0.03 }, { "t": " a", "p": 0.02 }] },
+        { "t": " sistemas", "p": 0.44, "alts": [{ "t": " sistemas", "p": 0.44 }, { "t": " produtos", "p": 0.21 }, { "t": " ferramentas", "p": 0.16 }, { "t": " produção", "p": 0.12 }, { "t": " aplicações", "p": 0.05 }] },
+        { "t": " que", "p": 0.78, "alts": [{ "t": " que", "p": 0.78 }, { "t": " reais", "p": 0.15 }, { "t": " usados", "p": 0.04 }, { "t": " de", "p": 0.02 }, { "t": " onde", "p": 0.01 }] },
+        { "t": " as", "p": 0.52, "alts": [{ "t": " as", "p": 0.52 }, { "t": " pessoas", "p": 0.31 }, { "t": " os", "p": 0.09 }, { "t": " outras", "p": 0.04 }, { "t": " meus", "p": 0.02 }] },
+        { "t": " pessoas", "p": 0.88, "alts": [{ "t": " pessoas", "p": 0.88 }, { "t": " empresas", "p": 0.05 }, { "t": " equipes", "p": 0.04 }, { "t": " usuários", "p": 0.02 }, { "t": " gente", "p": 0.01 }] },
+        { "t": " usam", "p": 0.63, "alts": [{ "t": " usam", "p": 0.63 }, { "t": " realmente", "p": 0.22 }, { "t": " de", "p": 0.07 }, { "t": " já", "p": 0.04 }, { "t": " precisam", "p": 0.03 }] },
+        { "t": ",", "p": 0.58, "alts": [{ "t": ",", "p": 0.58 }, { "t": ".", "p": 0.29 }, { "t": " de", "p": 0.07 }, { "t": " todo", "p": 0.04 }, { "t": " no", "p": 0.02 }] },
+        { "t": " e", "p": 0.74, "alts": [{ "t": " e", "p": 0.74 }, { "t": " mas", "p": 0.09 }, { "t": " depois", "p": 0.07 }, { "t": " sem", "p": 0.04 }, { "t": " com", "p": 0.03 }] },
+        { "t": " meço", "p": 0.29, "alts": [{ "t": " testo", "p": 0.31 }, { "t": " meço", "p": 0.29 }, { "t": " avalio", "p": 0.22 }, { "t": " mostro", "p": 0.08 }, { "t": " descubro", "p": 0.05 }] },
+        { "t": " onde", "p": 0.47, "alts": [{ "t": " onde", "p": 0.47 }, { "t": " o", "p": 0.24 }, { "t": " quando", "p": 0.13 }, { "t": " como", "p": 0.09 }, { "t": " se", "p": 0.04 }] },
+        { "t": " ela", "p": 0.55, "alts": [{ "t": " ela", "p": 0.55 }, { "t": " eles", "p": 0.19 }, { "t": " o", "p": 0.12 }, { "t": " a", "p": 0.07 }, { "t": " falham", "p": 0.03 }] },
+        { "t": " erra", "p": 0.48, "alts": [{ "t": " erra", "p": 0.48 }, { "t": " falha", "p": 0.33 }, { "t": " acerta", "p": 0.09 }, { "t": " quebra", "p": 0.05 }, { "t": " pode", "p": 0.02 }] },
+        { "t": ".", "p": 0.91, "alts": [{ "t": ".", "p": 0.91 }, { "t": ",", "p": 0.05 }, { "t": " —", "p": 0.02 }, { "t": "!", "p": 0.01 }, { "t": ":", "p": 0.01 }] }
+      ]
+    },
+    "numeros": {
+      "texto": "Em uso, com números",
+      "tokens": [
+        { "t": "Em", "p": null, "alts": [] },
+        { "t": " uso", "p": 0.41, "alts": [{ "t": " uso", "p": 0.41 }, { "t": " produção", "p": 0.37 }, { "t": " operação", "p": 0.12 }, { "t": " campo", "p": 0.05 }, { "t": " ação", "p": 0.03 }] },
+        { "t": ",", "p": null, "alts": [] },
+        { "t": " com", "p": null, "alts": [] },
+        { "t": " números", "p": 0.52, "alts": [{ "t": " números", "p": 0.52 }, { "t": " dados", "p": 0.28 }, { "t": " métricas", "p": 0.14 }, { "t": " resultados", "p": 0.04 }, { "t": " medidas", "p": 0.01 }] }
+      ]
+    },
+    "projetos": {
+      "texto": "Projetos, contados como execuções",
+      "tokens": [
+        { "t": "Projetos", "p": null, "alts": [] },
+        { "t": ",", "p": null, "alts": [] },
+        { "t": " contados", "p": 0.22, "alts": [{ "t": " vistos", "p": 0.25 }, { "t": " contados", "p": 0.22 }, { "t": " mostrados", "p": 0.19 }, { "t": " descritos", "p": 0.17 }, { "t": " explicados", "p": 0.09 }] },
+        { "t": " como", "p": null, "alts": [] },
+        { "t": " execu", "p": 0.61, "alts": [{ "t": " execu", "p": 0.61 }, { "t": " rastros", "p": 0.14 }, { "t": " logs", "p": 0.11 }, { "t": " hist", "p": 0.07 }, { "t": " conversas", "p": 0.04 }] },
+        { "t": "ções", "p": null, "alts": [] }
+      ]
+    },
+    "latente": {
+      "texto": "Projetos parecidos ficam perto",
+      "tokens": [
+        { "t": "Projetos", "p": null, "alts": [] },
+        { "t": " parecidos", "p": null, "alts": [] },
+        { "t": " ficam", "p": null, "alts": [] },
+        { "t": " perto", "p": 0.46, "alts": [{ "t": " perto", "p": 0.46 }, { "t": " próximos", "p": 0.38 }, { "t": " juntos", "p": 0.11 }, { "t": " lado", "p": 0.03 }, { "t": " vizinhos", "p": 0.01 }] }
+      ]
+    },
+    "metodo": {
+      "texto": "Como trabalho",
+      "tokens": [
+        { "t": "Como", "p": null, "alts": [] },
+        { "t": " trabalho", "p": 0.57, "alts": [{ "t": " trabalho", "p": 0.57 }, { "t": " funciona", "p": 0.19 }, { "t": " construo", "p": 0.12 }, { "t": " faço", "p": 0.07 }, { "t": " penso", "p": 0.03 }] }
+      ]
+    },
+    "contato": {
+      "texto": "Fale comigo",
+      "tokens": [
+        { "t": "Fale", "p": null, "alts": [] },
+        { "t": " comigo", "p": 0.74, "alts": [{ "t": " comigo", "p": 0.74 }, { "t": " com", "p": 0.14 }, { "t": " conosco", "p": 0.06 }, { "t": " mais", "p": 0.03 }, { "t": " agora", "p": 0.02 }] }
+      ]
+    }
+  }
+}

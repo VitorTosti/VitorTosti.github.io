@@ -1,0 +1,224 @@
+---
+// Texto que se escreve token a token. O texto completo está no HTML desde o início; a animação só revela.
+// Tokens com alternativas são focáveis (tabindex móvel) e descrevem o top-5 via aria-describedby.
+import { alternativas } from '../data/alternativas';
+import { formatPct, generationTimes, resolveFrase, splitNumber, toRender } from '../lib/tokenize';
+import { ptBR as s } from '../i18n/pt-BR';
+
+interface Props {
+  /** id da frase em alternativas.json; omitido para texto sem alternativas (ex.: números). */
+  id?: string;
+  text: string;
+  as?: 'h1' | 'h2' | 'h3' | 'p' | 'span' | 'strong';
+  class?: string;
+  /** 'load' começa ao carregar; 'view' quando entra na tela. */
+  trigger?: 'load' | 'view';
+  /** 'numero' divide dígito a dígito. */
+  mode?: 'texto' | 'numero';
+  /** Mantém o cursor piscando no fim. */
+  keepCursor?: boolean;
+  seed?: number;
+}
+
+const { id, text, as: Tag = 'span', class: cls, trigger = 'view', mode = 'texto', keepCursor = false, seed = 7 } = Astro.props;
+
+const tokens =
+  mode === 'numero' ? splitNumber(text).map((t) => toRender(t)) : resolveFrase(id ?? '', text, id ? alternativas : null);
+const times = generationTimes(
+  tokens.map((k) => k.lead + k.text),
+  seed,
+  mode === 'numero' ? 70 : 42,
+  mode === 'numero' ? 40 : 58,
+);
+const uid = `g-${id ?? 'n'}-${Math.abs(text.split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 0)).toString(36)}`;
+const comAlts = tokens.map((k) => k.alts.length > 0 || k.foraDoTop);
+const primeiro = comAlts.indexOf(true);
+
+const descricao = (i: number) => {
+  const k = tokens[i];
+  const lista = k.alts.map((a) => `${a.t.trim() || a.t} ${formatPct(a.p)}`).join(', ');
+  const extra = k.foraDoTop ? `; "${k.text}" ${s.painel.foraDoTop}` : '';
+  return s.painel.descricao(k.text, lista + extra);
+};
+---
+
+<Tag
+  class:list={['gen', cls]}
+  data-gen
+  data-trigger={trigger}
+  data-times={times.join(',')}
+  data-keep-cursor={keepCursor ? '' : undefined}
+>
+  {
+    tokens.map((k, i) =>
+      comAlts[i] ? (
+        <Fragment>
+          {k.lead}
+          <span
+            class="tok"
+            tabindex={i === primeiro ? '0' : '-1'}
+            aria-describedby={`${uid}-${i}`}
+            data-alts={JSON.stringify({ t: k.text, p: k.p, a: k.alts, f: k.foraDoTop })}
+          >
+            {k.text}
+          </span>
+        </Fragment>
+      ) : (
+        <Fragment>
+          {k.lead}
+          <span class="tok">{k.text}</span>
+        </Fragment>
+      ),
+    )
+  }
+</Tag>
+{
+  primeiro >= 0 && (
+    <span hidden>
+      {tokens.map((_, i) => comAlts[i] && <span id={`${uid}-${i}`}>{descricao(i)}</span>)}
+    </span>
+  )
+}
+
+<style is:global>
+  .gen {
+    position: relative;
+  }
+  .gen .tok[data-alts] {
+    cursor: help;
+    border-radius: 2px;
+    text-decoration: underline dotted var(--bar);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.14em;
+    transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+  }
+  .gen .tok[data-alts]:hover,
+  .gen .tok[data-alts][data-active] {
+    background: var(--accent-wash);
+    color: var(--accent-text);
+    text-decoration-color: var(--accent);
+  }
+  .gen .tok[data-alts]:focus-visible {
+    outline-offset: 1px;
+  }
+
+  /* Antes de gerar: tokens escondidos (só com JS e sem movimento reduzido; ver Base.astro). */
+  .gen-on .gen:not(.gen-done) .tok:not(.on) {
+    opacity: 0;
+  }
+  .gen .tok.on {
+    animation: tok-in var(--t-slow) var(--ease) both;
+  }
+  @keyframes tok-in {
+    0% {
+      opacity: 0;
+      color: var(--accent-text);
+    }
+    30% {
+      opacity: 1;
+      color: var(--accent-text);
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .gen-cursor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0.5em;
+    background: var(--accent);
+    pointer-events: none;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  .gen-cursor.typing {
+    animation: none;
+  }
+  .gen-cursor.out {
+    opacity: 0;
+    animation: none;
+    transition: opacity var(--t-base) var(--ease);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gen-cursor {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function placeCursor(host: HTMLElement, cursor: HTMLElement, tok: Element | null) {
+    const hostBox = host.getBoundingClientRect();
+    let x = 0;
+    let y = 0;
+    let h = parseFloat(getComputedStyle(host).fontSize);
+    if (tok) {
+      const rects = tok.getClientRects();
+      const last = rects[rects.length - 1];
+      if (last) {
+        x = last.right - hostBox.left + h * 0.08;
+        y = last.top - hostBox.top + last.height * 0.12;
+        h = last.height * 0.78;
+      }
+    }
+    cursor.style.height = `${h}px`;
+    cursor.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  function generate(host: HTMLElement) {
+    const toks = [...host.querySelectorAll<HTMLElement>('.tok')];
+    const times = (host.dataset.times ?? '').split(',').map(Number);
+    const cursor = document.createElement('span');
+    cursor.className = 'gen-cursor typing';
+    cursor.setAttribute('aria-hidden', 'true');
+    host.append(cursor);
+    placeCursor(host, cursor, null);
+
+    toks.forEach((tok, i) => {
+      setTimeout(() => {
+        tok.classList.add('on');
+        placeCursor(host, cursor, tok);
+        if (i === toks.length - 1) finish(host, cursor, tok);
+      }, times[i] ?? i * 60);
+    });
+  }
+
+  function finish(host: HTMLElement, cursor: HTMLElement, last: Element) {
+    host.classList.add('gen-done');
+    cursor.classList.remove('typing');
+    if (host.hasAttribute('data-keep-cursor')) {
+      addEventListener('resize', () => placeCursor(host, cursor, last), { passive: true });
+    } else {
+      setTimeout(() => cursor.classList.add('out'), 1600);
+      setTimeout(() => cursor.remove(), 2000);
+    }
+  }
+
+  const hosts = [...document.querySelectorAll<HTMLElement>('[data-gen]')];
+  if (reduce) {
+    hosts.forEach((h) => h.classList.add('gen-done'));
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          io.unobserve(e.target);
+          generate(e.target as HTMLElement);
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px' },
+    );
+    const start = () =>
+      hosts.forEach((h) => (h.dataset.trigger === 'load' ? setTimeout(() => generate(h), 250) : io.observe(h)));
+    // Espera as fontes para o cursor não medir a fonte de reserva.
+    document.fonts?.ready.then(start, start) ?? start();
+  }
+</script>

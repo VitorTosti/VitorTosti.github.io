@@ -1,0 +1,50 @@
+---
+import GeneratedText from './GeneratedText.astro';
+import { ptBR as s } from '../i18n/pt-BR';
+---
+
+<section class="section wide" id="contato">
+  <GeneratedText id="contato" text={s.frases.contato} as="h2" class="section-title big" />
+  <p class="frase">{s.contato}</p>
+  <ul class="links mono">
+    <li><a href={s.links.github} rel="me">GitHub ↗</a></li>
+    <li><a href={s.links.linkedin} rel="me">LinkedIn ↗</a></li>
+    {
+      s.links.email ? (
+        <li>
+          <a href={`mailto:${s.links.email}`}>{s.links.email}</a>
+        </li>
+      ) : (
+        <li class="todo">TODO: e-mail de contato</li>
+      )
+    }
+  </ul>
+</section>
+
+<style>
+  :global(.big) {
+    font-size: clamp(2.5rem, 9vw, 4.5rem) !important;
+  }
+  .frase {
+    max-width: var(--col);
+    font-size: 1.25rem;
+  }
+  .links {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+    font-size: 0.9375rem;
+  }
+  .links a {
+    display: inline-block;
+    padding-block: 0.625rem;
+  }
+  .todo {
+    padding-block: 0.625rem;
+    color: var(--ink-2);
+    border-bottom: 1px dashed var(--bar);
+  }
+</style>

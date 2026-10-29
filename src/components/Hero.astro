@@ -1,0 +1,93 @@
+---
+import GeneratedText from './GeneratedText.astro';
+import { alternativas } from '../data/alternativas';
+import { resolveFrase } from '../lib/tokenize';
+import { ptBR as s } from '../i18n/pt-BR';
+
+const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
+---
+
+<header class="hero wide">
+  <p class="label meta" aria-hidden="true">saída · {n} tokens · temperatura 0</p>
+  <h1>
+    <span class="name">{s.nome}</span>
+    <GeneratedText id="abertura" text={s.frases.abertura} as="span" class="line" trigger="load" keepCursor seed={3} />
+  </h1>
+  <p class="sub mono">{s.subtitulo}</p>
+  <ul class="links mono">
+    <li><a href={s.links.github} rel="me">GitHub ↗</a></li>
+    <li><a href={s.links.linkedin} rel="me">LinkedIn ↗</a></li>
+    {
+      s.links.email ? (
+        <li>
+          <a href={`mailto:${s.links.email}`}>{s.links.email}</a>
+        </li>
+      ) : (
+        <li class="todo">TODO: e-mail de contato</li>
+      )
+    }
+  </ul>
+  <p class="hint label">↳ {s.painel.dica}</p>
+</header>
+
+<style>
+  .hero {
+    padding-top: clamp(5rem, 16vh, 9rem);
+    padding-bottom: 3rem;
+  }
+  .meta {
+    margin-bottom: 1.25rem;
+  }
+  h1 {
+    display: block;
+  }
+  .name {
+    display: block;
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+    font-style: italic;
+    letter-spacing: 0;
+    color: var(--ink-2);
+    margin-bottom: 0.75rem;
+  }
+  h1 :global(.line) {
+    display: block;
+    font-size: clamp(2.375rem, 8.2vw, 5rem);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    max-width: 15ch;
+    font-variation-settings: 'opsz' 72;
+  }
+  .sub {
+    margin: 2rem 0 1.25rem;
+    color: var(--ink-2);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+  .links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.5rem;
+    font-size: 0.875rem;
+  }
+  .links a {
+    display: inline-block;
+    padding-block: 0.625rem;
+  }
+  .todo {
+    padding-block: 0.625rem;
+    color: var(--ink-2);
+    border-bottom: 1px dashed var(--bar);
+  }
+  .hint {
+    margin-top: 2.5rem;
+    max-width: 34rem;
+  }
+  @media (min-width: 768px) {
+    h1 :global(.line) {
+      max-width: 17ch;
+    }
+  }
+</style>

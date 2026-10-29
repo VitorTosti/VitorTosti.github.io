@@ -1,0 +1,234 @@
+---
+// Foto do cardápio à esquerda, JSON sendo gerado à direita (o gabarito do cardapio_017), e abaixo
+// o erro que importa: preço errado que o modelo não marcou para revisão.
+import { Image } from 'astro:assets';
+import foto from '../assets/cardapio_017.jpg';
+import gabarito from '../assets/cardapio_017_gabarito.json';
+import { jsonTokens } from '../lib/trace';
+import { avaliacaoCardapio as av } from '../data/projetos';
+
+type Item = (typeof gabarito.itens)[number];
+const mostrar = ['Portuguesa', 'Calabresa', 'Cerveja Long Neck'];
+const itens = gabarito.itens.filter((i) => mostrar.includes(i.nome));
+const omitidos = gabarito.itens.length - itens.length;
+
+// Linhas do JSON, cada uma com recuo e com marca para o item que pede revisão.
+type Linha = { recuo: number; toks: ReturnType<typeof jsonTokens>; revisar?: boolean; comentario?: string };
+const linha = (recuo: number, texto: string, extra: Partial<Linha> = {}): Linha => ({
+  recuo,
+  toks: [{ k: 'pont', t: texto }],
+  ...extra,
+});
+const kv = (recuo: number, chave: string, valor: unknown, virgula = true, extra: Partial<Linha> = {}): Linha => ({
+  recuo,
+  toks: [...jsonTokens({ [chave]: valor }).slice(1, -1), ...(virgula ? [{ k: 'pont' as const, t: ',' }] : [])],
+  ...extra,
+});
+const linhas: Linha[] = [
+  linha(0, '{'),
+  kv(1, 'restaurante', gabarito.restaurante),
+  linha(1, '"itens": ['),
+];
+itens.forEach((i: Item, n) => {
+  const r = i.revisar;
+  if (n === itens.length - 1) linhas.push(linha(2, '', { comentario: `… ${omitidos} itens` }));
+  linhas.push(linha(2, '{', { revisar: r }));
+  linhas.push(kv(3, 'nome', i.nome, true, { revisar: r }));
+  linhas.push(linha(3, '"precos": [', { revisar: r, toks: [{ k: 'chave', t: '"precos"' }, { k: 'pont', t: ': [' }] }));
+  i.precos.forEach((pr, j) =>
+    linhas.push({ recuo: 4, toks: [...jsonTokens(pr), ...(j < i.precos.length - 1 ? [{ k: 'pont' as const, t: ',' }] : [])], revisar: r }),
+  );
+  linhas.push(linha(3, '],', { revisar: r }));
+  linhas.push(kv(3, 'revisar', i.revisar, !!i.motivo_revisao, { revisar: r }));
+  if (i.motivo_revisao) linhas.push(kv(3, 'motivo_revisao', i.motivo_revisao, false, { revisar: r }));
+  linhas.push(linha(2, n === itens.length - 1 ? '}' : '},', { revisar: r }));
+});
+linhas.push(linha(1, ']'), linha(0, '}'));
+
+// HTML montado aqui para que a indentação do template não vaze para dentro do <pre>.
+const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const codigo = linhas
+  .map((l, i) => {
+    const corpo = l.comentario
+      ? `<span class="cm">// ${esc(l.comentario)}</span>`
+      : l.toks.map((t) => `<span class="${t.k}">${esc(t.t)}</span>`).join('');
+    return `<span class="ln${l.revisar ? ' rev' : ''}" data-step data-at="${i * 55}">${'  '.repeat(l.recuo)}${corpo}</span>`;
+  })
+  .join('');
+---
+
+<div class="m2j">
+  <figure class="foto">
+    <Image
+      src={foto}
+      widths={[480, 760, 1100]}
+      sizes="(min-width: 900px) 420px, 100vw"
+      alt="Foto de um cardápio sintético de pizzaria, impresso em folheto e fotografado torto sobre uma mesa."
+      loading="lazy"
+    />
+    <figcaption class="label">cardapio_017.jpg · folheto, foto difícil</figcaption>
+  </figure>
+
+  <figure class="json run">
+    <figcaption class="json-head">
+      <span>saída esperada · gabarito</span>
+      <span>{gabarito.itens.length} itens</span>
+    </figcaption>
+    <pre data-run tabindex="0" aria-label="JSON do gabarito do cardápio 017"><code set:html={codigo} /></pre>
+  </figure>
+</div>
+
+<div class="erro run">
+  <p class="label">resultado preliminar · {av.preliminar.cardapios} cardápios</p>
+  <p class="ok"><span aria-hidden="true">✓</span> {av.preliminar.limpas}.</p>
+  <p class="falha"><span aria-hidden="true">✗</span> Na foto difícil, dois preços lidos errado, sem pedir revisão:</p>
+  <ol class="diff" data-run aria-label="Preços lidos errado">
+    {
+      av.preliminar.erros.map((e, i) => (
+        <li data-step data-at={i * 300}>
+          <span class="certo">
+            <span class="sr-only">certo: </span>R$ {e.certo}
+          </span>
+          <span class="seta" aria-hidden="true">→</span>
+          <span class="lido">
+            <span class="sr-only">lido: </span>R$ {e.lido}
+          </span>
+          <code class="flag">revisar: false</code>
+        </li>
+      ))
+    }
+  </ol>
+  <p class="nota">
+    É o erro que mais custa: o restaurante publica o preço errado sem saber. Por isso a métrica principal é <em>erro de preço silencioso</em>,
+    preço errado que o modelo não marcou para revisão.
+  </p>
+</div>
+
+<style>
+  .m2j {
+    display: grid;
+    gap: 1rem;
+  }
+  .foto {
+    margin: 0;
+  }
+  .foto :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
+  .foto figcaption {
+    margin-top: 0.5rem;
+  }
+  .json {
+    margin: 0;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--surface);
+    overflow: hidden;
+    min-width: 0;
+  }
+  .json-head {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+  pre {
+    margin: 0;
+    padding: 0.75rem 0;
+    overflow-x: auto;
+    font-size: 0.75rem;
+    line-height: 1.65;
+  }
+  code {
+    font-size: inherit;
+  }
+  pre :global(.ln) {
+    display: block;
+    padding-inline: 1rem;
+    white-space: pre;
+  }
+  pre :global(.ln.rev) {
+    background: var(--accent-wash);
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+  pre :global(.chave),
+  pre :global(.pont) {
+    color: var(--ink-2);
+  }
+  pre :global(.rev .str),
+  pre :global(.rev .lit) {
+    color: var(--accent-text);
+  }
+  pre :global(.cm) {
+    color: var(--ink-2);
+    font-style: italic;
+  }
+
+  .erro {
+    margin-top: 2rem;
+    max-width: var(--col);
+  }
+  .erro p {
+    margin-bottom: 0.5rem;
+  }
+  .ok span {
+    color: var(--accent-text);
+  }
+  .falha span {
+    font-weight: 600;
+  }
+  .diff {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 1rem;
+    font-family: var(--mono);
+    font-size: 0.9375rem;
+  }
+  .diff li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .certo {
+    color: var(--ink-2);
+  }
+  .lido {
+    font-weight: 600;
+    text-decoration: underline wavy var(--ink-2) 1px;
+    text-underline-offset: 0.25em;
+  }
+  .flag {
+    font-size: 0.75rem;
+    color: var(--ink-2);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0 0.375rem;
+  }
+  .nota {
+    color: var(--ink-2);
+    font-size: 1rem;
+  }
+  @media (min-width: 900px) {
+    .m2j {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 1.5rem;
+      align-items: start;
+    }
+    pre {
+      font-size: 0.8125rem;
+    }
+  }
+</style>
+
+<script>
+  import '../lib/reveal-client';
+</script>

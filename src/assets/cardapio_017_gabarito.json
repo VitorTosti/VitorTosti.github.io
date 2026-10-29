@@ -1,0 +1,298 @@
+{
+  "restaurante": "Forno a Lenha Napoli",
+  "adicionais": [
+    {
+      "nome": "Molho extra",
+      "valor": 3.0,
+      "categoria": "Porções"
+    },
+    {
+      "nome": "Cheddar",
+      "valor": 5.5,
+      "categoria": "Porções"
+    }
+  ],
+  "observacoes": [
+    "Embalagem para viagem: R$ 6,00",
+    "Aceitamos Pix e cartões"
+  ],
+  "itens": [
+    {
+      "categoria": "Pizzas",
+      "nome": "Portuguesa",
+      "descricao": "Presunto, ovo, cebola, ervilha, mussarela e azeitona",
+      "precos": [
+        {
+          "tamanho": "Broto",
+          "valor": 50.9
+        },
+        {
+          "tamanho": "Média",
+          "valor": 58.9
+        },
+        {
+          "tamanho": "Grande",
+          "valor": 72.5
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Pizzas",
+      "nome": "Frango com Catupiry",
+      "descricao": "Frango desfiado e catupiry original",
+      "precos": [
+        {
+          "tamanho": "Broto",
+          "valor": 45.5
+        },
+        {
+          "tamanho": "Média",
+          "valor": 61.9
+        },
+        {
+          "tamanho": "Grande",
+          "valor": 87.0
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Pizzas",
+      "nome": "Quatro Queijos",
+      "descricao": "Mussarela, provolone, parmesão e catupiry",
+      "precos": [
+        {
+          "tamanho": "Broto",
+          "valor": 50.5
+        },
+        {
+          "tamanho": "Média",
+          "valor": 67.9
+        },
+        {
+          "tamanho": "Grande",
+          "valor": 74.0
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Pizzas",
+      "nome": "Calabresa",
+      "descricao": "Calabresa fatiada, cebola e azeitona",
+      "precos": [
+        {
+          "tamanho": "Broto",
+          "valor": 45.9
+        },
+        {
+          "tamanho": "Média",
+          "valor": 62.9
+        },
+        {
+          "tamanho": "Grande",
+          "valor": 64.5
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Pizzas",
+      "nome": "Mussarela",
+      "descricao": "Molho, mussarela e orégano",
+      "precos": [
+        {
+          "tamanho": "Broto",
+          "valor": 40.9
+        },
+        {
+          "tamanho": "Média",
+          "valor": 44.0
+        },
+        {
+          "tamanho": "Grande",
+          "valor": 72.9
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Porções",
+      "nome": "Anéis de Cebola",
+      "descricao": null,
+      "precos": [
+        {
+          "tamanho": "Meia",
+          "valor": 25.9
+        },
+        {
+          "tamanho": "Inteira",
+          "valor": 41.9
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Porções",
+      "nome": "Isca de Peixe",
+      "descricao": "Tilápia empanada com molho tártaro",
+      "precos": [
+        {
+          "tamanho": "Meia",
+          "valor": 40.9
+        },
+        {
+          "tamanho": "Inteira",
+          "valor": 73.0
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Porções",
+      "nome": "Calabresa Acebolada",
+      "descricao": null,
+      "precos": [
+        {
+          "tamanho": "Meia",
+          "valor": 35.5
+        },
+        {
+          "tamanho": "Inteira",
+          "valor": 40.0
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Porções",
+      "nome": "Mandioca Frita",
+      "descricao": null,
+      "precos": [
+        {
+          "tamanho": "Meia",
+          "valor": 26.9
+        },
+        {
+          "tamanho": "Inteira",
+          "valor": 29.9
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Bebidas",
+      "nome": "Suco Natural",
+      "descricao": "Laranja, limão ou maracujá",
+      "precos": [
+        {
+          "tamanho": null,
+          "valor": 9.9
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Bebidas",
+      "nome": "Caipirinha",
+      "descricao": "Limão, morango ou maracujá",
+      "precos": [
+        {
+          "tamanho": null,
+          "valor": 18.5
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Bebidas",
+      "nome": "Água sem Gás",
+      "descricao": null,
+      "precos": [
+        {
+          "tamanho": null,
+          "valor": 3.5
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Bebidas",
+      "nome": "Chá Gelado",
+      "descricao": null,
+      "precos": [
+        {
+          "tamanho": null,
+          "valor": 6.5
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Bebidas",
+      "nome": "Cerveja Long Neck",
+      "descricao": null,
+      "precos": [
+        {
+          "tamanho": null,
+          "valor": null
+        }
+      ],
+      "revisar": true,
+      "motivo_revisao": "preço não informado (\"A combinar\")"
+    },
+    {
+      "categoria": "Sobremesas",
+      "nome": "Pudim de Leite",
+      "descricao": null,
+      "precos": [
+        {
+          "tamanho": null,
+          "valor": 12.9
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Sobremesas",
+      "nome": "Mousse de Maracujá",
+      "descricao": null,
+      "precos": [
+        {
+          "tamanho": null,
+          "valor": 11.5
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    },
+    {
+      "categoria": "Sobremesas",
+      "nome": "Sorvete 2 Bolas",
+      "descricao": null,
+      "precos": [
+        {
+          "tamanho": null,
+          "valor": 13.9
+        }
+      ],
+      "revisar": false,
+      "motivo_revisao": null
+    }
+  ]
+}

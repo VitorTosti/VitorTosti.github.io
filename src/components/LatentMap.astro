@@ -1,0 +1,244 @@
+---
+// Projetos como pontos num mapa 2D, como embeddings. No celular vira lista ordenada por semelhança.
+import GeneratedText from './GeneratedText.astro';
+import { ordemPorSemelhanca, pontos, regioes, vizinhos } from '../lib/latent';
+import { ptBR as s } from '../i18n/pt-BR';
+
+const W = 1000;
+const H = 520;
+const PAD = 60;
+const px = (x: number) => PAD + x * (W - 2 * PAD);
+const py = (y: number) => PAD + y * (H - 2 * PAD);
+const viz = vizinhos(pontos, 2);
+const nome = (slug: string) => pontos.find((p) => p.slug === slug)!.nome;
+const pos = (slug: string) => pontos.find((p) => p.slug === slug)!;
+const ordem = ordemPorSemelhanca(pontos);
+---
+
+<section class="section wide" id="latente">
+  <GeneratedText id="latente" text={s.frases.latente} as="h2" class="section-title" />
+  <p class="intro">
+    Cada projeto é um ponto, posicionado à mão a partir das habilidades que usa: agentes, avaliação, ferramenta
+    interna, dados e interface. Passe o mouse num ponto para ver os dois vizinhos mais próximos.
+  </p>
+
+  <figure class="mapa">
+    <svg viewBox={`0 0 ${W} ${H}`} role="group" aria-label="Mapa de projetos por semelhança">
+      <rect x="0.5" y="0.5" width={W - 1} height={H - 1} class="frame" rx="6"></rect>
+      {
+        regioes.map((r) => (
+          <text x={px(r.x)} y={py(r.y)} class="regiao" text-anchor="middle" aria-hidden="true">
+            {r.t}
+          </text>
+        ))
+      }
+      <g class="linhas" aria-hidden="true">
+        {
+          pontos.flatMap((p) =>
+            viz[p.slug].map((v) => (
+              <line
+                x1={px(p.x)}
+                y1={py(p.y)}
+                x2={px(pos(v).x)}
+                y2={py(pos(v).y)}
+                data-from={p.slug}
+                data-to={v}
+                pathLength="1"
+              />
+            )),
+          )
+        }
+      </g>
+      {
+        pontos.map((p, i) => (
+          <a
+            href={`#${p.slug}`}
+            class="pt"
+            data-slug={p.slug}
+            aria-describedby={`viz-${p.slug}`}
+          >
+            <desc id={`viz-${p.slug}`}>Perto de {viz[p.slug].map(nome).join(' e ')}.</desc>
+            <circle cx={px(p.x)} cy={py(p.y)} r="22" class="hit" />
+            <circle cx={px(p.x)} cy={py(p.y)} r="7" class="dot" />
+            <text x={px(p.x) + 14} y={py(p.y) - 12} class="idx">
+              {String(i + 1).padStart(2, '0')}
+            </text>
+            <text
+              x={px(p.x) + (p.x >= 0.7 ? -14 : 14)}
+              y={py(p.y) + 30}
+              class="nome"
+              text-anchor={p.x >= 0.7 ? 'end' : 'start'}
+            >
+              {p.nome}
+            </text>
+          </a>
+        ))
+      }
+    </svg>
+    <figcaption class="label">posições definidas à mão · vizinhos pela distância entre os vetores de habilidades</figcaption>
+  </figure>
+
+  <ol class="lista">
+    {
+      ordem.map((p) => (
+        <li>
+          <a href={`#${p.slug}`}>{p.nome}</a>
+          <span class="label">perto de {viz[p.slug].map(nome).join(' e ')}</span>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .intro {
+    max-width: var(--col);
+    color: var(--ink-2);
+  }
+  .mapa {
+    display: none;
+    margin: 2rem 0 0;
+  }
+  .mapa figcaption {
+    margin-top: 0.625rem;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .frame {
+    fill: var(--surface);
+    stroke: var(--rule);
+  }
+  .regiao {
+    font-family: var(--mono);
+    font-size: 13px;
+    fill: var(--ink-2);
+    opacity: 0.75;
+  }
+  .linhas line {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+    transition:
+      stroke-dashoffset var(--t-slow) var(--ease),
+      opacity var(--t-fast) var(--ease);
+  }
+  .linhas line.on {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  .pt {
+    cursor: pointer;
+    outline: none;
+  }
+  .hit {
+    fill: transparent;
+  }
+  .dot {
+    fill: var(--ink);
+    transition:
+      fill var(--t-fast) var(--ease),
+      r var(--t-fast) var(--ease);
+  }
+  .idx {
+    font-family: var(--mono);
+    font-size: 12px;
+    fill: var(--ink-2);
+  }
+  .nome {
+    font-family: var(--serif);
+    font-size: 22px;
+    fill: var(--ink);
+    opacity: 0;
+    transition: opacity var(--t-fast) var(--ease);
+  }
+  .pt.on .dot,
+  .pt.viz .dot {
+    fill: var(--accent);
+  }
+  .pt.on .dot {
+    r: 9px;
+  }
+  .pt.on .nome,
+  .pt.viz .nome {
+    opacity: 1;
+  }
+  .pt.viz .nome {
+    fill: var(--ink-2);
+  }
+  .pt:focus-visible .hit {
+    stroke: var(--focus);
+    stroke-width: 2;
+  }
+  .lista {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    border-top: 1px solid var(--rule);
+    counter-reset: n;
+  }
+  .lista li {
+    display: grid;
+    gap: 0.125rem;
+    padding: 0.75rem 0 0.75rem 2rem;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    counter-increment: n;
+  }
+  .lista li::before {
+    content: counter(n, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+  .lista a {
+    font-size: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .mapa {
+      display: block;
+    }
+    .lista {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .linhas line {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const svg = document.querySelector<SVGSVGElement>('#latente svg');
+  if (svg) {
+    const pts = [...svg.querySelectorAll<SVGAElement>('.pt')];
+    const linhas = [...svg.querySelectorAll<SVGLineElement>('.linhas line')];
+    const ativar = (slug: string | null) => {
+      const alvos = new Set<string>();
+      linhas.forEach((l) => {
+        const on = l.dataset.from === slug;
+        l.classList.toggle('on', on);
+        if (on) alvos.add(l.dataset.to!);
+      });
+      pts.forEach((p) => {
+        p.classList.toggle('on', p.dataset.slug === slug);
+        p.classList.toggle('viz', alvos.has(p.dataset.slug!));
+      });
+    };
+    pts.forEach((p) => {
+      p.addEventListener('pointerenter', () => ativar(p.dataset.slug!));
+      p.addEventListener('focus', () => ativar(p.dataset.slug!));
+      p.addEventListener('pointerleave', () => ativar(null));
+      p.addEventListener('blur', () => ativar(null));
+    });
+  }
+</script>

@@ -1,0 +1,99 @@
+---
+import GeneratedText from './GeneratedText.astro';
+import { ptBR as s } from '../i18n/pt-BR';
+---
+
+<section class="section wide" id="trajetoria">
+  <GeneratedText id="trajetoria" text={s.frases.trajetoria} as="h2" class="section-title" />
+  <ol class="tl">
+    {
+      s.trajetoria.map((t) => (
+        <li>
+          <p class="quando">{t.quando}</p>
+          <div>
+            <h3>
+              {t.onde} <span class="papel">· {t.papel}</span>
+            </h3>
+            <p>{t.texto}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+  <h3 class="sub">Formação</h3>
+  <ul class="form">
+    {
+      s.formacao.map((f) => (
+        <li>
+          <span>
+            <strong>{f.onde}</strong> · {f.texto}
+          </span>
+          <span class="quando">{f.quando}</span>
+        </li>
+      ))
+    }
+    <li><span>{s.idiomas}</span></li>
+  </ul>
+</section>
+
+<style>
+  .tl,
+  .form {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 52rem;
+  }
+  .tl li {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .quando {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  h3 {
+    font-size: 1.375rem;
+    line-height: 1.25;
+    margin-bottom: 0.375rem;
+  }
+  .papel {
+    font-style: italic;
+    color: var(--ink-2);
+  }
+  .tl p {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 1.0625rem;
+  }
+  .sub {
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .form li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding: 0.625rem 0;
+    border-top: 1px solid var(--rule);
+    font-size: 1.0625rem;
+  }
+  .form strong {
+    font-weight: 500;
+  }
+  @media (min-width: 768px) {
+    .tl li {
+      grid-template-columns: 11rem 1fr;
+      gap: 1.5rem;
+    }
+    .tl .quando {
+      padding-top: 0.35rem;
+    }
+  }
+</style>

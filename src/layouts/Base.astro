@@ -1,0 +1,63 @@
+---
+import '@fontsource-variable/newsreader/opsz.css';
+import '@fontsource-variable/newsreader/opsz-italic.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
+import serifUrl from '@fontsource-variable/newsreader/files/newsreader-latin-opsz-normal.woff2?url';
+import monoUrl from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
+import '../styles/global.css';
+import ProbPanel from '../components/ProbPanel.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { ptBR as s } from '../i18n/pt-BR';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const { title = s.meta.title, description = s.meta.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang={s.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0E0E10" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={serifUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      // Antes da primeira pintura: tema salvo e se a geração token a token vai rodar.
+      (function () {
+        var d = document.documentElement;
+        try {
+          var t = localStorage.getItem('tema');
+          if (t === 'light' || t === 'dark') d.dataset.theme = t;
+        } catch (e) {}
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('gen-on');
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip sr-only" href="#conteudo">Pular para o conteúdo</a>
+    <ThemeToggle />
+    <main id="conteudo">
+      <slot />
+    </main>
+    <slot name="footer" />
+    <ProbPanel />
+  </body>
+</html>

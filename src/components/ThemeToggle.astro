@@ -1,0 +1,55 @@
+---
+import { ptBR as s } from '../i18n/pt-BR';
+---
+
+<button type="button" class="theme" data-claro={s.tema.claro} data-escuro={s.tema.escuro} aria-label={s.tema.escuro}>
+  <span class="dot" aria-hidden="true"></span>
+  <span class="lbl" aria-hidden="true">tema</span>
+</button>
+
+<style>
+  .theme {
+    position: absolute;
+    top: 1rem;
+    right: var(--gutter);
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 0.25rem;
+    background: none;
+    border: 0;
+    color: var(--ink-2);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  .theme:hover {
+    color: var(--ink);
+  }
+  .dot {
+    width: 0.875rem;
+    height: 0.875rem;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+  }
+</style>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.theme')!;
+  const root = document.documentElement;
+  const isDark = () =>
+    root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const sync = () => btn.setAttribute('aria-label', isDark() ? btn.dataset.claro! : btn.dataset.escuro!);
+  sync();
+  btn.addEventListener('click', () => {
+    const next = isDark() ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('tema', next);
+    } catch {}
+    sync();
+  });
+</script>

@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import GeneratedText from '../components/GeneratedText.astro';
+---
+
+<Base title="Página não encontrada · Vitor Tosti">
+  <section class="section wide nf">
+    <p class="label">erro · 404 · 0 tokens úteis</p>
+    <GeneratedText text="Essa página não existe." as="h1" class="t" trigger="load" />
+    <p><a href="/">Voltar para o início</a></p>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding-top: 8rem;
+  }
+  .nf :global(.t) {
+    font-size: clamp(2.25rem, 8vw, 4rem);
+    margin: 1rem 0 2rem;
+  }
+</style>
