@@ -39,8 +39,16 @@ export const ptBR = {
     metaFim: (n: number) => `${n} tokens · top-5 por posição`,
   },
   // As ferramentas que aparecem nos projetos e na trajetória; nada fora delas.
-  skills: ['Python', 'TypeScript', 'React', 'Node.js', 'SQL · PostgreSQL · SQLite', 'MCP', 'Claude e Gemini', 'Testes com Vitest'],
-  skillsRotulo: 'skills',
+  // Agrupadas pelo que um recrutador de IA procura primeiro. Cada item tem prova num projeto ou na trajetória.
+  skills: [
+    {
+      rot: 'IA',
+      itens: ['Agentes com MCP (tool use)', 'Avaliação de LLMs com dados reais', 'Saída estruturada com esquema', 'Claude e Gemini', 'Claude Code e Codex'],
+    },
+    { rot: 'código', itens: ['Python', 'TypeScript', 'SQL · PostgreSQL', 'Node.js e Express', 'React'] },
+    { rot: 'entrega', itens: ['Testes e CI (Vitest, GitHub Actions)', 'Deploy em VPS', 'Automação com n8n'] },
+  ],
+  skillsRotulo: 'Skills',
   sobre:
     'Trabalho como técnico de tecnologia na CAIJ Informática, onde sou o único desenvolvedor do InfoCAIJ: a plataforma que tirou a venda e a preparação de notebooks do WhatsApp e hoje acompanha cerca de 300 máquinas por mês. Em cima dela construí um servidor MCP que deixa o Claude responder onde a fila trava, e testei com o modelo e com os dados reais até achar onde ele errava. Antes, automatizei testes de iluminação automotiva na Genesis e programei máquinas CNC na Mercedes-Benz.',
   avanco: {

@@ -26,10 +26,22 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
       seed={3}
     />
   </h1>
-  <ul class="skills mono" aria-label={s.skillsRotulo}>
-    <li class="rot" aria-hidden="true">{s.skillsRotulo}</li>
-    {s.skills.map((k) => <li>{k}</li>)}
-  </ul>
+  <dl class="skills mono" aria-label={s.skillsRotulo}>
+    {
+      s.skills.map((g) => (
+        <div class="grupo">
+          <dt>{g.rot}</dt>
+          <dd>
+            <ul>
+              {g.itens.map((k) => (
+                <li>{k}</li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
   <GeneratedText
     text={s.sobre}
     as="p"
@@ -90,14 +102,31 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
   }
   .skills {
     grid-area: skills;
-    list-style: none;
     margin: 1.5rem 0 0;
+    display: grid;
+    gap: 0.5rem;
+    max-width: 44rem;
+    font-size: 0.8125rem;
+  }
+  .grupo {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .skills dt {
+    color: var(--accent-text);
+  }
+  .skills dd {
+    margin: 0;
+  }
+  .skills ul {
+    list-style: none;
+    margin: 0;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    max-width: 40rem;
-    font-size: 0.8125rem;
   }
   .skills li {
     padding: 0.25rem 0.625rem;
@@ -105,10 +134,11 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
     border-radius: 3px;
     color: var(--ink);
   }
-  .skills .rot {
-    border-color: transparent;
-    padding-left: 0;
-    color: var(--accent-text);
+  @media (max-width: 639px) {
+    .grupo {
+      grid-template-columns: 1fr;
+      margin-top: 0.25rem;
+    }
   }
   .adv-wrap {
     grid-area: adv;
@@ -179,8 +209,8 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
       align-self: end;
     }
     h1 :global(.line) {
-      font-size: clamp(3.25rem, 5.2vw, 4.75rem);
-      max-width: 16ch;
+      font-size: clamp(3rem, 4.6vw, 4.25rem);
+      max-width: 18ch;
     }
   }
 </style>
