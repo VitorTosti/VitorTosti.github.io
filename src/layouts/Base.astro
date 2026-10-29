@@ -6,7 +6,6 @@ import serifUrl from '@fontsource-variable/newsreader/files/newsreader-latin-ops
 import monoUrl from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 import ProbPanel from '../components/ProbPanel.astro';
-import ThemeToggle from '../components/ThemeToggle.astro';
 import { ptBR as s } from '../i18n/pt-BR';
 
 interface Props {
@@ -25,8 +24,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0E0E10" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0E0E10" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href={serifUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
@@ -40,20 +38,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>
-      // Antes da primeira pintura: tema salvo e se a geração token a token vai rodar.
+      // Antes da primeira pintura: se a geração token a token vai rodar.
       (function () {
         var d = document.documentElement;
-        try {
-          var t = localStorage.getItem('tema');
-          if (t === 'light' || t === 'dark') d.dataset.theme = t;
-        } catch (e) {}
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('gen-on');
       })();
     </script>
   </head>
   <body>
     <a class="skip sr-only" href="#conteudo">Pular para o conteúdo</a>
-    <ThemeToggle />
     <main id="conteudo">
       <slot />
     </main>

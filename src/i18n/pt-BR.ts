@@ -31,7 +31,7 @@ export const ptBR = {
     titulo: 'próximo token',
     lista: 'Top-5 desta posição',
     temperatura: 'temperatura',
-    ajuda: 'Redistribui o top-5: pᵢ^(1/T), mantendo a massa total dele. Em 1, os números originais; abaixo concentra, acima achata.',
+    ajuda: 'A temperatura decide o quanto o modelo arrisca. Em 1, as chances reais. Abaixo de 1, ele fica previsível e quase sempre escolhe a primeira opção; acima, as opções ficam parecidas e ele pode escolher outra palavra. Arraste e veja as barras mudarem.',
     denovo: 'gerar de novo',
     quase: (topo: string, escolhido: string) => `Quase escrevi “${topo}”. Escolhi “${escolhido}”.`,
     provavel: (t: string) => `“${t}” era o mais provável nesta posição.`,
@@ -63,8 +63,7 @@ export const ptBR = {
   links: {
     github: 'https://github.com/VitorTosti',
     linkedin: 'https://www.linkedin.com/in/vitortosti/',
-    // TODO: e-mail de contato
-    email: null as string | null,
+    email: 'vitor.tosti@hotmail.com' as string | null,
   },
   numeros: [
     { valor: '~300', rotulo: 'máquinas e pedidos por mês no InfoCAIJ' },
@@ -113,7 +112,6 @@ export const ptBR = {
     fechar: 'Fechar',
     descricao: (token: string, alts: string) => `Alternativas para "${token}": ${alts}`,
   },
-  tema: { claro: 'Usar tema claro', escuro: 'Usar tema escuro' },
   rodape: {
     ilustrativas:
       'Probabilidades ilustrativas: escritas à mão enquanto as reais não são geradas. O script scripts/gerar-alternativas.ts as substitui por logprobs do Gemini.',

@@ -1,15 +1,15 @@
 /* Sistema visual: tinta e papel, uma única cor de destaque para o que o modelo "gerou". */
 
+/* Só modo escuro: papel quase preto, tinta clara e o âmbar como única cor de destaque. */
 :root {
-  --paper: #f4f1ea;
-  --surface: #fbf9f4;
-  --ink: #141414;
-  --ink-2: #5c5850;
-  --rule: #d6d1c4;
-  --bar: #bdb7a8;
-  /* Destaque: preenchimentos (barras, cursor) e texto (versão mais escura, 4,8:1 sobre o papel). */
-  --accent: #1f9d55;
-  --accent-text: #157a41;
+  --paper: #0e0e10;
+  --surface: #17171a;
+  --ink: #eceae4;
+  --ink-2: #9a978f;
+  --rule: #2a2a2e;
+  --bar: #4a4943;
+  --accent: #f2a33a;
+  --accent-text: #f2a33a;
   --accent-wash: color-mix(in srgb, var(--accent) 12%, transparent);
   --focus: var(--accent-text);
   --sheet: color-mix(in srgb, var(--ink) 5%, transparent);
@@ -26,32 +26,6 @@
   --t-slow: 400ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
 
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --paper: #0e0e10;
-    --surface: #17171a;
-    --ink: #eceae4;
-    --ink-2: #9a978f;
-    --rule: #2a2a2e;
-    --bar: #4a4943;
-    --accent: #f2a33a;
-    --accent-text: #f2a33a;
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme='dark'] {
-  --paper: #0e0e10;
-  --surface: #17171a;
-  --ink: #eceae4;
-  --ink-2: #9a978f;
-  --rule: #2a2a2e;
-  --bar: #4a4943;
-  --accent: #f2a33a;
-  --accent-text: #f2a33a;
   color-scheme: dark;
 }
 

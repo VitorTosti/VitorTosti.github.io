@@ -43,6 +43,11 @@ export function montarCampo(el: HTMLElement) {
   let visivel = true;
   let raf = 0;
   let antes = 0;
+  /** Linhas a redesenhar no próximo quadro; o resto do canvas fica como está. */
+  const sujas = new Set<Linha>();
+  let tudo = true;
+  // As linhas de fundo só começam depois do título: na abertura, a CPU é dele (e da linha do top-5).
+  let ambienteDesde = Infinity;
 
   function lerCores() {
     const cs = getComputedStyle(document.documentElement);
@@ -62,7 +67,7 @@ export function montarCampo(el: HTMLElement) {
     const tam = larg < 640 ? 11 : 12.5;
     fonte = `400 ${tam}px "JetBrains Mono Variable", ui-monospace, monospace`;
     ctx!.font = fonte;
-    caixas = [...hero!.querySelectorAll<HTMLElement>(RESTO), ...document.querySelectorAll<HTMLElement>('.theme')]
+    caixas = [...hero!.querySelectorAll<HTMLElement>(RESTO)]
       .filter((e) => e.offsetParent !== null)
       .map((e) => {
         const b = e.getBoundingClientRect();
@@ -78,6 +83,7 @@ export function montarCampo(el: HTMLElement) {
       linhas.push(velha ? { ...velha, y } : nova(y));
     }
     linhas.forEach((l) => l.toks.length && encaixar(l, l.toks, l.inicio));
+    tudo = true;
   }
 
   function nova(y: number): Linha {
@@ -125,6 +131,7 @@ export function montarCampo(el: HTMLElement) {
       x0 = v ? v[0] + Math.floor(sorteio() * Math.min(4, (v[1] - v[0] - 150) / (pauta * 1.5))) * pauta * 1.5 : -1;
     }
     encaixar(l, splitFallback(texto), x0);
+    sujas.add(l);
     if (!l.toks.length) {
       l.estado = 'vazia';
       l.ate = agora + 1500 + sorteio() * 3000;
@@ -141,7 +148,9 @@ export function montarCampo(el: HTMLElement) {
     let escrevendo = linhas.filter((l) => l.estado === 'escrevendo').length;
     for (const l of linhas) {
       if (agora < l.ate) continue;
+      sujas.add(l);
       if (l.estado === 'vazia') {
+        if (agora < ambienteDesde) continue;
         if (escrevendo >= MAX_ESCREVENDO) {
           l.ate = agora + 400 + sorteio() * 800;
           continue;
@@ -169,14 +178,20 @@ export function montarCampo(el: HTMLElement) {
         }
       }
     }
-    for (const l of linhas) if (l.estado === 'apagando') l.alfa = Math.max(0, (l.ate - agora) / 700);
+    for (const l of linhas) {
+      if (l.estado === 'apagando') l.alfa = Math.max(0, (l.ate - agora) / 700);
+      // O destaque do último token esfria quadro a quadro; a linha que apaga também muda a cada quadro.
+      if (l.estado === 'apagando' || (l.estado === 'escrevendo' && agora - l.ultimo < 650)) sujas.add(l);
+    }
   }
 
   function desenhar(agora: number) {
-    ctx!.clearRect(0, 0, larg, alt);
+    if (!tudo && !sujas.size) return;
     ctx!.font = fonte;
     ctx!.textBaseline = 'alphabetic';
-    for (const l of linhas) {
+    if (tudo) ctx!.clearRect(0, 0, larg, alt);
+    for (const l of tudo ? linhas : sujas) {
+      if (!tudo) ctx!.clearRect(0, l.y - pauta, larg, pauta);
       if (!l.n) continue;
       const base = l.y - pauta * 0.3;
       // Esmaece de cima para baixo: perto do fim da abertura a folha some na seção seguinte.
@@ -195,6 +210,8 @@ export function montarCampo(el: HTMLElement) {
       }
     }
     ctx!.globalAlpha = 1;
+    sujas.clear();
+    tudo = false;
   }
 
   function quadro(t: number) {
@@ -214,6 +231,7 @@ export function montarCampo(el: HTMLElement) {
 
   /** Folha estática: todas as linhas já escritas, sem destaque. */
   function estatica() {
+    tudo = true;
     for (const l of linhas) {
       comecar(l, pega(), 0);
       l.n = l.toks.length;
@@ -241,6 +259,9 @@ export function montarCampo(el: HTMLElement) {
     comecar(l, texto, performance.now(), b.right - r.left + 24);
     l.passo = 28;
   });
+  const soltar = () => (ambienteDesde = Math.min(ambienteDesde, performance.now() + 600));
+  titulo?.addEventListener('gen:done', soltar, { once: true });
+  setTimeout(soltar, 5000);
 
   if (!animar) {
     estatica();
@@ -261,10 +282,4 @@ export function montarCampo(el: HTMLElement) {
       if (!animar) estatica();
     }, 150);
   });
-  const trocouTema = () => {
-    lerCores();
-    if (!animar) desenhar(0);
-  };
-  new MutationObserver(trocouTema).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', trocouTema);
 }

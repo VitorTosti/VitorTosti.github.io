@@ -15,7 +15,7 @@ const browser = await chromium.launch();
 const erros = [];
 
 for (const vp of viewports)
-  for (const tema of ['light', 'dark'])
+  for (const tema of ['dark'])
     for (const motion of ['no-preference', 'reduce']) {
       const ctx = await browser.newContext({
         viewport: { width: vp.width, height: vp.height },

@@ -9,7 +9,7 @@ const browser = await chromium.launch();
 let falhas = 0;
 
 for (const width of [375, 1440])
-  for (const tema of ['light', 'dark']) {
+  for (const tema of ['dark']) {
     const ctx = await browser.newContext({ viewport: { width, height: 900 }, colorScheme: tema, reducedMotion: 'reduce' });
     const page = await ctx.newPage();
     await page.goto(url, { waitUntil: 'networkidle' });
