@@ -26,6 +26,10 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
       seed={3}
     />
   </h1>
+  <ul class="skills mono" aria-label={s.skillsRotulo}>
+    <li class="rot" aria-hidden="true">{s.skillsRotulo}</li>
+    {s.skills.map((k) => <li>{k}</li>)}
+  </ul>
   <GeneratedText
     text={s.sobre}
     as="p"
@@ -64,7 +68,7 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
     padding-top: clamp(5rem, 14vh, 8rem);
     padding-bottom: 3rem;
     display: grid;
-    grid-template-areas: 'meta' 'h1' 'sobre' 'adv' 'side' 'info';
+    grid-template-areas: 'meta' 'h1' 'skills' 'sobre' 'adv' 'side' 'info';
     column-gap: 4rem;
   }
   .meta {
@@ -83,6 +87,28 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
     font-size: 1.1875rem;
     line-height: 1.55;
     color: var(--ink);
+  }
+  .skills {
+    grid-area: skills;
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    max-width: 40rem;
+    font-size: 0.8125rem;
+  }
+  .skills li {
+    padding: 0.25rem 0.625rem;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--ink);
+  }
+  .skills .rot {
+    border-color: transparent;
+    padding-left: 0;
+    color: var(--accent-text);
   }
   .adv-wrap {
     grid-area: adv;
@@ -140,6 +166,7 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
       grid-template-areas:
         'meta meta'
         'h1 side'
+        'skills side'
         'sobre side'
         'info side'
         'adv side';

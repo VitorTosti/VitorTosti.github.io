@@ -50,7 +50,7 @@ for (const vp of viewports)
       await page.screenshot({ path: `${base}-pagina.png`, fullPage: true });
 
       if (motion === 'no-preference') {
-        const alvo = page.locator('.hero .tok[data-alts]').filter({ hasText: 'meço' });
+        const alvo = page.locator('.hero .tok[data-alts]').filter({ hasText: 'UFABC' });
         if (vp.mobile) await alvo.tap();
         else await alvo.hover();
         await page.waitForTimeout(400);

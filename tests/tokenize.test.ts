@@ -60,8 +60,8 @@ describe('alternativas.json', () => {
   it('a abertura usa a divisão do JSON, com alternativas', () => {
     const toks = resolveFrase('abertura', ptBR.frases.abertura, dados);
     expect(toks.map((k) => k.lead + k.text).join('')).toBe(ptBR.frases.abertura);
-    expect(toks[0].text).toBe('Coloco');
-    expect(toks[0].alts.map((a) => a.t)).toContain('Construo');
+    expect(toks[0].text).toBe('Estudante');
+    expect(toks[0].alts.map((a) => a.t)).toContain('Desenvolvedor');
   });
 });
 
@@ -151,13 +151,13 @@ describe('lente', async () => {
     expect(aplicarTemperatura([], 1)).toEqual([]);
   });
 
-  it('acha a posição mais disputada da abertura: "meço" (31% contra 29%)', () => {
+  it('acha a posição mais disputada da abertura: "UFABC" (34% contra 21%)', () => {
     const dados = parseAlternativas(raw);
     const toks = resolveFrase('abertura', ptBR.frases.abertura, dados);
     const i = maisDisputado(toks);
-    expect(toks[i].text).toBe('meço');
-    expect(margem(toks[i].alts)).toBeCloseTo(0.02);
-    expect(maisProvavel(toks[i].alts)?.t.trim()).toBe('testo');
+    expect(toks[i].text).toBe('UFABC');
+    expect(margem(toks[i].alts)).toBeCloseTo(0.13);
+    expect(maisProvavel(toks[i].alts)?.t.trim()).toBe('UFABC');
     expect(maisDisputado([{ alts: [] }])).toBe(-1);
   });
 });

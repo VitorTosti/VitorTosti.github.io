@@ -5,12 +5,12 @@ export const ptBR = {
   meta: {
     title: 'Vitor Tosti · AI Builder',
     description:
-      'Vitor Tosti coloca IA em sistemas que as pessoas usam e mede onde ela erra. Servidor MCP somente leitura, avaliação com dados reais e ferramentas internas em produção.',
+      'Vitor Tosti, estudante de Ciência da Computação na UFABC. Servidor MCP somente leitura, avaliação com dados reais e ferramentas internas em produção.',
   },
   nome: 'Vitor Tosti',
   // Cada frase gerada token a token tem um id, usado para achar as alternativas em alternativas.json.
   frases: {
-    abertura: 'Coloco IA em sistemas que as pessoas usam, e meço onde ela erra.',
+    abertura: 'Estudante de Ciência da Computação na UFABC.',
     numeros: '~300 máquinas por mês passam pelo que eu construí',
     projetos: 'Cinco execuções, com os erros à mostra',
     latente: 'Projetos parecidos ficam perto',
@@ -38,9 +38,11 @@ export const ptBR = {
     metaGerando: (i: number, n: number) => `decodificando · ${i}/${n} tokens`,
     metaFim: (n: number) => `${n} tokens · top-5 por posição`,
   },
-  // Rascunho para revisão do Vitor: só fatos que já estão no site.
+  // As ferramentas que aparecem nos projetos e na trajetória; nada fora delas.
+  skills: ['Python', 'TypeScript', 'React', 'Node.js', 'SQL · PostgreSQL · SQLite', 'MCP', 'Claude e Gemini', 'Testes com Vitest'],
+  skillsRotulo: 'skills',
   sobre:
-    'Estudo Ciência da Computação na UFABC e trabalho como técnico de tecnologia na CAIJ Informática, onde sou o único desenvolvedor do InfoCAIJ: a plataforma que tirou a venda e a preparação de notebooks do WhatsApp e hoje acompanha cerca de 300 máquinas por mês. Em cima dela construí um servidor MCP que deixa o Claude responder onde a fila trava, e testei com o modelo e com os dados reais até achar onde ele errava. Antes, automatizei testes de iluminação automotiva na Genesis e programei máquinas CNC na Mercedes-Benz.',
+    'Trabalho como técnico de tecnologia na CAIJ Informática, onde sou o único desenvolvedor do InfoCAIJ: a plataforma que tirou a venda e a preparação de notebooks do WhatsApp e hoje acompanha cerca de 300 máquinas por mês. Em cima dela construí um servidor MCP que deixa o Claude responder onde a fila trava, e testei com o modelo e com os dados reais até achar onde ele errava. Antes, automatizei testes de iluminação automotiva na Genesis e programei máquinas CNC na Mercedes-Benz.',
   avanco: {
     proximo: 'mostre o trabalho',
     em: (s: number) => `em ${s} s`,
@@ -49,7 +51,7 @@ export const ptBR = {
     verProjetos: 'ver projetos',
     rotulo: 'Avanço automático para os projetos',
   },
-  subtitulo: 'AI Builder · Ciência da Computação @ UFABC · São Bernardo do Campo, SP',
+  subtitulo: 'AI Builder · São Bernardo do Campo, SP',
   links: {
     github: 'https://github.com/VitorTosti',
     linkedin: 'https://www.linkedin.com/in/vitortosti/',

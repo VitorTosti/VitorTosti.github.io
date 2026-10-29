@@ -27,7 +27,7 @@ h1{font-weight:400;font-size:78px;line-height:1.02;letter-spacing:-0.025em;max-w
 .call b{color:#141414;font-weight:600}
 </style></head><body>
 <div><p class="nome">Vitor Tosti</p>
-<h1>Coloco IA em sistemas que as pessoas usam, e meço onde ela <span class="g">erra.</span><span class="cur"></span></h1></div>
+<h1>Estudante de Ciência da Computação na <span class="g">UFABC.</span><span class="cur"></span></h1></div>
 <div><p class="call"><b>tempo_entre_etapas</b>({"de": "Venda registrada", "ate": "Pronta"}) → mediana 48 min · 93 de 135 pularam "Pronta"</p>
 <p class="meta" style="margin-top:14px">AI Builder · Ciência da Computação @ UFABC</p></div>
 </body></html>`;
