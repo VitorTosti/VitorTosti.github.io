@@ -11,13 +11,12 @@ export const ptBR = {
   nav: [
     { href: '#sobre', rotulo: 'Sobre' },
     { href: '#projetos', rotulo: 'Projetos' },
-    { href: '#metodo', rotulo: 'Método' },
+    { href: '#trajetoria', rotulo: 'Trajetória' },
     { href: '#contato', rotulo: 'Contato' },
   ],
   intro: 'Estudante de Ciência da Computação na UFABC. Construo com IA sistemas que já estão em uso.',
   falar: 'Fale comigo',
-  titulos: { sobre: 'Sobre', projetos: 'Projetos', metodo: 'Como trabalho', trajetoria: 'Trajetória', contato: 'Vamos conversar' },
-  metodoNomes: ['Problema', 'Construção', 'Avaliação', 'Correção'],
+  titulos: { sobre: 'Sobre', projetos: 'Projetos', trajetoria: 'Trajetória', contato: 'Vamos conversar' },
   // Cada frase gerada token a token tem um id, usado para achar as alternativas em alternativas.json.
   frases: {
     abertura: 'Estudante de Ciência da Computação na UFABC.',
@@ -80,12 +79,6 @@ export const ptBR = {
     { valor: '15', rotulo: 'usuários em 4 perfis' },
     { valor: '60–90 → 5 min', rotulo: 'de instalação de sistema por máquina, com automação via FOG' },
     { valor: '93 de 135', rotulo: 'máquinas pulavam uma etapa, achado pelo MCP nos dados reais' },
-  ],
-  metodo: [
-    'Levanto o problema com quem vai usar.',
-    'Construo com IA (Claude Code, Codex, n8n), revisando cada mudança.',
-    'Avalio com o modelo e com dados reais, medindo o erro que custa caro.',
-    'Corrijo com um teste que impede o erro de voltar.',
   ],
   trajetoria: [
     {

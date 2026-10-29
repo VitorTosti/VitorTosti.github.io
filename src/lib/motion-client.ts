@@ -142,7 +142,80 @@ function pilha() {
   });
 }
 
+/** JSON do cardápio: as linhas aparecem em sequência, como uma resposta sendo gerada, ao entrar na tela. */
+function linhas() {
+  const els = document.querySelectorAll<HTMLElement>('[data-linhas]');
+  if (!('IntersectionObserver' in window)) return els.forEach((e) => e.classList.add('vistas'));
+  const io = new IntersectionObserver(
+    (es) =>
+      es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        e.target.classList.add('vistas');
+      }),
+    { threshold: 0.4 },
+  );
+  els.forEach((e) => io.observe(e));
+}
+
+/**
+ * Carrossel do InfoMachine: troca a cada 4 s. Para com o mouse em cima, com foco dentro, fora da tela,
+ * com a aba oculta ou pelo botão de pausa; com movimento reduzido, só troca pelos botões.
+ */
+function carrosseis() {
+  document.querySelectorAll<HTMLElement>('[data-carrossel]').forEach((host) => {
+    const slides = [...host.querySelectorAll<HTMLElement>('.slide')];
+    const dots = [...host.querySelectorAll<HTMLButtonElement>('[data-ir]')];
+    const pausa = host.querySelector<HTMLButtonElement>('[data-pausa]')!;
+    let atual = 0;
+    let parado = reduce;
+    let sobre = false;
+    let visivel = false;
+    let relogio = 0;
+    host.classList.toggle('parado', parado);
+    pausa.setAttribute('aria-label', parado ? 'Retomar troca automática' : 'Pausar troca automática');
+
+    const mostrar = (k: number) => {
+      atual = (k + slides.length) % slides.length;
+      slides.forEach((s, i) => {
+        s.classList.toggle('ativo', i === atual);
+        if (i === atual) s.removeAttribute('aria-hidden');
+        else s.setAttribute('aria-hidden', 'true');
+      });
+      dots.forEach((d, i) => (i === atual ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current')));
+    };
+    const agendar = () => {
+      clearInterval(relogio);
+      if (!parado && !sobre && visivel && !document.hidden) relogio = window.setInterval(() => mostrar(atual + 1), 4000);
+    };
+
+    dots.forEach((d) =>
+      d.addEventListener('click', () => {
+        mostrar(Number(d.dataset.ir));
+        agendar();
+      }),
+    );
+    pausa.addEventListener('click', () => {
+      parado = !parado;
+      host.classList.toggle('parado', parado);
+      pausa.setAttribute('aria-label', parado ? 'Retomar troca automática' : 'Pausar troca automática');
+      agendar();
+    });
+    host.addEventListener('pointerenter', () => ((sobre = true), agendar()));
+    host.addEventListener('pointerleave', () => ((sobre = false), agendar()));
+    host.addEventListener('focusin', () => ((sobre = true), agendar()));
+    host.addEventListener('focusout', () => ((sobre = false), agendar()));
+    document.addEventListener('visibilitychange', agendar);
+    new IntersectionObserver(([e]) => {
+      visivel = e.isIntersecting;
+      agendar();
+    }).observe(host);
+  });
+}
+
 entradas();
+linhas();
+carrosseis();
 ima();
 faixas();
 sobre();

@@ -9,7 +9,10 @@ import posterSrc from '../assets/mcp-poster.webp';
 import videoUrl from '../assets/infocaij-mcp-demo.mp4?url';
 import gif from '../assets/mcp-demo.gif';
 import fotoCardapio from '../assets/cardapio_017.jpg';
+import gabarito from '../assets/cardapio_017_gabarito.json';
 import painel from '../assets/painel.png';
+import testes from '../assets/testes.png';
+import etiqueta from '../assets/etiqueta.png';
 
 const poster = await getImage({ src: posterSrc, format: 'webp', width: 960, quality: 75 });
 const [erroA, erroB] = av.preliminar.erros;
@@ -21,7 +24,7 @@ type Cartao = {
   resumo: string;
   fatos: string[];
   link: { rotulo: string; href: string | null };
-  midia: 'video' | 'cardapio' | 'numeros' | 'painel' | 'rastro';
+  midia: 'video' | 'cardapio' | 'numeros' | 'carrossel' | 'rastro';
 };
 
 const cartoes: Cartao[] = [
@@ -43,11 +46,12 @@ const cartoes: Cartao[] = [
     slug: cardapio.slug,
     nome: cardapio.nome,
     status: 'em andamento',
-    resumo: 'A foto do cardápio vira cardápio digital em JSON validado por esquema, com o que precisa de revisão humana marcado.',
+    resumo:
+      'A foto do cardápio de papel vira cardápio digital: itens, preços por tamanho, adicionais e observações em JSON validado por esquema, com o que precisa de revisão humana marcado.',
     fatos: [
-      `${av.cardapios} cardápios com gabarito · ${av.itens} itens · ${av.armadilhas.reduce((a, b) => a + b.n, 0)} armadilhas`,
-      'Métrica principal: erro de preço silencioso',
-      `Preliminar: R$ ${erroA.certo} lido como ${erroA.lido} e ${erroB.certo} como ${erroB.lido}, sem pedir revisão`,
+      'Métrica: erro de preço silencioso (errado e sem pedir revisão)',
+      `Preliminar, ${av.preliminar.cardapios} cardápios: 100% prontos em fotos limpas e comuns`,
+      `✗ Foto difícil: R$ ${erroA.certo} → ${erroA.lido} e R$ ${erroB.certo} → ${erroB.lido}, sem pedir revisão`,
     ],
     link: { rotulo: 'TODO: repositório', href: null },
     midia: 'cardapio',
@@ -68,7 +72,7 @@ const cartoes: Cartao[] = [
     resumo: 'App portátil de triagem de notebooks: lê o hardware, roda 5 testes e imprime a etiqueta térmica.',
     fatos: ['Cerca de 100 máquinas por semana', 'Roda de pendrive, em Windows e macOS', 'Atualizações verificadas por SHA-256'],
     link: { rotulo: 'GitHub', href: infomachine.link.href },
-    midia: 'painel',
+    midia: 'carrossel',
   },
   {
     slug: coreufabc.slug,
@@ -87,6 +91,45 @@ const numeros = [
   { v: '13 mil+', r: 'eventos de histórico' },
   { v: '95', r: 'arquivos de teste' },
 ];
+
+// Conjunto de avaliação do Cardápio em 1 minuto, em grade.
+const avaliacao = [
+  { v: String(av.cardapios), r: 'cardápios com gabarito', t: 'Cardápios sintéticos com gabarito exato' },
+  { v: String(av.itens), r: 'itens', t: 'Itens no gabarito' },
+  { v: String(av.estilos.length), r: 'estilos visuais', t: av.estilos.join(', ') },
+  { v: String(av.armadilhas.reduce((a, b) => a + b.n, 0)), r: 'armadilhas', t: av.armadilhas.map((a) => `${a.n} ${a.rotulo}`).join(', ') },
+];
+
+// O JSON que sai da foto: um item comum e o item que o modelo marcou para revisão (gabarito do cardapio_017).
+type Linha = { t: string; recuo: number; revisar?: boolean; nota?: boolean };
+const comum = gabarito.itens.find((i) => i.nome === 'Portuguesa')!;
+const marcado = gabarito.itens.find((i) => i.revisar)!;
+const js = (v: unknown) => JSON.stringify(v);
+const linhasJson: Linha[] = [
+  { t: '{', recuo: 0 },
+  { t: `"restaurante": ${js(gabarito.restaurante)},`, recuo: 1 },
+  { t: '"itens": [', recuo: 1 },
+  { t: `{ "nome": ${js(comum.nome)}, "precos": [`, recuo: 2 },
+  ...comum.precos.map((p, k) => ({
+    t: `{ "tamanho": ${js(p.tamanho)}, "valor": ${js(p.valor)} }${k < comum.precos.length - 1 ? ',' : ''}`,
+    recuo: 3,
+  })),
+  { t: '], "revisar": false },', recuo: 2 },
+  { t: `// … mais ${gabarito.itens.length - 2} itens`, recuo: 2, nota: true },
+  { t: `{ "nome": ${js(marcado.nome)},`, recuo: 2, revisar: true },
+  { t: '"precos": [{ "tamanho": null, "valor": null }],', recuo: 3, revisar: true },
+  { t: '"revisar": true,', recuo: 3, revisar: true },
+  { t: `"motivo_revisao": ${js(marcado.motivo_revisao)} }`, recuo: 3, revisar: true },
+  { t: ']', recuo: 1 },
+  { t: '}', recuo: 0 },
+];
+
+const capturas = [
+  { src: painel, legenda: 'painel', alt: 'Painel do InfoMachine com o hardware lido da máquina (valores de exemplo).' },
+  { src: testes, legenda: 'testes', alt: 'Tela de testes do InfoMachine: câmera, teclado, som, tela e touchpad (valores de exemplo).' },
+  { src: etiqueta, legenda: 'etiqueta', alt: 'Pré-visualização da etiqueta térmica gerada pelo InfoMachine (valores de exemplo).' },
+];
+
 const rastroCore = coreufabc.rastro.flatMap((p) =>
   p.tipo === 'chamada'
     ? [`${p.ferramenta}(${Object.entries(p.args).map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join(', ')})`]
@@ -118,7 +161,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
               <span class="ghost todo">{c.link.rotulo}</span>
             )}
           </header>
-          <div class="corpo">
+          <div class:list={['corpo', { larga: c.midia === 'cardapio' }]}>
             <div class="texto">
               <p class="resumo">{c.resumo}</p>
               <ul class="fatos">
@@ -127,6 +170,16 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
                 ))}
               </ul>
             </div>
+            {c.midia === 'cardapio' && (
+              <dl class="aval">
+                {avaliacao.map((a) => (
+                  <div title={a.t}>
+                    <dt>{a.v}</dt>
+                    <dd>{a.r}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
             <div class="midia">
               {c.midia === 'video' && (
                 <video controls muted playsinline preload="none" poster={poster.src} width="1908" height="986">
@@ -135,22 +188,56 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
                 </video>
               )}
               {c.midia === 'cardapio' && (
-                <Image
-                  src={fotoCardapio}
-                  alt="Um dos cardápios sintéticos do conjunto de avaliação, fotografado."
-                  widths={[480, 800]}
-                  sizes="(min-width: 900px) 40vw, 100vw"
-                  loading="lazy"
-                />
+                <div class="foto-json">
+                  <figure class="foto">
+                    <Image
+                      src={fotoCardapio}
+                      alt="Um dos cardápios sintéticos do conjunto de avaliação, fotografado de lado."
+                      widths={[480, 800]}
+                      sizes="(min-width: 900px) 34vw, 100vw"
+                      loading="lazy"
+                    />
+                    <figcaption class="chip">foto</figcaption>
+                  </figure>
+                  <span class="seta" aria-hidden="true">
+                    →
+                  </span>
+                  <figure class="json">
+                    <pre class="mono" tabindex="0" aria-label="JSON extraído da foto" data-linhas>{linhasJson.map((l, k) => (
+                        <span class:list={['ln', { rev: l.revisar, nota: l.nota }]} style={`--r:${l.recuo};--k:${k}`}>{l.t}</span>
+                      ))}</pre>
+                    <figcaption class="chip">JSON validado por esquema</figcaption>
+                  </figure>
+                </div>
               )}
-              {c.midia === 'painel' && (
-                <Image
-                  src={painel}
-                  alt="Painel do InfoMachine com o hardware lido da máquina (valores de exemplo)."
-                  widths={[480, 800, 1200]}
-                  sizes="(min-width: 900px) 40vw, 100vw"
-                  loading="lazy"
-                />
+              {c.midia === 'carrossel' && (
+                <div class="carrossel" data-carrossel role="group" aria-roledescription="carrossel" aria-label="Capturas do InfoMachine">
+                  {capturas.map((cap, k) => (
+                    <figure class:list={['slide', { ativo: k === 0 }]} aria-hidden={k === 0 ? undefined : 'true'}>
+                      <Image src={cap.src} alt={cap.alt} widths={[480, 800, 1200]} sizes="(min-width: 900px) 46vw, 100vw" loading="lazy" />
+                      <figcaption class="chip">{cap.legenda} · valores de exemplo</figcaption>
+                    </figure>
+                  ))}
+                  <div class="ctl">
+                    <button type="button" class="pausa" data-pausa aria-label="Pausar troca automática">
+                      <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+                        <path class="i-pausa" d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path class="i-play" d="M5 3l8 5-8 5z" fill="currentColor" />
+                      </svg>
+                    </button>
+                    {capturas.map((cap, k) => (
+                      <button
+                        type="button"
+                        class="dot"
+                        data-ir={k}
+                        aria-label={`Mostrar ${cap.legenda} (${k + 1} de ${capturas.length})`}
+                        aria-current={k === 0 ? 'true' : undefined}
+                      >
+                        <i />
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
               {c.midia === 'numeros' && (
                 <dl class="nums">
@@ -277,6 +364,176 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
     object-fit: contain;
     background: #000;
   }
+
+  /* Cardápio: foto → JSON lado a lado, com o item marcado para revisão em destaque. */
+  .foto-json {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+  .foto-json figure {
+    position: relative;
+    margin: 0;
+    border-radius: clamp(0.75rem, 1.5vw, 1.25rem);
+    overflow: hidden;
+  }
+  .foto {
+    aspect-ratio: 4 / 3;
+  }
+  .foto :global(img) {
+    position: absolute;
+    inset: 0;
+  }
+  .seta {
+    justify-self: center;
+    align-self: center;
+    font-family: var(--mono);
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--accent);
+    transform: rotate(90deg);
+  }
+  .json {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+  }
+  .json .chip {
+    left: auto;
+    right: 0.75rem;
+    top: 0.75rem;
+    bottom: auto;
+  }
+  .json pre {
+    margin: 0;
+    padding: 0.875rem 1rem;
+    font-size: 0.6875rem;
+    line-height: 1.6;
+    overflow: auto;
+    color: var(--ink-2);
+  }
+  .ln {
+    display: block;
+    padding-left: calc(var(--r) * 1.25em);
+    transition: opacity 260ms linear;
+    transition-delay: calc(var(--k) * 55ms);
+  }
+  :global(.gen-on) [data-linhas]:not(.vistas) .ln {
+    opacity: 0;
+  }
+  .ln.rev {
+    color: var(--accent-text);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .ln.nota {
+    font-style: italic;
+  }
+  .chip {
+    position: absolute;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--paper) 85%, transparent);
+    border: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--ink-2);
+  }
+  .aval {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-content: start;
+    column-gap: 1rem;
+  }
+  .aval div {
+    padding: 0.875rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .aval dt {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .aval dd {
+    margin: 0.375rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+
+  /* InfoMachine: as três capturas trocam sozinhas; a nova entra por cima e assenta devagar. */
+  .carrossel {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    align-self: center;
+  }
+  .slide {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .slide :global(img) {
+    transform: scale(1.05);
+    transition: transform 5s linear;
+  }
+  .slide.ativo {
+    opacity: 1;
+  }
+  .slide.ativo :global(img) {
+    transform: none;
+  }
+  .ctl {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    padding: 0.125rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    border: 1px solid var(--rule);
+  }
+  .ctl button {
+    display: grid;
+    place-items: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 0.25rem;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .dot i {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--ink-2);
+    transition:
+      width var(--t-base) var(--ease),
+      background-color var(--t-base) var(--ease);
+  }
+  .dot[aria-current='true'] i {
+    width: 22px;
+    background: var(--accent);
+  }
+  .pausa .i-play,
+  :global(.parado) > .ctl .pausa .i-pausa {
+    display: none;
+  }
+  :global(.parado) > .ctl .pausa .i-play {
+    display: inline;
+  }
+
   .nums {
     margin: 0;
     display: grid;
@@ -319,6 +576,19 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
   .rastro li:last-child {
     color: var(--ink);
   }
+
+  @media (min-width: 640px) {
+    .foto-json {
+      grid-template-columns: 1fr auto 1.3fr;
+      gap: 0.75rem;
+    }
+    .foto {
+      aspect-ratio: auto;
+    }
+    .seta {
+      transform: none;
+    }
+  }
   @media (min-width: 900px) {
     .topo {
       grid-template-columns: auto 1fr auto;
@@ -335,14 +605,51 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
       min-height: 20rem;
       max-height: 26rem;
     }
-    /* Empilhamento: cada cartão fica preso um pouco abaixo do anterior. */
-    .cartao {
-      position: sticky;
-      top: calc(5rem + var(--i) * 1.75rem);
+    /* Cardápio: a mídia ocupa a linha de cima inteira; texto e avaliação dividem a de baixo. */
+    .corpo.larga {
+      grid-template-columns: 1.25fr 1fr 0.9fr;
+      row-gap: 1.5rem;
+      align-items: start;
+    }
+    /* Resumo, fatos e números viram três colunas abaixo da mídia. */
+    .corpo.larga .texto {
+      display: contents;
+    }
+    .corpo.larga .resumo {
+      margin: 0;
+      font-size: 1.0625rem;
+    }
+    .corpo.larga .fatos li:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+    .corpo.larga .aval div {
+      padding-block: 0 0.75rem;
+      border-top: 0;
+    }
+    .corpo.larga .midia {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      min-height: 0;
+      max-height: none;
     }
     .pilha {
       gap: 22vh;
       padding-bottom: 10vh;
+    }
+  }
+  /* Empilhamento só quando o cartão inteiro cabe na tela. */
+  @media (min-width: 900px) and (min-height: 760px) {
+    .cartao {
+      position: sticky;
+      top: calc(5rem + var(--i) * 1.75rem);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .slide,
+    .slide :global(img),
+    .ln {
+      transition: none;
     }
   }
 </style>

@@ -1,5 +1,5 @@
 ---
-// Trajetória e formação, ainda sobre a superfície aberta em "Como trabalho".
+// Trajetória e formação, num painel de superfície com cantos arredondados no topo.
 import BigTitle from './BigTitle.astro';
 import { ptBR as s } from '../i18n/pt-BR';
 ---
@@ -42,8 +42,9 @@ import { ptBR as s } from '../i18n/pt-BR';
 <style>
   .tl-sec {
     background: var(--surface);
+    border-radius: clamp(2rem, 4vw, 3.75rem) clamp(2rem, 4vw, 3.75rem) 0 0;
     padding-inline: var(--gutter);
-    padding-top: 0;
+    margin-top: clamp(3rem, 8vw, 6rem);
   }
   .tl-sec :global(.big-title) {
     margin-bottom: clamp(2.5rem, 6vw, 5rem);
