@@ -38,6 +38,17 @@ export const ptBR = {
     metaGerando: (i: number, n: number) => `decodificando · ${i}/${n} tokens`,
     metaFim: (n: number) => `${n} tokens · top-5 por posição`,
   },
+  // Rascunho para revisão do Vitor: só fatos que já estão no site.
+  sobre:
+    'Estudo Ciência da Computação na UFABC e trabalho como técnico de tecnologia na CAIJ Informática, onde sou o único desenvolvedor do InfoCAIJ: a plataforma que tirou a venda e a preparação de notebooks do WhatsApp e hoje acompanha cerca de 300 máquinas por mês. Em cima dela construí um servidor MCP que deixa o Claude responder onde a fila trava, e testei com o modelo e com os dados reais até achar onde ele errava. Antes, automatizei testes de iluminação automotiva na Genesis e programei máquinas CNC na Mercedes-Benz.',
+  avanco: {
+    proximo: 'mostre o trabalho',
+    em: (s: number) => `em ${s} s`,
+    irAgora: 'ir agora',
+    ficar: 'ficar aqui',
+    verProjetos: 'ver projetos',
+    rotulo: 'Avanço automático para os projetos',
+  },
   subtitulo: 'AI Builder · Ciência da Computação @ UFABC · São Bernardo do Campo, SP',
   links: {
     github: 'https://github.com/VitorTosti',

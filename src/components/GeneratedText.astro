@@ -21,6 +21,12 @@ interface Props {
   flicker?: boolean;
   /** Tokens alimentam o painel lateral da abertura em vez do painel flutuante. */
   lens?: boolean;
+  /** Seletor de outro texto gerado: este só começa quando aquele termina. */
+  startAfter?: string;
+  /** id do elemento gerado, para outro texto encadear nele. */
+  elId?: string;
+  /** 'rapido' para parágrafos: ritmo de leitura, não de título. */
+  ritmo?: 'titulo' | 'rapido';
   seed?: number;
 }
 
@@ -34,17 +40,22 @@ const {
   keepCursor = false,
   flicker = false,
   lens = false,
+  startAfter,
+  ritmo = 'titulo',
   seed = 7,
 } = Astro.props;
 
 const tokens =
   mode === 'numero' ? splitNumber(text).map((t) => toRender(t)) : resolveFrase(id ?? '', text, id ? alternativas : null);
 // Com flicker cada posição precisa de tempo para os candidatos aparecerem antes do token fixar.
+const [base, jitter, pausa] =
+  mode === 'numero' ? [70, 40, 160] : flicker ? [150, 70, 160] : ritmo === 'rapido' ? [14, 14, 90] : [42, 58, 160];
 const times = generationTimes(
   tokens.map((k) => k.lead + k.text),
   seed,
-  mode === 'numero' ? 70 : flicker ? 150 : 42,
-  mode === 'numero' ? 40 : flicker ? 70 : 58,
+  base,
+  jitter,
+  pausa,
 );
 const uid = `g-${id ?? 'n'}-${Math.abs(text.split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 0)).toString(36)}`;
 const comAlts = tokens.map((k) => k.alts.length > 0 || k.foraDoTop);
@@ -59,12 +70,14 @@ const descricao = (i: number) => {
 ---
 
 <Tag
+  id={Astro.props.elId}
   class:list={['gen', cls]}
   data-gen
   data-trigger={trigger}
   data-times={times.join(',')}
   data-keep-cursor={keepCursor ? '' : undefined}
   data-flicker={flicker ? '' : undefined}
+  data-start-after={startAfter}
 >
   {
     tokens.map((k, i) =>
@@ -300,7 +313,12 @@ const descricao = (i: number) => {
       { rootMargin: '0px 0px -12% 0px' },
     );
     const start = () =>
-      hosts.forEach((h) => (h.dataset.trigger === 'load' ? setTimeout(() => generate(h), 250) : io.observe(h)));
+      hosts.forEach((h) => {
+        const depois = h.dataset.startAfter && document.querySelector(h.dataset.startAfter);
+        if (depois) depois.addEventListener('gen:done', () => setTimeout(() => generate(h), 180), { once: true });
+        else if (h.dataset.trigger === 'load') setTimeout(() => generate(h), 250);
+        else io.observe(h);
+      });
     // Espera as fontes para o cursor não medir a fonte de reserva.
     document.fonts?.ready.then(start, start) ?? start();
   }

@@ -165,6 +165,9 @@ code,
 
 .section {
   padding-block: 4.5rem;
+  /* Seções fora da tela não entram no cálculo de layout enquanto a abertura é gerada token a token. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1200px;
 }
 
 .section-title {

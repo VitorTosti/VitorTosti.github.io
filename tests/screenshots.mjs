@@ -45,6 +45,8 @@ for (const vp of viewports)
         scrollTo(0, 0);
       });
       await page.waitForTimeout(motion === 'reduce' ? 100 : 2500);
+      // content-visibility: auto pula seções fora da tela; na captura de página inteira, todas precisam aparecer.
+      await page.addStyleTag({ content: '.section { content-visibility: visible !important; }' });
       await page.screenshot({ path: `${base}-pagina.png`, fullPage: true });
 
       if (motion === 'no-preference') {

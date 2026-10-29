@@ -1,6 +1,7 @@
 ---
 import GeneratedText from './GeneratedText.astro';
 import Lens from './Lens.astro';
+import AutoAdvance from './AutoAdvance.astro';
 import { alternativas } from '../data/alternativas';
 import { resolveFrase } from '../lib/tokenize';
 import { ptBR as s } from '../i18n/pt-BR';
@@ -21,9 +22,22 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
       keepCursor
       flicker
       lens
+      elId="abertura-linha"
       seed={3}
     />
   </h1>
+  <GeneratedText
+    text={s.sobre}
+    as="p"
+    class="sobre"
+    elId="sobre-mim"
+    startAfter="#abertura-linha"
+    ritmo="rapido"
+    seed={5}
+  />
+  <div class="adv-wrap">
+    <AutoAdvance depoisDe="#sobre-mim" alvo="projetos" />
+  </div>
   <div class="side">
     <Lens />
   </div>
@@ -50,7 +64,7 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
     padding-top: clamp(5rem, 14vh, 8rem);
     padding-bottom: 3rem;
     display: grid;
-    grid-template-areas: 'meta' 'h1' 'side' 'info';
+    grid-template-areas: 'meta' 'h1' 'sobre' 'adv' 'side' 'info';
     column-gap: 4rem;
   }
   .meta {
@@ -61,6 +75,17 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
   h1 {
     grid-area: h1;
     display: block;
+  }
+  .hero :global(.sobre) {
+    grid-area: sobre;
+    margin: 1.75rem 0 0;
+    max-width: 36rem;
+    font-size: 1.1875rem;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .adv-wrap {
+    grid-area: adv;
   }
   .side {
     grid-area: side;
@@ -115,7 +140,9 @@ const n = resolveFrase('abertura', s.frases.abertura, alternativas).length;
       grid-template-areas:
         'meta meta'
         'h1 side'
-        'info side';
+        'sobre side'
+        'info side'
+        'adv side';
       align-items: end;
       min-height: min(100svh, 56rem);
       align-content: center;

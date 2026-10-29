@@ -73,21 +73,19 @@
   let marcos: { y: number; n: number }[] = [];
   let total = 0;
 
+  // Mede por bloco de texto (título, parágrafo, item), não por nó: centenas de spans de token viram
+  // algumas dezenas de leituras de layout. Blocos que contêm outros blocos ficam de fora para não contar duas vezes.
+  const BLOCOS = 'h1, h2, h3, h4, h5, p, li, dt, dd, figcaption, pre, .call, .k';
   function medir() {
     if (!main) return;
-    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
-      acceptNode: (node) => {
-        const el = node.parentElement;
-        if (!el || !node.textContent?.trim()) return NodeFilter.FILTER_REJECT;
-        if (el.closest('[hidden], [aria-hidden="true"], script, style, .sr-only')) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      },
-    });
     const itens: { y: number; n: number }[] = [];
-    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-      const r = node.parentElement!.getBoundingClientRect();
-      if (!r.height) continue;
-      itens.push({ y: r.top + scrollY, n: splitFallback(node.textContent!).length });
+    for (const el of main.querySelectorAll<HTMLElement>(BLOCOS)) {
+      if (el.querySelector(BLOCOS)) continue;
+      if (el.closest('[hidden], [aria-hidden="true"], .sr-only')) continue;
+      const texto = el.textContent?.trim();
+      if (!texto) continue;
+      const top = el.offsetTop + (el.offsetParent as HTMLElement | null ? offsetDoc(el.offsetParent as HTMLElement) : 0);
+      itens.push({ y: top, n: splitFallback(texto).length });
     }
     itens.sort((a, b) => a.y - b.y);
     let acc = 0;
@@ -95,6 +93,15 @@
     total = acc;
     if (totalEl) totalEl.textContent = fmt.format(total);
     atualizar();
+  }
+
+  const cacheOffset = new Map<HTMLElement, number>();
+  function offsetDoc(el: HTMLElement): number {
+    const c = cacheOffset.get(el);
+    if (c !== undefined) return c;
+    const v = el.offsetTop + (el.offsetParent ? offsetDoc(el.offsetParent as HTMLElement) : 0);
+    cacheOffset.set(el, v);
+    return v;
   }
 
   function atualizar() {
@@ -126,11 +133,16 @@
     },
     { passive: true },
   );
+  const ocioso = (fn: () => void) =>
+    'requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 2500 }) : setTimeout(fn, 600);
+  const remedir = () => {
+    cacheOffset.clear();
+    medir();
+  };
   let t = 0;
   addEventListener('resize', () => {
     clearTimeout(t);
-    t = window.setTimeout(medir, 200);
+    t = window.setTimeout(() => ocioso(remedir), 200);
   });
-  document.fonts?.ready.then(medir, medir);
-  addEventListener('load', medir);
+  addEventListener('load', () => ocioso(remedir));
 </script>
