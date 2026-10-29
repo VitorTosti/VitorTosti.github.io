@@ -1,6 +1,6 @@
 ---
-// Duas faixas com todas as skills, correndo sem parar em sentidos opostos; a rolagem da página
-// empurra um pouco mais. A lista real (para leitor de tela) é a primeira cópia; as repetições existem
+// Duas faixas com todas as skills, correndo sem parar em sentidos opostos (só CSS, sem depender da rolagem).
+// A lista real (para leitor de tela) é a primeira cópia; as repetições existem
 // só para a faixa não ter fim visível. Com movimento reduzido, as faixas param e quebram em linhas.
 import { ptBR as s } from '../i18n/pt-BR';
 
@@ -14,7 +14,7 @@ const linhas = [
 <section class="marquee" aria-label={s.skillsRotulo} data-marquee>
   {
     linhas.map((l, k) => (
-      <div class:list={['row', { vazada: k === 1 }]} data-dir={l.dir}>
+      <div class:list={['row', { vazada: k === 1 }]}>
         <div class:list={['trilho', { volta: l.dir < 0 }]}>
           {[0, 1].map((c) => (
             <ul class="faixa" aria-hidden={c > 0 ? 'true' : undefined}>
@@ -41,7 +41,6 @@ const linhas = [
   }
   .row {
     width: max-content;
-    will-change: transform;
   }
   /* Duas cópias idênticas: andar exatamente uma cópia (-50%) fecha o laço sem emenda. */
   .trilho {

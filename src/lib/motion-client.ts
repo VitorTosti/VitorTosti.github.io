@@ -1,4 +1,4 @@
-// Movimento da página: entrada ao rolar, cursor magnético, faixas de skills, o "Sobre" gerado pela
+// Movimento da página: entrada ao rolar, cursor magnético, carrossel, o "Sobre" gerado pela
 // rolagem e a pilha de projetos. Tudo funciona sem JS (conteúdo visível, sem movimento) e respeita
 // movimento reduzido.
 
@@ -81,25 +81,6 @@ addEventListener(
   { passive: true },
 );
 addEventListener('resize', () => tarefas.forEach((t) => t()), { passive: true });
-
-/** As faixas de skills já correm sozinhas (CSS); a rolagem empurra cada uma no seu sentido. */
-function faixas() {
-  const sec = document.querySelector<HTMLElement>('[data-marquee]');
-  if (!sec || reduce) return;
-  const rows = [...sec.querySelectorAll<HTMLElement>('.row')];
-  let topo = 0;
-  const medir = () => (topo = sec.getBoundingClientRect().top + scrollY);
-  medir();
-  addEventListener('resize', medir, { passive: true });
-  aCadaRolagem(() => {
-    const off = (scrollY - topo + innerHeight) * 0.3;
-    rows.forEach((r) => {
-      const dir = Number(r.dataset.dir) || 1;
-      // A faixa já corre sozinha (CSS); a rolagem só empurra. A primeira começa deslocada para nunca mostrar a borda.
-      r.style.transform = `translate3d(${dir > 0 ? Math.min(off, 440) - 480 : -off}px, 0, 0)`;
-    });
-  });
-}
 
 /** "Sobre": cada token acende quando o parágrafo passa entre 80% e 20% da altura da tela. */
 function sobre() {
@@ -217,6 +198,5 @@ entradas();
 linhas();
 carrosseis();
 ima();
-faixas();
 sobre();
 pilha();
