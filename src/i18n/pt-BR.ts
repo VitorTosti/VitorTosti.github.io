@@ -60,7 +60,7 @@ export const ptBR = {
   skillsRotulo: 'Skills',
   sobre:
     // Quem é o Vitor, não o que ele fez (os trabalhos estão nos projetos e na trajetória). Rascunho para revisão.
-    'Sou o Vitor, estudante de Ciência da Computação na UFABC, em São Bernardo do Campo. Comecei pela eletrônica, no técnico da ETEC, e passei pela usinagem CNC antes de chegar ao software. Gosto de construir coisas que as pessoas usam de verdade e de entender onde elas falham. Hoje isso quer dizer colocar IA em sistemas reais e medir onde ela erra. Procuro um estágio para fazer isso junto de um time.',
+    'Sou o Vitor, estudante de Ciência da Computação na UFABC. Meu foco é IA aplicada: agentes que usam ferramentas, modelos que transformam documentos bagunçados em dados estruturados e, principalmente, avaliação, que é medir com dados reais onde o modelo erra antes que alguém dependa da resposta. Gosto de entregar coisas que funcionam no dia a dia de quem usa. Quero seguir aprendendo com gente experiente e contribuir com times que levam IA a sério.',
   avanco: {
     proximo: 'mostre o trabalho',
     em: (s: number) => `em ${s} s`,
