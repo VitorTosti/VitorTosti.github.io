@@ -1,0 +1,42 @@
+---
+// Sobre: o texto é "gerado" pela rolagem. Cada token vai de apagado a aceso conforme o parágrafo passa
+// pela tela, na ordem em que um modelo o escreveria.
+import BigTitle from './BigTitle.astro';
+import { ptBR as s } from '../i18n/pt-BR';
+import { splitFallback } from '../lib/tokenize';
+
+const toks = splitFallback(s.sobre);
+---
+
+<section class="section about" id="sobre">
+  <BigTitle text={s.titulos.sobre} />
+  <p class="texto" data-scrollgen>
+    <span class="sr-only">{s.sobre}</span>
+    <span aria-hidden="true">{toks.map((t) => <span class="st">{t}</span>)}</span>
+  </p>
+  <a class="pill" href={`mailto:${s.links.email}`} data-fade>{s.falar}</a>
+</section>
+
+<style>
+  .about {
+    display: grid;
+    justify-items: center;
+    gap: clamp(2.5rem, 6vw, 4.5rem);
+    padding-inline: var(--gutter);
+    text-align: center;
+  }
+  .texto {
+    margin: 0;
+    max-width: 40rem;
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  :global(.gen-on) .st {
+    opacity: 0.18;
+  }
+  .st.on {
+    opacity: 1;
+    transition: opacity 200ms linear;
+  }
+</style>

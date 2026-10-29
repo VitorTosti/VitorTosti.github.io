@@ -44,10 +44,7 @@ body {
   margin: 0;
   /* O fundo da abertura vai de borda a borda (100vw); a barra de rolagem não pode gerar rolagem lateral. */
   overflow-x: clip;
-  /* Folha de log: pauta fina a cada 2rem. A página inteira é uma geração. */
   background-color: var(--paper);
-  background-image: linear-gradient(var(--sheet) 1px, transparent 1px);
-  background-size: 100% 2rem;
   color: var(--ink);
   font-family: var(--serif);
   font-size: 1.1875rem;
@@ -149,6 +146,83 @@ code,
 .section-title {
   font-size: clamp(1.75rem, 5.5vw, 2.5rem);
   margin-bottom: 1.75rem;
+}
+
+/* Botão principal: pílula âmbar sólida. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.875rem clamp(1.75rem, 3vw, 2.75rem);
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: clamp(0.75rem, 1vw, 0.9375rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform var(--t-fast) var(--ease),
+    background-color var(--t-fast) var(--ease);
+}
+.pill:hover {
+  color: var(--paper);
+  background: color-mix(in srgb, var(--accent) 86%, white);
+}
+.pill:active {
+  transform: scale(0.97);
+}
+.pill.grande {
+  font-size: clamp(0.8125rem, 1.6vw, 1.25rem);
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+
+/* Botão secundário: pílula vazada. */
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.625rem 1.5rem;
+  border: 1px solid var(--ink-2);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease);
+}
+.ghost:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+.ghost.todo {
+  border-style: dashed;
+  color: var(--ink-2);
+}
+
+/* Títulos de seção enormes, gerados token a token. */
+.big-title {
+  margin: 0;
+  font-size: clamp(3rem, 11vw, 10rem);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-variation-settings: 'opsz' 72;
+  text-align: center;
+}
+.big-title.start {
+  text-align: start;
 }
 
 .label {

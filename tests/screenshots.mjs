@@ -1,5 +1,4 @@
-// Capturas de verificação: 375 px e 1440 px, claro e escuro, com e sem movimento reduzido,
-// mais o painel de probabilidades aberto. Uso: node tests/screenshots.mjs [url] [pasta]
+// Capturas de verificação: 375 px e 1440 px, com e sem movimento reduzido. Uso: node tests/screenshots.mjs [url] [pasta]
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
@@ -49,19 +48,6 @@ for (const vp of viewports)
       await page.addStyleTag({ content: '.section { content-visibility: visible !important; }' });
       await page.screenshot({ path: `${base}-pagina.png`, fullPage: true });
 
-      if (motion === 'no-preference') {
-        const alvo = page.locator('.hero .tok[data-alts]').filter({ hasText: 'UFABC' });
-        if (vp.mobile) await alvo.tap();
-        else await alvo.hover();
-        await page.waitForTimeout(400);
-        await page.screenshot({ path: `${base}-painel.png` });
-        await page.keyboard.press('Escape');
-        if (!vp.mobile) {
-          await page.locator('#latente .pt[data-slug="infocaij-mcp"] .dot').hover();
-          await page.waitForTimeout(450);
-          await page.locator('#latente').screenshot({ path: `${base}-latente.png` });
-        }
-      }
       await ctx.close();
     }
 

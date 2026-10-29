@@ -5,7 +5,6 @@ import '@fontsource-variable/jetbrains-mono/wght.css';
 import serifUrl from '@fontsource-variable/newsreader/files/newsreader-latin-opsz-normal.woff2?url';
 import monoUrl from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import '../styles/global.css';
-import ProbPanel from '../components/ProbPanel.astro';
 import { ptBR as s } from '../i18n/pt-BR';
 
 interface Props {
@@ -51,6 +50,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <slot />
     </main>
     <slot name="footer" />
-    <ProbPanel />
+
   </body>
 </html>

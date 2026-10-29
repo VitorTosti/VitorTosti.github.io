@@ -1,50 +1,53 @@
 ---
-import SectionHead from './SectionHead.astro';
+// Contato: sobe por cima da superfície com cantos arredondados, como o fim de uma página de log.
+import BigTitle from './BigTitle.astro';
 import { ptBR as s } from '../i18n/pt-BR';
 ---
 
-<section class="section wide" id="contato">
-  <SectionHead id="contato" class="big" />
-  <p class="frase">{s.contato}</p>
-  <ul class="links mono">
-    <li><a href={s.links.github} rel="me">GitHub ↗</a></li>
-    <li><a href={s.links.linkedin} rel="me">LinkedIn ↗</a></li>
-    {
-      s.links.email ? (
-        <li>
-          <a href={`mailto:${s.links.email}`}>{s.links.email}</a>
-        </li>
-      ) : (
-        <li class="todo">TODO: e-mail de contato</li>
-      )
-    }
+<section class="section contato" id="contato">
+  <BigTitle text={s.titulos.contato} />
+  <p class="frase" data-fade>{s.contato}</p>
+  <a class="pill grande" href={`mailto:${s.links.email}`} data-fade style="--d:120ms">{s.links.email}</a>
+  <ul class="links" data-fade style="--d:200ms">
+    <li><a class="ghost" href={s.links.github} rel="me">GitHub <span aria-hidden="true">↗</span></a></li>
+    <li><a class="ghost" href={s.links.linkedin} rel="me">LinkedIn <span aria-hidden="true">↗</span></a></li>
   </ul>
+  <p class="rodape">© {new Date().getFullYear()} {s.nome} · feito com Astro, sem rastreamento</p>
 </section>
 
 <style>
-  :global(.big .section-title) {
-    font-size: clamp(2.5rem, 9vw, 4.5rem);
+  .contato {
+    position: relative;
+    background: var(--paper);
+    border-radius: clamp(2rem, 4vw, 3.75rem) clamp(2rem, 4vw, 3.75rem) 0 0;
+    margin-top: calc(-1 * clamp(2rem, 4vw, 3.75rem));
+    padding-inline: var(--gutter);
+    padding-bottom: 2.5rem;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 2rem;
   }
   .frase {
-    max-width: var(--col);
-    font-size: 1.25rem;
+    margin: 0;
+    max-width: 34rem;
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    line-height: 1.45;
+    color: var(--ink-2);
   }
   .links {
     list-style: none;
+    margin: 0;
     padding: 0;
-    margin: 1.5rem 0 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem 1.5rem;
-    font-size: 0.9375rem;
+    justify-content: center;
+    gap: 0.75rem;
   }
-  .links a {
-    display: inline-block;
-    padding-block: 0.625rem;
-  }
-  .todo {
-    padding-block: 0.625rem;
+  .rodape {
+    margin: clamp(3rem, 8vw, 6rem) 0 0;
+    font-family: var(--mono);
+    font-size: 0.75rem;
     color: var(--ink-2);
-    border-bottom: 1px dashed var(--bar);
   }
 </style>

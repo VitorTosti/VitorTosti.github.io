@@ -1,0 +1,12 @@
+---
+// Título de seção enorme e centralizado, gerado token a token quando entra na tela.
+import GeneratedText from './GeneratedText.astro';
+
+interface Props {
+  text: string;
+  align?: 'center' | 'start';
+}
+const { text, align = 'center' } = Astro.props;
+---
+
+<GeneratedText text={text} as="h2" class:list={['big-title', align]} trigger="view" />

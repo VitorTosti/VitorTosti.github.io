@@ -8,6 +8,16 @@ export const ptBR = {
       'Vitor Tosti, estudante de Ciência da Computação na UFABC. Servidor MCP somente leitura, avaliação com dados reais e ferramentas internas em produção.',
   },
   nome: 'Vitor Tosti',
+  nav: [
+    { href: '#sobre', rotulo: 'Sobre' },
+    { href: '#projetos', rotulo: 'Projetos' },
+    { href: '#metodo', rotulo: 'Método' },
+    { href: '#contato', rotulo: 'Contato' },
+  ],
+  intro: 'Estudante de Ciência da Computação na UFABC. Construo com IA sistemas que já estão em uso.',
+  falar: 'Fale comigo',
+  titulos: { sobre: 'Sobre', projetos: 'Projetos', metodo: 'Como trabalho', trajetoria: 'Trajetória', contato: 'Vamos conversar' },
+  metodoNomes: ['Problema', 'Construção', 'Avaliação', 'Correção'],
   // Cada frase gerada token a token tem um id, usado para achar as alternativas em alternativas.json.
   frases: {
     abertura: 'Estudante de Ciência da Computação na UFABC.',

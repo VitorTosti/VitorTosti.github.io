@@ -132,32 +132,3 @@ describe('formatPct', () => {
     expect(formatPct(0.001)).toBe('<1%');
   });
 });
-
-describe('lente', async () => {
-  const { aplicarTemperatura, maisDisputado, margem, maisProvavel } = await import('../src/lib/lens');
-  const alts = [
-    { t: 'testo', p: 0.31 },
-    { t: 'meço', p: 0.29 },
-    { t: 'avalio', p: 0.22 },
-  ];
-
-  it('temperatura 1 devolve os números originais; abaixo de 1 concentra; acima achata', () => {
-    const t1 = aplicarTemperatura(alts, 1);
-    t1.forEach((a, i) => expect(a.p).toBeCloseTo(alts[i].p));
-    const t05 = aplicarTemperatura(alts, 0.5);
-    expect(t05.reduce((s, a) => s + a.p, 0)).toBeCloseTo(0.82);
-    expect(aplicarTemperatura(alts, 0.2)[0].p).toBeGreaterThan(t1[0].p);
-    expect(aplicarTemperatura(alts, 2)[0].p).toBeLessThan(t1[0].p);
-    expect(aplicarTemperatura([], 1)).toEqual([]);
-  });
-
-  it('acha a posição mais disputada da abertura: "UFABC" (34% contra 21%)', () => {
-    const dados = parseAlternativas(raw);
-    const toks = resolveFrase('abertura', ptBR.frases.abertura, dados);
-    const i = maisDisputado(toks);
-    expect(toks[i].text).toBe('UFABC');
-    expect(margem(toks[i].alts)).toBeCloseTo(0.13);
-    expect(maisProvavel(toks[i].alts)?.t.trim()).toBe('UFABC');
-    expect(maisDisputado([{ alts: [] }])).toBe(-1);
-  });
-});
