@@ -470,12 +470,13 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
       padding-bottom: 10vh;
     }
   }
-  /* Empilhamento só quando o cartão inteiro cabe na tela. */
-  @media (min-width: 900px) and (min-height: 760px) {
+  /* Empilhamento em qualquer altura de tela. Quando o cartão não cabe, --topo (calculado em motion-client)
+     o prende pela base, para ele aparecer inteiro antes do próximo passar por cima. */
+  @media (min-width: 900px) {
     /* Todos com a mesma altura: um cartão mais alto não aparece por baixo do seguinte. */
     .cartao {
       position: sticky;
-      top: calc(5rem + var(--i) * 1.75rem);
+      top: var(--topo, calc(5rem + var(--i) * 1.75rem));
       min-height: min(45.5rem, calc(100svh - 6rem - var(--i) * 1.75rem));
     }
     /* A mídia estica e ocupa a altura que sobra, sem vazio no pé do cartão. */

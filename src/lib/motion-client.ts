@@ -104,10 +104,21 @@ function sobre() {
 /** Pilha de projetos: o cartão preso encolhe um pouco conforme os seguintes passam por cima. */
 function pilha() {
   const host = document.querySelector<HTMLElement>('[data-pilha]');
-  if (!host || reduce) return;
+  if (!host) return;
   const cards = [...host.querySelectorAll<HTMLElement>('[data-cartao]')];
   const largo = matchMedia('(min-width: 900px)');
   const n = cards.length;
+  // Em telas baixas o cartão não cabe abaixo do topo padrão: prende pela base, com 16 px de folga.
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const topos = () =>
+    cards.forEach((c, i) => {
+      const padrao = (5 + i * 1.75) * rem;
+      c.style.setProperty('--topo', `${Math.min(padrao, innerHeight - c.offsetHeight - 16)}px`);
+    });
+  topos();
+  addEventListener('resize', topos);
+  new ResizeObserver(topos).observe(host);
+  if (reduce) return;
   aCadaRolagem(() => {
     if (!largo.matches) {
       cards.forEach((c) => (c.style.transform = ''));
