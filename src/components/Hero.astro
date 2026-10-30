@@ -6,6 +6,7 @@ import { Image } from 'astro:assets';
 import foto from '../assets/vitor.webp';
 import { ptBR as s } from '../i18n/pt-BR';
 import { splitFallback } from '../lib/tokenize';
+import { CURRICULO, temCurriculo } from '../lib/curriculo';
 
 const tokens = splitFallback(s.nome);
 ---
@@ -49,7 +50,16 @@ const tokens = splitFallback(s.nome);
 
   <div class="base">
     <p class="intro">{s.intro}</p>
-    <a class="pill" href={`mailto:${s.links.email}`}>{s.falar}</a>
+    <div class="botoes">
+      {
+        temCurriculo && (
+          <a class="ghost" href={CURRICULO} download>
+            {s.curriculo}
+          </a>
+        )
+      }
+      <a class="pill" href={`mailto:${s.links.email}`}>{s.falar}</a>
+    </div>
   </div>
 </header>
 
@@ -164,7 +174,10 @@ const tokens = splitFallback(s.nome);
     color: var(--ink-2);
     animation: sobe-leve 700ms 350ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
-  .base .pill {
+  .botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
     animation: sobe-leve 700ms 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   @keyframes sobe {
@@ -221,7 +234,7 @@ const tokens = splitFallback(s.nome);
     .nav,
     .t,
     .intro,
-    .base .pill,
+    .botoes,
     .retrato,
     .cur {
       animation: none;

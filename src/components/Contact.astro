@@ -2,6 +2,7 @@
 // Contato: sobe por cima da superfície com cantos arredondados, como o fim de uma página de log.
 import BigTitle from './BigTitle.astro';
 import { ptBR as s } from '../i18n/pt-BR';
+import { CURRICULO, temCurriculo } from '../lib/curriculo';
 ---
 
 <section class="section contato" id="contato">
@@ -11,6 +12,15 @@ import { ptBR as s } from '../i18n/pt-BR';
   <ul class="links" data-fade style="--d:200ms">
     <li><a class="ghost" href={s.links.github} rel="me">GitHub <span aria-hidden="true">↗</span></a></li>
     <li><a class="ghost" href={s.links.linkedin} rel="me">LinkedIn <span aria-hidden="true">↗</span></a></li>
+    {
+      temCurriculo && (
+        <li>
+          <a class="ghost" href={CURRICULO} download>
+            {s.curriculo}
+          </a>
+        </li>
+      )
+    }
   </ul>
   <p class="rodape">© {new Date().getFullYear()} {s.nome} · feito com Astro, sem rastreamento</p>
 </section>

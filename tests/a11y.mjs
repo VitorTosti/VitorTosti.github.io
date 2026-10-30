@@ -8,13 +8,15 @@ const url = process.argv[2] ?? 'http://localhost:4321/';
 const browser = await chromium.launch();
 let falhas = 0;
 
+const paginas = ['', 'projetos/infocaij-mcp/', 'projetos/cardapio-em-1-minuto/', 'projetos/infocaij/', 'projetos/infomachine/', 'projetos/coreufabc/'];
+for (const pagina of paginas)
 for (const width of [375, 1440])
   for (const tema of ['dark']) {
     const ctx = await browser.newContext({ viewport: { width, height: 900 }, colorScheme: tema, reducedMotion: 'reduce' });
     const page = await ctx.newPage();
-    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.goto(url + pagina, { waitUntil: 'networkidle' });
     const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']).analyze();
-    console.log(`${width}/${tema}: ${r.violations.length} violações, ${r.passes.length} regras ok`);
+    console.log(`/${pagina} ${width}/${tema}: ${r.violations.length} violações, ${r.passes.length} regras ok`);
     for (const v of r.violations) {
       falhas++;
       console.log(`  ✗ ${v.id} (${v.impact}): ${v.help}`);

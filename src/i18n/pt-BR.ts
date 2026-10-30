@@ -16,6 +16,7 @@ export const ptBR = {
   ],
   intro: 'Estudante de Ciência da Computação na UFABC. Construo com IA sistemas que já estão em uso.',
   falar: 'Fale comigo',
+  curriculo: 'Currículo (PDF)',
   titulos: { sobre: 'Sobre', projetos: 'Projetos', trajetoria: 'Trajetória', contato: 'Vamos conversar' },
   // Cada frase gerada token a token tem um id, usado para achar as alternativas em alternativas.json.
   frases: {
