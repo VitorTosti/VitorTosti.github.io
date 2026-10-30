@@ -40,7 +40,7 @@ const tokens = splitFallback(s.nome);
         src={foto}
         alt="Retrato de Vitor Tosti."
         widths={[320, 480, 720, 900]}
-        sizes="(min-width: 640px) 32vw, 56vw"
+        sizes="(min-width: 640px) 24vw, 44vw"
         loading="eager"
         fetchpriority="high"
       />
@@ -126,7 +126,7 @@ const tokens = splitFallback(s.nome);
     left: 50%;
     top: 50%;
     z-index: 2;
-    width: clamp(15rem, 31vw, 30rem);
+    width: clamp(12rem, 24vw, 23rem);
     transform: translate(-50%, -46%);
     animation: sobe-retrato 900ms 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
     pointer-events: none;
@@ -208,7 +208,7 @@ const tokens = splitFallback(s.nome);
     .retrato {
       position: static;
       transform: none;
-      width: 56vw;
+      width: 44vw;
       margin: 1.5rem auto 0;
       animation-name: sobe-leve;
     }
