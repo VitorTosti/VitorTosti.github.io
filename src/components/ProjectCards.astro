@@ -25,6 +25,8 @@ type Cartao = {
   fatos: string[];
   link: { rotulo: string; href: string | null };
   midia: 'video' | 'cardapio' | 'numeros' | 'carrossel' | 'rastro';
+  /** Cor do projeto: número, status e detalhes do cartão. */
+  cor: 'ambar' | 'coral' | 'agua' | 'violeta' | 'verde';
 };
 
 const cartoes: Cartao[] = [
@@ -41,6 +43,7 @@ const cartoes: Cartao[] = [
     ],
     link: { rotulo: 'GitHub', href: mcp.link.href },
     midia: 'video',
+    cor: 'ambar',
   },
   {
     slug: cardapio.slug,
@@ -55,6 +58,7 @@ const cartoes: Cartao[] = [
     ],
     link: { rotulo: 'TODO: repositório', href: null },
     midia: 'cardapio',
+    cor: 'coral',
   },
   {
     slug: infocaij.slug,
@@ -64,6 +68,7 @@ const cartoes: Cartao[] = [
     fatos: ['Fila de 8 etapas com checklist técnico de 10 itens', 'Integração com o ERP, nota fiscal e garantia com QR Code', 'Código privado'],
     link: { rotulo: 'Estudo de caso', href: infocaij.link.href },
     midia: 'numeros',
+    cor: 'agua',
   },
   {
     slug: infomachine.slug,
@@ -73,6 +78,7 @@ const cartoes: Cartao[] = [
     fatos: ['Cerca de 100 máquinas por semana', 'Roda de pendrive, em Windows e macOS', 'Atualizações verificadas por SHA-256'],
     link: { rotulo: 'GitHub', href: infomachine.link.href },
     midia: 'carrossel',
+    cor: 'violeta',
   },
   {
     slug: coreufabc.slug,
@@ -82,6 +88,7 @@ const cartoes: Cartao[] = [
     fatos: ['66 testes', 'CI no GitHub Actions'],
     link: { rotulo: 'GitHub', href: coreufabc.link.href },
     midia: 'rastro',
+    cor: 'verde',
   },
 ];
 
@@ -144,7 +151,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
   <div class="pilha" data-pilha>
     {
       cartoes.map((c, i) => (
-        <article class="cartao" id={c.slug} aria-labelledby={`h-${c.slug}`} style={`--i:${i}`} data-cartao>
+        <article class="cartao" id={c.slug} aria-labelledby={`h-${c.slug}`} style={`--i:${i};--cor:var(--c-${c.cor})`} data-cartao>
           <header class="topo">
             <span class="num" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
@@ -281,8 +288,9 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
   }
   .cartao {
     background: var(--paper);
-    border: 1px solid var(--rule);
-    border-radius: clamp(1.5rem, 3vw, 2.75rem);
+    /* Contorno claro, como um cartão recortado sobre o fundo. */
+    border: 2px solid var(--ink-soft);
+    border-radius: clamp(1.75rem, 3.5vw, 3.25rem);
     padding: clamp(1.25rem, 3vw, 2.25rem);
     transform-origin: 50% 0;
   }
@@ -298,7 +306,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
     font-size: clamp(3.5rem, 9vw, 7.5rem);
     line-height: 0.8;
     letter-spacing: -0.04em;
-    color: var(--accent);
+    color: var(--cor);
     font-variation-settings: 'opsz' 72;
   }
   .tit {
@@ -311,7 +319,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--ink-2);
+    color: var(--cor);
   }
   h3 {
     margin: 0;
@@ -321,6 +329,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
   }
   .ghost {
     grid-area: link;
+    border-color: var(--cor);
     justify-self: start;
   }
   .corpo {
@@ -347,7 +356,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
     border-top: 1px solid var(--rule);
   }
   .midia {
-    border-radius: clamp(1rem, 2vw, 1.75rem);
+    border-radius: clamp(1.25rem, 2.6vw, 2.25rem);
     overflow: hidden;
     background: var(--surface);
     min-height: 14rem;
@@ -391,7 +400,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
     font-family: var(--mono);
     font-size: 1.25rem;
     line-height: 1;
-    color: var(--accent);
+    color: var(--cor);
     transform: rotate(90deg);
   }
   .json {
@@ -422,8 +431,8 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
     opacity: 0;
   }
   .ln.rev {
-    color: var(--accent-text);
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--cor);
+    background: color-mix(in srgb, var(--cor) 12%, transparent);
   }
   .ln.nota {
     font-style: italic;
@@ -455,7 +464,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
     font-size: clamp(1.75rem, 3vw, 2.5rem);
     line-height: 1;
     letter-spacing: -0.02em;
-    color: var(--ink);
+    color: var(--cor);
   }
   .aval dd {
     margin: 0.375rem 0 0;
@@ -524,7 +533,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
   }
   .dot[aria-current='true'] i {
     width: 22px;
-    background: var(--accent);
+    background: var(--cor);
   }
   .pausa .i-play,
   :global(.parado) > .ctl .pausa .i-pausa {
@@ -551,7 +560,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
     font-size: clamp(2.25rem, 5vw, 4rem);
     line-height: 1;
     letter-spacing: -0.03em;
-    color: var(--ink);
+    color: var(--cor);
   }
   .nums dd {
     margin: 0;
@@ -571,7 +580,7 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
   }
   .rastro li::before {
     content: '→ ';
-    color: var(--accent);
+    color: var(--cor);
   }
   .rastro li:last-child {
     color: var(--ink);
@@ -640,9 +649,22 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
   }
   /* Empilhamento só quando o cartão inteiro cabe na tela. */
   @media (min-width: 900px) and (min-height: 760px) {
+    /* Todos com a mesma altura: um cartão mais alto não aparece por baixo do seguinte. */
     .cartao {
       position: sticky;
       top: calc(5rem + var(--i) * 1.75rem);
+      min-height: min(45.5rem, calc(100svh - 6rem - var(--i) * 1.75rem));
+    }
+    /* A mídia estica e ocupa a altura que sobra, sem vazio no pé do cartão. */
+    .cartao {
+      display: flex;
+      flex-direction: column;
+    }
+    .corpo {
+      flex: 1;
+    }
+    .midia {
+      max-height: none;
     }
   }
   @media (prefers-reduced-motion: reduce) {

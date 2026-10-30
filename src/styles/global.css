@@ -10,6 +10,14 @@
   --bar: #4a4943;
   --accent: #f2a33a;
   --accent-text: #f2a33a;
+  /* Contorno claro dos cartões. */
+  --ink-soft: #d7d4cc;
+  /* Uma cor por projeto; o âmbar continua sendo a cor do site. */
+  --c-ambar: #f2a33a;
+  --c-coral: #ff7a5c;
+  --c-agua: #3fd0bd;
+  --c-violeta: #b39dff;
+  --c-verde: #8ad66b;
   --accent-wash: color-mix(in srgb, var(--accent) 12%, transparent);
   --focus: var(--accent-text);
   --sheet: color-mix(in srgb, var(--ink) 5%, transparent);
