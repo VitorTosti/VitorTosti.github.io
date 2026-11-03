@@ -1,13 +1,13 @@
 ---
 // Introdução da página inicial: o nome aparece sozinho, a Terra surge girando e a câmera mergulha
 // até São Paulo; no fim, a tela se abre para a abertura com a esfera de projetos.
-// A Terra é um vídeo (um corte para tela larga e outro para celular). Se ele não tocar a tempo,
-// entra no lugar a Terra de pontos desenhada no canvas.
+// A Terra é 3D em WebGL (lib/terra3d.ts, com texturas da NASA). Se o WebGL ou as texturas não
+// estiverem prontos a tempo, entra no lugar a Terra de pontos desenhada no canvas 2D.
 // Toca ao abrir o portfólio. Sem JS ou com movimento reduzido, não existe: a página abre direto.
 import { ptBR as s } from '../i18n/pt-BR';
-import terraLarga from '../assets/terra-16x9.mp4?url';
-import terraAlta from '../assets/terra-9x16.mp4?url';
-import terraCapa from '../assets/terra-capa.jpg?url';
+import texDia from '../assets/terra-dia.jpg?url';
+import texNoite from '../assets/terra-noite.jpg?url';
+import texNoiteSp from '../assets/terra-noite-sp.jpg?url';
 import { splitFallback } from '../lib/tokenize';
 import { pontosDaTerra } from '../lib/terra';
 
@@ -42,8 +42,9 @@ const pontos = JSON.stringify(pontosDaTerra());
 </script>
 
 <div class="intro-terra" aria-hidden="true" data-intro>
-  <video muted playsinline disablepictureinpicture preload="none" data-larga={terraLarga} data-alta={terraAlta} data-capa={terraCapa}></video>
-  <canvas></canvas>
+  <canvas class="c3d" data-dia={texDia} data-noite={texNoite} data-sp={texNoiteSp}></canvas>
+  <canvas class="c2d"></canvas>
+  <span class="i-pino"></span>
   <p class="i-nome">
     {
       tokens.map((t, i) => (
@@ -58,6 +59,7 @@ const pontos = JSON.stringify(pontosDaTerra());
   </p>
   <p class="i-sub">{s.subtitulo}</p>
   <p class="i-local">São Bernardo do Campo, SP</p>
+  <span class="i-brilho"></span>
   <button type="button" class="i-pular" tabindex="-1" data-pular>Pular</button>
   <script type="application/json" data-pontos set:html={pontos} />
 </div>
@@ -89,20 +91,57 @@ const pontos = JSON.stringify(pontosDaTerra());
     opacity: 0;
     pointer-events: none;
   }
-  canvas,
-  video {
+  canvas {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
   }
-  video {
-    object-fit: cover;
+  .c3d {
     opacity: 0;
-    transition: opacity 0.8s var(--ease);
+    transition: opacity 1s var(--ease);
   }
-  .intro-terra.com-video video {
+  .intro-terra.com-3d .c3d {
     opacity: 1;
+  }
+  /* São Bernardo do Campo fica no centro exato da tela durante o mergulho: um alfinete âmbar. */
+  .i-pino {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 14px var(--accent);
+    opacity: 0;
+    transition: opacity 0.5s var(--ease);
+    pointer-events: none;
+  }
+  .i-pino::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    animation: i-pulso 1.4s ease-out infinite;
+  }
+  .intro-terra.com-3d.desce .i-pino {
+    opacity: 1;
+  }
+  .intro-terra.com-3d.chegou .i-pino {
+    opacity: 0;
+  }
+  @keyframes i-pulso {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(3.2);
+    }
   }
 
   .i-nome {
@@ -195,6 +234,48 @@ const pontos = JSON.stringify(pontosDaTerra());
     opacity: 0;
   }
 
+  /* Passagem para a abertura: o brilho da cidade cresce no centro da tela e encolhe até virar um
+     ponto, o mesmo centro de onde os cartões da esfera saem. */
+  .i-brilho {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 60vmax;
+    height: 60vmax;
+    margin: -30vmax 0 0 -30vmax;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgb(255 214 150 / 0.95) 0%,
+      rgb(242 163 58 / 0.7) 12%,
+      rgb(242 163 58 / 0.22) 34%,
+      transparent 64%
+    );
+    opacity: 0;
+    transform: scale(0.2);
+    pointer-events: none;
+  }
+  .intro-terra.chegou .i-brilho {
+    animation: i-brilho 1.25s cubic-bezier(0.7, 0, 0.2, 1) both;
+  }
+  @keyframes i-brilho {
+    0% {
+      opacity: 0;
+      transform: scale(0.35);
+    }
+    35% {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.015);
+    }
+  }
+  .intro-terra.sai {
+    transition-delay: 0.35s;
+  }
+
   .i-pular {
     position: absolute;
     right: var(--gutter);
@@ -244,10 +325,12 @@ const pontos = JSON.stringify(pontosDaTerra());
 </style>
 
 <script>
-  // Linha do tempo (ms): o nome entra e fica até o vídeo estar pronto (no mínimo 1.300, no máximo
-  // 2.400). Com vídeo, a tela se abre quando faltam 0,7 s para ele acabar (o fim já escurece).
-  // Sem vídeo a tempo, a Terra de pontos: surge (1.700–2.900), mergulha (2.900–4.800) e a tela
-  // se abre (4.600–5.300), contados a partir do momento em que o nome sai.
+  // Linha do tempo (ms, a partir do momento em que o nome sai, em 1.300): a Terra surge girando
+  // (1.300–2.600), vira até a América do Sul, mergulha até São Bernardo do Campo (2.700–4.600) e a
+  // tela se abre (4.500). O nome fica na tela até a Terra 3D estar pronta, por no máximo 2,6 s;
+  // sem ela, a Terra de pontos segue a mesma linha do tempo.
+  import type { Terra3D } from '../lib/terra3d';
+
   const root = document.documentElement;
   const host = document.querySelector<HTMLElement>('[data-intro]');
   if (host && root.classList.contains('intro-on')) tocar(host);
@@ -255,7 +338,8 @@ const pontos = JSON.stringify(pontosDaTerra());
   function tocar(host: HTMLElement) {
     // O script chegou a tempo: daqui em diante, a própria introdução decide quando terminar.
     (window as unknown as { __introComecou?: boolean }).__introComecou = true;
-    const canvas = host.querySelector('canvas')!;
+    const canvas = host.querySelector<HTMLCanvasElement>('.c2d')!;
+    const tela3d = host.querySelector<HTMLCanvasElement>('.c3d')!;
     const ctx = canvas.getContext('2d')!;
     const bruto: number[] = JSON.parse(host.querySelector('[data-pontos]')!.textContent!);
     const RAD = Math.PI / 180;
@@ -277,6 +361,7 @@ const pontos = JSON.stringify(pontosDaTerra());
     let w = 0;
     let h = 0;
     let dpr = 1;
+    let terra: Terra3D | null = null;
     function medir() {
       dpr = Math.min(2, devicePixelRatio || 1);
       w = innerWidth;
@@ -284,6 +369,7 @@ const pontos = JSON.stringify(pontosDaTerra());
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      terra?.medir();
     }
     medir();
     addEventListener('resize', medir, { passive: true });
@@ -292,9 +378,10 @@ const pontos = JSON.stringify(pontosDaTerra());
     const faixa = (t: number, a: number, b: number) => clamp((t - a) / (b - a));
     const suave = (x: number) => x * x * (3 - 2 * x);
     const entra = (x: number) => x * x * x * x;
+    const vaivem = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
     const mistura = (a: number, b: number, x: number) => a + (b - a) * x;
 
-    /** Desenha a Terra: raio r, centro da vista em (lat0, lon0) e opacidade a. */
+    /** Terra de pontos (reserva): raio r, centro da vista em (lat0, lon0) e opacidade a. */
     function desenhar(r: number, lat0: number, lon0: number, a: number, marca: number) {
       ctx.clearRect(0, 0, w, h);
       if (a <= 0) return;
@@ -373,53 +460,29 @@ const pontos = JSON.stringify(pontosDaTerra());
       ctx.globalAlpha = 1;
     }
 
-    // Vídeo: o corte vertical para telas em pé, o largo para o resto.
-    const video = host.querySelector('video')!;
-    const VELOCIDADE = 1.2;
-    let modo: 'espera' | 'video' | 'pontos' = 'espera';
-    video.poster = video.dataset.capa!;
-    video.src = innerWidth / innerHeight < 0.8 ? video.dataset.alta! : video.dataset.larga!;
-    video.preload = 'auto';
-    video.muted = true;
-    video.defaultMuted = true;
-    video.playsInline = true;
-    video.load();
-    let pronto = false;
-    video.addEventListener('canplay', () => (pronto = true), { once: true });
-    video.addEventListener('error', () => (pronto = false));
-    function tocarVideo() {
-      modo = 'video';
-      video.currentTime = 0;
-      video.playbackRate = VELOCIDADE;
-      video.play().then(
-        () => {
-          video.playbackRate = VELOCIDADE;
-          marcar('globo');
-          marcar('com-video');
-          // Se o vídeo travar no meio, a página abre mesmo assim.
-          setTimeout(terminar, ((video.duration || 6) / VELOCIDADE) * 1000 + 1500);
-        },
-        // Reprodução automática bloqueada: segue com a Terra de pontos.
-        () => comecarPontos(performance.now()),
-      );
-    }
-    video.addEventListener('timeupdate', () => {
-      if (modo !== 'video' || !video.duration) return;
-      if (video.currentTime > 3.4) marcar('desce');
-      if (video.currentTime > 4.8) marcar('chegou');
-      if (video.currentTime > video.duration - 0.7) terminar();
-    });
-    video.addEventListener('ended', () => modo === 'video' && terminar());
+    // Terra 3D: o three.js e as texturas só baixam aqui, quando a introdução toca.
+    let modo: 'espera' | '3d' | 'pontos' = 'espera';
+    let pronta = false;
+    import('../lib/terra3d')
+      .then(({ criarTerra }) =>
+        criarTerra(tela3d, { dia: tela3d.dataset.dia!, noite: tela3d.dataset.noite!, noiteSp: tela3d.dataset.sp! }),
+      )
+      .then((t) => {
+        if (modo === 'pontos' || fim) return t.destruir();
+        terra = t;
+        pronta = true;
+      })
+      .catch(() => {
+        // Sem WebGL ou sem texturas: a Terra de pontos assume quando o nome sair.
+      });
 
     const t0 = performance.now();
-    // Base da linha do tempo da Terra de pontos; muda se ela começar mais tarde que o previsto.
+    // Base da linha do tempo; muda se a Terra começar mais tarde que o previsto.
     let base = t0;
-    function comecarPontos(agora: number) {
-      if (modo === 'pontos') return;
-      modo = 'pontos';
-      video.pause();
-      video.removeAttribute('src');
+    function comecar(qual: '3d' | 'pontos', agora: number) {
+      modo = qual;
       base = agora - 1300;
+      if (qual === '3d') marcar('com-3d');
     }
     let fim = false;
     let quadro = 0;
@@ -433,21 +496,39 @@ const pontos = JSON.stringify(pontosDaTerra());
     function passo(agora: number) {
       const desde = agora - t0;
       if (modo === 'espera') {
-        if (desde > 1300 && pronto) tocarVideo();
-        else if (desde > 2400) comecarPontos(agora);
-      }
-      if (modo !== 'pontos') {
-        quadro = requestAnimationFrame(passo);
-        return;
+        if (desde > 1300 && pronta) comecar('3d', agora);
+        else if (desde > 2600) comecar('pontos', agora);
+        else {
+          quadro = requestAnimationFrame(passo);
+          return;
+        }
       }
       const t = agora - base;
+      // Na Terra 3D o giro termina antes do alfinete aparecer, para ele já cair sobre a cidade.
+      const giro = suave(faixa(t, 1300, modo === '3d' ? 3600 : 4300));
+      const lat0 = mistura(6, DESTINO.lat, giro);
+
+      if (modo === '3d' && terra) {
+        // Distância da câmera ao centro (raio = 1): a Terra chega grande (~70% da altura) e a
+        // altitude cai em escala logarítmica, como num mergulho de verdade, até a região de SP
+        // ocupar a tela.
+        const surge = 1 - Math.pow(1 - faixa(t, 1300, 2600), 3);
+        const mergulho = vaivem(faixa(t, 2700, 4600));
+        const alt = mistura(6.5, 3.8, surge) * Math.pow(0.19 / 3.8, mergulho);
+        terra.quadro(lat0, mistura(18, DESTINO.lon, giro), 1 + alt);
+        if (t > 1300) marcar('globo');
+        if (t > 3700) marcar('desce');
+        if (t > 4250) marcar('chegou');
+        if (t > 4500) terminar();
+        if (t < 5300) quadro = requestAnimationFrame(passo);
+        return;
+      }
+
       const m = Math.min(w, h);
       const surge = suave(faixa(t, 1700, 2900));
       const mergulho = entra(faixa(t, 2900, 4800));
-      const giro = suave(faixa(t, 1700, 4600));
       // Raio: aparece em 30% da tela e cresce até a cidade ocupar a tela inteira.
       const r = mistura(m * 0.18, m * 0.34, surge) + mergulho * Math.max(w, h) * 5;
-      const lat0 = mistura(8, DESTINO.lat, giro);
       const lon0 = mistura(DESTINO.lon + 150, DESTINO.lon, giro);
       const a = surge * (1 - faixa(t, 4550, 4900));
       desenhar(r, lat0, lon0, a, faixa(t, 2700, 3200));
@@ -468,9 +549,9 @@ const pontos = JSON.stringify(pontosDaTerra());
       document.dispatchEvent(new Event('intro:fim'));
       setTimeout(() => {
         cancelAnimationFrame(quadro);
-        video.pause();
+        terra?.destruir();
         host.remove();
-      }, 800);
+      }, 1100);
     }
 
     host.querySelector('[data-pular]')!.addEventListener('click', terminar);
