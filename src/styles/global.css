@@ -18,6 +18,7 @@
   --c-agua: #3fd0bd;
   --c-violeta: #b39dff;
   --c-verde: #8ad66b;
+  --c-azul: #7aa2ff;
   --c-tinta: var(--ink-soft);
   --accent-wash: color-mix(in srgb, var(--accent) 12%, transparent);
   --focus: var(--accent-text);

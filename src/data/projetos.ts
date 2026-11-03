@@ -214,4 +214,78 @@ export const coreufabc: ProjetoCurto = {
   link: { rotulo: 'github.com/VitorTosti/CoreUFABC', href: 'https://github.com/VitorTosti/CoreUFABC' },
 };
 
-export const outrosProjetos = [cardapio, infocaij, infomachine, coreufabc];
+export const encaixe: ProjetoCurto = {
+  slug: 'encaixe',
+  nome: 'Encaixe',
+  status: 'em construção',
+  resumo:
+    'Agenda online para pequenos negócios de beleza, construída por um time de agentes de IA: um orquestrador e cinco especialistas, cada um dono de uma área do código, com contratos de tipos, um branch por agente, testes antes de cada merge e, desde a Fase 2b, revisão independente. O cliente agenda pelo celular sem criar senha; o profissional vê o dia, encaixa a lista de espera nos horários vagos e avisa quem já deveria ter voltado. Piloto: uma barbearia de São Bernardo do Campo. Próxima etapa: um copiloto com agentes nomeados em que o modelo propõe e a pessoa confirma.',
+  rastro: [
+    {
+      tipo: 'pergunta',
+      rotulo: 'problema',
+      texto:
+        'O dono de uma barbearia atende o dia todo com as mãos ocupadas e precisa ver o dia, fechar a agenda e preencher os horários vagos sem parar o atendimento.',
+    },
+    { tipo: 'chamada', etapa: true, ferramenta: 'orquestrador', args: { plano: 'por fase', contratos: 'packages/domain/src/contracts' } },
+    {
+      tipo: 'chamada',
+      etapa: true,
+      ferramenta: 'especialistas',
+      args: { agentes: ['motor-agenda', 'banco-dados', 'design-system', 'ui-cliente', 'ui-painel'], branch: 'agent/<nome>' },
+    },
+    { tipo: 'chamada', etapa: true, ferramenta: 'portao_antes_do_merge', args: { comandos: ['typecheck', 'lint', 'test'], revisao: 'independente' } },
+    {
+      tipo: 'saida',
+      texto: 'Página pública, painel do profissional e motor de agenda integrados; cada negócio isolado no banco por RLS.',
+      aviso: 'O copiloto com agentes (Fase 3) está especificado e ainda não foi construído.',
+    },
+    {
+      tipo: 'avaliacao',
+      itens: ['471 testes unitários', '191 testes no motor, 99,3% de cobertura', '146 asserções pgTAP', '9 arquivos E2E com axe'],
+    },
+  ],
+  stack: 'Next.js 16 · TypeScript · Tailwind 4 · Supabase (Postgres, Auth, RLS) · Vitest · Playwright · pnpm',
+  link: { rotulo: 'github.com/VitorTosti/sistema-agenda', href: 'https://github.com/VitorTosti/sistema-agenda' },
+};
+
+/** O time de agentes do Encaixe: quem é dono de quê e o que entregou. */
+export const timeEncaixe = [
+  { agente: 'Orquestrador', dono: 'contratos, integração, merges', entregou: 'Plano de cada fase, contratos de tipos, integração na main e o registro de andamento.' },
+  { agente: 'motor-agenda', dono: 'packages/domain', entregou: 'Horários livres, reserva, remarcação, buracos, fechamento de período, lista de espera e indicadores. 191 testes, 99,3% de cobertura.' },
+  { agente: 'banco-dados', dono: 'supabase/', entregou: '22 tabelas com RLS, restrição contra dois atendimentos no mesmo horário, RPCs atômicas e 146 asserções pgTAP.' },
+  { agente: 'design-system', dono: 'packages/ui', entregou: 'Tema por negócio, o seletor de horários "Pente" e testes de contraste e acessibilidade.' },
+  { agente: 'ui-cliente', dono: 'página pública', entregou: 'Agendamento em etapas, login por código SMS, remarcar e cancelar, lista de espera e links de uso único.' },
+  { agente: 'ui-painel', dono: 'painel', entregou: 'Hoje, Agenda, lista de espera com "Encaixar", Retornos, Clientes, Serviços, Equipe, Configurações e Relatórios.' },
+];
+
+/** As regras que fizeram o time funcionar. */
+export const regrasEncaixe = [
+  'Contratos primeiro: os tipos compartilhados só mudam pelo orquestrador, que avisa os outros agentes.',
+  'Um branch por agente (agent/<nome>), num worktree isolado; o orquestrador faz o merge.',
+  'Subagente não chama subagente: toda coordenação passa pela sessão principal.',
+  'Verifique, não acredite: nenhuma entrega entra sem typecheck, lint e testes verdes.',
+  'Quem escreve não revisa: desde a Fase 2b, uma sessão que não escreveu o código revisa cada branch antes do merge. As revisões pegaram escritas que deveriam ser atômicas e um limite de 200 clientes que fazia o aviso por WhatsApp falhar.',
+];
+
+/** O copiloto (próxima etapa): agentes nomeados, todos com escrita em duas fases. */
+export const copilotoEncaixe = {
+  agentes: [
+    { nome: 'Recepção', cuida: 'agenda, remarcações e bloqueios' },
+    { nome: 'Retorno', cuida: 'clientes na hora de voltar' },
+    { nome: 'Caixa', cuida: 'faturamento e números' },
+    { nome: 'Vaga', cuida: 'horários vagos e lista de espera' },
+  ],
+  regras: [
+    'Leitura executa direto; toda escrita é proposta, mostrada como prévia e só executa no Confirmar.',
+    'O negócio e o usuário vêm sempre do servidor, nunca do modelo.',
+    'Nomes e observações de clientes chegam ao modelo como dados não confiáveis.',
+  ],
+  metas: [
+    { v: '95%', r: 'de ferramenta correta' },
+    { v: '100%', r: 'das escritas por proposta' },
+    { v: '0', r: 'execuções sem confirmação' },
+  ],
+};
+
+export const outrosProjetos = [cardapio, infocaij, infomachine, coreufabc, encaixe];

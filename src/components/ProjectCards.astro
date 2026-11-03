@@ -13,6 +13,8 @@ import gif from '../assets/mcp-demo.gif';
 import painel from '../assets/painel.png';
 import testes from '../assets/testes.png';
 import etiqueta from '../assets/etiqueta.png';
+import encaixeHoje from '../assets/encaixe-painel-hoje.webp';
+import encaixePente from '../assets/encaixe-cliente-pente.webp';
 
 const poster = await getImage({ src: posterSrc, format: 'webp', width: 960, quality: 75 });
 
@@ -125,6 +127,27 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
                     </div>
                   ))}
                 </dl>
+              )}
+              {c.midia === 'telas' && (
+                <figure class="telas">
+                  <Image
+                    class="tela-pc"
+                    src={encaixeHoje}
+                    alt="Painel do Encaixe, tela Hoje: o dia de cada barbeiro em blocos, com horários livres e o espaço do copiloto (dados fictícios)."
+                    widths={[640, 960, 1400]}
+                    sizes="(min-width: 900px) 46vw, 100vw"
+                    loading="lazy"
+                  />
+                  <Image
+                    class="tela-cel"
+                    src={encaixePente}
+                    alt="Página pública do Encaixe no celular: escolha do dia e dos horários livres (dados fictícios)."
+                    widths={[240, 360, 480]}
+                    sizes="(min-width: 900px) 12vw, 30vw"
+                    loading="lazy"
+                  />
+                  <figcaption class="chip">painel e página pública · dados fictícios</figcaption>
+                </figure>
               )}
               {c.midia === 'rastro' && (
                 <ol class="rastro mono">
@@ -378,6 +401,33 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
     display: inline;
   }
 
+  /* Encaixe: o painel no computador, com a página pública no celular por cima, no canto. */
+  .telas {
+    position: relative;
+    margin: 0;
+    display: grid;
+    align-content: center;
+    padding: clamp(1rem, 2.5vw, 1.75rem) clamp(1rem, 2.5vw, 1.75rem) clamp(3rem, 5vw, 3.75rem);
+    background: radial-gradient(circle at 85% 90%, color-mix(in srgb, var(--cor) 22%, transparent), transparent 60%), var(--surface);
+  }
+  .midia .telas :global(.tela-pc) {
+    width: 84%;
+    height: auto;
+    object-fit: initial;
+    border-radius: 0.75rem;
+    box-shadow: 0 1.5rem 3rem rgb(0 0 0 / 0.45);
+  }
+  .midia .telas :global(.tela-cel) {
+    position: absolute;
+    right: clamp(1rem, 2.5vw, 1.75rem);
+    /* Acima da etiqueta "dados fictícios", que fica no pé. */
+    bottom: clamp(3rem, 5vw, 3.75rem);
+    width: 27%;
+    height: auto;
+    border-radius: 1.1rem;
+    border: 3px solid #050506;
+    box-shadow: 0 1.25rem 2.5rem rgb(0 0 0 / 0.6);
+  }
   .nums {
     margin: 0;
     display: grid;

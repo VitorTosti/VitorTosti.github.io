@@ -1,6 +1,7 @@
 ---
 // Página de detalhe de cada projeto: problema, solução, o rastro completo e o que só cabe aqui
-// (correções do MCP, avaliação do Cardápio, capturas do InfoMachine, números do InfoCAIJ).
+// (correções do MCP, avaliação do Cardápio, capturas do InfoMachine, números do InfoCAIJ, o time de
+// agentes do Encaixe).
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Trace from '../../components/Trace.astro';
@@ -9,11 +10,15 @@ import { cartoes, numeros } from '../../data/cartoes';
 import {
   avaliacaoCardapio as av,
   cardapio,
+  copilotoEncaixe,
   coreufabc,
+  encaixe,
   ferramentasMcp,
   infocaij,
   infocaijMcp as mcp,
   infomachine,
+  regrasEncaixe,
+  timeEncaixe,
   type ProjetoCurto,
 } from '../../data/projetos';
 import type { Passo } from '../../lib/trace';
@@ -24,6 +29,10 @@ import gif from '../../assets/mcp-demo.gif';
 import painel from '../../assets/painel.png';
 import testes from '../../assets/testes.png';
 import etiqueta from '../../assets/etiqueta.png';
+import encaixeHoje from '../../assets/encaixe-painel-hoje.webp';
+import encaixeRetornos from '../../assets/encaixe-painel-retornos.webp';
+import encaixeServicos from '../../assets/encaixe-cliente-servicos.webp';
+import encaixePente from '../../assets/encaixe-cliente-pente.webp';
 
 export function getStaticPaths() {
   return cartoes.map((c) => ({ params: { slug: c.slug } }));
@@ -39,6 +48,7 @@ const curtos: Record<string, ProjetoCurto> = {
   [infocaij.slug]: infocaij,
   [infomachine.slug]: infomachine,
   [coreufabc.slug]: coreufabc,
+  [encaixe.slug]: encaixe,
 };
 const curto = curtos[slug!];
 const ehMcp = slug === mcp.slug;
@@ -54,6 +64,14 @@ const capturas = [
   { src: painel, legenda: 'Painel: hardware lido da máquina', alt: 'Painel do InfoMachine com o hardware lido da máquina (valores de exemplo).' },
   { src: testes, legenda: 'Testes: câmera, teclado, som, tela e touchpad', alt: 'Tela de testes do InfoMachine (valores de exemplo).' },
   { src: etiqueta, legenda: 'Etiqueta térmica, impressa por um serviço no NAS', alt: 'Pré-visualização da etiqueta térmica gerada pelo InfoMachine (valores de exemplo).' },
+];
+const telasPc = [
+  { src: encaixeHoje, legenda: 'Hoje: o dia de cada barbeiro, com horários livres e o espaço do copiloto', alt: 'Tela Hoje do painel do Encaixe (dados fictícios).' },
+  { src: encaixeRetornos, legenda: 'Retornos: quem está na hora de voltar, convites enviados e quem voltou', alt: 'Tela Retornos do painel do Encaixe (dados fictícios).' },
+];
+const telasCel = [
+  { src: encaixeServicos, legenda: 'Página pública: escolha do serviço', alt: 'Página pública do Encaixe no celular, com a lista de serviços (dados fictícios).' },
+  { src: encaixePente, legenda: 'O "Pente": dia e horários livres', alt: 'Página pública do Encaixe no celular, com a escolha do dia e dos horários (dados fictícios).' },
 ];
 const num = String(i + 1).padStart(2, '0');
 ---
@@ -122,6 +140,32 @@ const num = String(i + 1).padStart(2, '0');
       )
     }
     {
+      c.midia === 'telas' && (
+        <div class="destaque telas">
+          <ul class="telas-pc">
+            {telasPc.map((t) => (
+              <li data-fade>
+                <figure>
+                  <Image src={t.src} alt={t.alt} widths={[720, 1100, 1600]} sizes="(min-width: 900px) 60vw, 100vw" loading="lazy" />
+                  <figcaption>{t.legenda} · dados fictícios</figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+          <ul class="telas-cel">
+            {telasCel.map((t) => (
+              <li data-fade>
+                <figure>
+                  <Image src={t.src} alt={t.alt} widths={[320, 480, 720]} sizes="(min-width: 900px) 20vw, 45vw" loading="lazy" />
+                  <figcaption>{t.legenda}</figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+    {
       c.midia === 'numeros' && (
         <dl class="destaque nums">
           {numeros.map((n) => (
@@ -164,6 +208,75 @@ const num = String(i + 1).padStart(2, '0');
       </div>
     </section>
 
+    {
+      slug === encaixe.slug && (
+        <section class="bloco" aria-labelledby="h-time">
+          <h2 id="h-time" class="rot">O time de agentes</h2>
+          <div>
+            <p class="texto" data-fade>
+              Eu defini o produto, escrevi a especificação e aprovei cada entrega. O código foi escrito por um orquestrador e
+              cinco agentes especialistas, cada um dono de uma área. O time completo tem 8 agentes; copiloto-ia, automacoes e
+              qa-seguranca entram nas próximas fases.
+            </p>
+            <ol class="time" data-fade>
+              {timeEncaixe.map((a) => (
+                <li>
+                  <p class="ag">{a.agente}</p>
+                  <p class="dono">{a.dono}</p>
+                  <p class="entregou">{a.entregou}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+      )
+    }
+    {
+      slug === encaixe.slug && (
+        <section class="bloco" aria-labelledby="h-regras">
+          <h2 id="h-regras" class="rot">Regras do time</h2>
+          <ul class="lista" data-fade>
+            {regrasEncaixe.map((r) => (
+              <li>{r}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+    {
+      slug === encaixe.slug && (
+        <section class="bloco" aria-labelledby="h-copiloto">
+          <h2 id="h-copiloto" class="rot">Próxima etapa: copiloto</h2>
+          <div data-fade>
+            <p class="texto">
+              O profissional escreve ou fala em português ("fecha sexta à tarde, vou no médico") e o copiloto escolhe um de
+              quatro agentes nomeados. O modelo propõe; a pessoa decide. Está especificado e ainda não foi construído.
+            </p>
+            <ul class="chips" aria-label="Agentes do copiloto">
+              {copilotoEncaixe.agentes.map((a) => (
+                <li>
+                  <strong>{a.nome}</strong> · {a.cuida}
+                </li>
+              ))}
+            </ul>
+            <ul class="lista sub-lista">
+              {copilotoEncaixe.regras.map((r) => (
+                <li>{r}</li>
+              ))}
+            </ul>
+            <h3 class="sub">Metas da avaliação, num conjunto dourado de 40+ pedidos</h3>
+            <dl class="aval">
+              {copilotoEncaixe.metas.map((m) => (
+                <div>
+                  <dt>{m.v}</dt>
+                  <dd>{m.r}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )
+    }
     {
       ehMcp && (
         <section class="bloco" aria-labelledby="h-correcoes">
@@ -421,6 +534,63 @@ const num = String(i + 1).padStart(2, '0');
     border-radius: 1.25rem;
     border: 2px solid var(--ink-soft);
   }
+  /* Encaixe: duas telas do painel grandes e as duas do celular ao lado. */
+  .telas {
+    display: grid;
+    gap: 1rem;
+  }
+  .telas ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .telas figure {
+    margin: 0;
+  }
+  .telas :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 1.25rem;
+    border: 2px solid var(--ink-soft);
+  }
+  .telas-cel {
+    grid-template-columns: 1fr 1fr;
+  }
+  .time {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+  }
+  .time li {
+    display: grid;
+    gap: 0.25rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .time .ag {
+    margin: 0;
+    font-size: 1.375rem;
+    line-height: 1.2;
+    color: var(--cor);
+  }
+  .time .dono {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+  .time .entregou {
+    margin: 0.25rem 0 0;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+  .sub-lista {
+    margin-top: 1.25rem;
+  }
   .nums {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -670,6 +840,28 @@ const num = String(i + 1).padStart(2, '0');
     }
     .galeria {
       grid-template-columns: repeat(3, 1fr);
+    }
+    .telas {
+      grid-template-columns: 3fr 1.15fr;
+      align-items: start;
+    }
+    .telas-cel {
+      grid-template-columns: 1fr;
+    }
+    .time li {
+      grid-template-columns: 11rem 1fr;
+      grid-template-areas: 'ag entregou' 'dono entregou';
+      column-gap: 1.5rem;
+    }
+    .time .ag {
+      grid-area: ag;
+    }
+    .time .dono {
+      grid-area: dono;
+    }
+    .time .entregou {
+      grid-area: entregou;
+      margin: 0;
     }
     .nums {
       grid-template-columns: repeat(4, 1fr);

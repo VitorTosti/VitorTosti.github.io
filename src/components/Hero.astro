@@ -1,6 +1,6 @@
 ---
 // Abertura em uma tela: o nome no centro de uma esfera 3D de fragmentos dos projetos.
-// 21 cartões (prints e números reais) ficam numa esfera de Fibonacci; arrastar gira a esfera e o
+// 24 cartões (prints e números reais) ficam numa esfera de Fibonacci; arrastar gira a esfera e o
 // nome continua no centro, de frente para a câmera. Cada cartão leva à página do projeto.
 // Sem JS, a esfera fica parada no ângulo inicial; com movimento reduzido, não há inércia de entrada.
 import { getImage } from 'astro:assets';
@@ -11,6 +11,7 @@ import testes from '../assets/testes.png';
 import etiqueta from '../assets/etiqueta.png';
 import cardapio009 from '../assets/cardapio_009.jpg';
 import cardapio017 from '../assets/cardapio_017.jpg';
+import encaixeHoje from '../assets/encaixe-painel-hoje.webp';
 import { ptBR as s } from '../i18n/pt-BR';
 import { splitFallback } from '../lib/tokenize';
 import { CURRICULO, temCurriculo } from '../lib/curriculo';
@@ -22,7 +23,7 @@ const img = async (src: ImageMetadata) => (await getImage({ src, format: 'webp',
 const num = (r: string) => numeros.find((n) => n.r === r)!.v;
 const aval = (r: string) => av.find((a) => a.r === r)!.v;
 
-type Cor = 'ambar' | 'coral' | 'agua' | 'violeta' | 'verde' | 'tinta';
+type Cor = 'ambar' | 'coral' | 'agua' | 'violeta' | 'verde' | 'azul' | 'tinta';
 // Todo cartão diz de qual projeto é (rot) e carrega a cor dele.
 type Frag =
   | { tipo: 'img'; src: string; href: string; rot: string; cor: Cor; alto?: boolean }
@@ -33,6 +34,7 @@ const CARD = { href: pj('cardapio-em-1-minuto'), rot: 'Cardápio', cor: 'coral' 
 const CAIJ = { href: pj('infocaij'), rot: 'InfoCAIJ', cor: 'agua' } as const;
 const MACH = { href: pj('infomachine'), rot: 'InfoMachine', cor: 'violeta' } as const;
 const CORE = { href: pj('coreufabc'), rot: 'CoreUFABC', cor: 'verde' } as const;
+const ENC = { href: pj('encaixe'), rot: 'Encaixe', cor: 'azul' } as const;
 const EU = { href: '#sobre', rot: 'Sobre', cor: 'tinta' } as const;
 
 // Ordem pensada para a esfera: prints e números se alternam, e cada projeto aparece espalhado.
@@ -43,6 +45,7 @@ const frags: Frag[] = [
   { tipo: 'txt', v: num('máquinas e pedidos por mês'), r: 'máquinas e pedidos por mês', ...CAIJ },
   { tipo: 'img', src: await img(painel), ...MACH },
   { tipo: 'txt', v: 'Cardápio em 1 minuto', r: 'foto → JSON validado', ...CARD, rot: 'em andamento', titulo: true },
+  { tipo: 'txt', v: 'Encaixe', r: 'orquestrador + 5 agentes', ...ENC, rot: 'time de agentes', titulo: true },
   { tipo: 'txt', v: 'InfoMachine', r: '~100 máquinas por semana', ...MACH, rot: 'em uso na bancada', titulo: true },
   { tipo: 'img', src: await img(testes), ...MACH },
   { tipo: 'txt', v: 'CoreUFABC', r: 'CR · CA · CPk', ...CORE, rot: 'protótipo', titulo: true },
@@ -53,9 +56,11 @@ const frags: Frag[] = [
   { tipo: 'txt', v: 'InfoCAIJ', r: '15 usuários · 8 etapas', ...CAIJ, rot: 'em produção', titulo: true },
   { tipo: 'txt', v: '66', r: 'testes · CI no GitHub', ...CORE },
   { tipo: 'txt', v: num('eventos de histórico'), r: 'eventos de histórico', ...CAIJ },
+  { tipo: 'img', src: await img(encaixeHoje), ...ENC },
   { tipo: 'txt', v: 'SHA-256', r: 'atualizações verificadas', ...MACH },
   { tipo: 'txt', v: '0', r: 'dados de clientes expostos', ...MCP },
   { tipo: 'txt', v: aval('armadilhas'), r: 'armadilhas no teste', ...CARD },
+  { tipo: 'txt', v: '471', r: 'testes · 146 asserções no banco', ...ENC },
   { tipo: 'img', src: await img(foto), ...EU, rot: 'Vitor Tosti', alto: true },
   { tipo: 'txt', v: 'UFABC', r: 'Ciência da Computação', ...EU, rot: 'formação', titulo: true },
 ];

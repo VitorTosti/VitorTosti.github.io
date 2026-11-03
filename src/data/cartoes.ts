@@ -1,6 +1,6 @@
-// Os cinco projetos como cartões: resumo, fatos, cor e o tipo de mídia. Usado na página inicial
+// Os seis projetos como cartões: resumo, fatos, cor e o tipo de mídia. Usado na página inicial
 // (cartões empilhados) e nas páginas de detalhe de cada projeto.
-import { avaliacaoCardapio as av, cardapio, coreufabc, infocaij, infocaijMcp as mcp, infomachine } from './projetos';
+import { avaliacaoCardapio as av, cardapio, coreufabc, encaixe, infocaij, infocaijMcp as mcp, infomachine } from './projetos';
 
 const [erroA, erroB] = av.preliminar.erros;
 
@@ -11,9 +11,9 @@ export type Cartao = {
   resumo: string;
   fatos: string[];
   link: { rotulo: string; href: string | null };
-  midia: 'video' | 'cardapio' | 'numeros' | 'carrossel' | 'rastro';
+  midia: 'video' | 'cardapio' | 'numeros' | 'carrossel' | 'rastro' | 'telas';
   /** Cor do projeto: número, status e detalhes do cartão. */
-  cor: 'ambar' | 'coral' | 'agua' | 'violeta' | 'verde';
+  cor: 'ambar' | 'coral' | 'agua' | 'violeta' | 'verde' | 'azul';
 };
 
 export const cartoes: Cartao[] = [
@@ -31,6 +31,21 @@ export const cartoes: Cartao[] = [
     link: { rotulo: 'GitHub', href: mcp.link.href },
     midia: 'video',
     cor: 'ambar',
+  },
+  {
+    slug: encaixe.slug,
+    nome: encaixe.nome,
+    status: 'time de agentes',
+    resumo:
+      'Agenda online para negócios de beleza construída por um time de agentes de IA: um orquestrador e cinco especialistas, com contratos, um branch por agente e testes antes de cada merge.',
+    fatos: [
+      '471 testes, 191 no motor de agenda com 99,3% de cobertura',
+      '22 tabelas isoladas por negócio com RLS e 146 asserções pgTAP',
+      'Próxima etapa: copiloto em que o modelo propõe e a pessoa confirma',
+    ],
+    link: { rotulo: 'GitHub', href: encaixe.link.href },
+    midia: 'telas',
+    cor: 'azul',
   },
   {
     slug: cardapio.slug,

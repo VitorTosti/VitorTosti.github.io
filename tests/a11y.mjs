@@ -8,7 +8,7 @@ const url = process.argv[2] ?? 'http://localhost:4321/';
 const browser = await chromium.launch();
 let falhas = 0;
 
-const paginas = ['', 'projetos/infocaij-mcp/', 'projetos/cardapio-em-1-minuto/', 'projetos/infocaij/', 'projetos/infomachine/', 'projetos/coreufabc/'];
+const paginas = ['', 'projetos/infocaij-mcp/', 'projetos/cardapio-em-1-minuto/', 'projetos/infocaij/', 'projetos/infomachine/', 'projetos/coreufabc/', 'projetos/encaixe/'];
 for (const pagina of paginas)
 for (const width of [375, 1440])
   for (const tema of ['dark']) {
