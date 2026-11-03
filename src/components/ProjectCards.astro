@@ -4,7 +4,6 @@
 import { Image, getImage } from 'astro:assets';
 import BigTitle from './BigTitle.astro';
 import CardapioJson from './CardapioJson.astro';
-import { coreufabc } from '../data/projetos';
 import { avaliacao, cartoes, numeros } from '../data/cartoes';
 import { ptBR as s } from '../i18n/pt-BR';
 import posterSrc from '../assets/mcp-poster.webp';
@@ -15,6 +14,9 @@ import testes from '../assets/testes.png';
 import etiqueta from '../assets/etiqueta.png';
 import encaixeHoje from '../assets/encaixe-painel-hoje.webp';
 import encaixePente from '../assets/encaixe-cliente-pente.webp';
+import coreInicio from '../assets/core-inicio.webp';
+import coreNotas from '../assets/core-notas.webp';
+import coreHistorico from '../assets/core-historico.webp';
 
 const poster = await getImage({ src: posterSrc, format: 'webp', width: 960, quality: 75 });
 
@@ -24,13 +26,12 @@ const capturas = [
   { src: etiqueta, legenda: 'etiqueta', alt: 'Pré-visualização da etiqueta térmica gerada pelo InfoMachine (valores de exemplo).' },
 ];
 
-const rastroCore = coreufabc.rastro.flatMap((p) =>
-  p.tipo === 'chamada'
-    ? [`${p.ferramenta}(${Object.entries(p.args).map(([k, v]) => `${k}: ${JSON.stringify(v)}`).join(', ')})`]
-    : p.tipo === 'avaliacao'
-      ? [`✓ ${p.itens.join(' · ')}`]
-      : [],
-);
+// CoreUFABC: três telas do app, com o histórico fictício do repositório.
+const celulares = [
+  { src: coreInicio, alt: 'CoreUFABC, tela Início: CR, progressão curricular e próximas disciplinas (histórico fictício).' },
+  { src: coreNotas, alt: 'CoreUFABC, tela Notas: CR, CA e CP e o simulador de CR (histórico fictício).' },
+  { src: coreHistorico, alt: 'CoreUFABC, tela Histórico: progresso por eixo do currículo (histórico fictício).' },
+];
 ---
 
 <section class="section projetos" id="projetos">
@@ -149,12 +150,13 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
                   <figcaption class="chip">painel e página pública · dados fictícios</figcaption>
                 </figure>
               )}
-              {c.midia === 'rastro' && (
-                <ol class="rastro mono">
-                  {rastroCore.map((l) => (
-                    <li>{l}</li>
+              {c.midia === 'celulares' && (
+                <figure class="celulares">
+                  {celulares.map((t) => (
+                    <Image src={t.src} alt={t.alt} widths={[240, 360, 520]} sizes="(min-width: 900px) 14vw, 30vw" loading="lazy" />
                   ))}
-                </ol>
+                  <figcaption class="chip">histórico fictício</figcaption>
+                </figure>
               )}
             </div>
           </div>
@@ -453,22 +455,26 @@ const rastroCore = coreufabc.rastro.flatMap((p) =>
     font-size: 0.75rem;
     color: var(--ink-2);
   }
-  .rastro {
+  /* CoreUFABC: três telas do app lado a lado, a do meio um pouco acima. */
+  .celulares {
+    position: relative;
     margin: 0;
-    padding: clamp(1.25rem, 3vw, 2.25rem);
-    list-style: none;
+    padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 2.5vw, 1.75rem) clamp(3rem, 5vw, 3.75rem);
     display: grid;
-    align-content: center;
-    gap: 0.875rem;
-    font-size: 0.875rem;
-    color: var(--ink-2);
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.5rem, 1.5vw, 1rem);
+    align-items: center;
+    background: radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--cor) 22%, transparent), transparent 65%), var(--surface);
   }
-  .rastro li::before {
-    content: '→ ';
-    color: var(--cor);
+  .midia .celulares :global(img) {
+    height: auto;
+    object-fit: initial;
+    border-radius: 1rem;
+    border: 3px solid #050506;
+    box-shadow: 0 1.25rem 2.5rem rgb(0 0 0 / 0.5);
   }
-  .rastro li:last-child {
-    color: var(--ink);
+  .midia .celulares :global(img:nth-of-type(2)) {
+    transform: translateY(-6%);
   }
 
   @media (min-width: 900px) {

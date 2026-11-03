@@ -11,7 +11,7 @@ export type Cartao = {
   resumo: string;
   fatos: string[];
   link: { rotulo: string; href: string | null };
-  midia: 'video' | 'cardapio' | 'numeros' | 'carrossel' | 'rastro' | 'telas';
+  midia: 'video' | 'cardapio' | 'numeros' | 'carrossel' | 'celulares' | 'telas';
   /** Cor do projeto: número, status e detalhes do cartão. */
   cor: 'ambar' | 'coral' | 'agua' | 'violeta' | 'verde' | 'azul';
 };
@@ -89,7 +89,7 @@ export const cartoes: Cartao[] = [
     resumo: 'Lê o histórico do SIGAA, calcula CR, CA e CPk e simula a grade do próximo quadrimestre.',
     fatos: ['66 testes', 'CI no GitHub Actions'],
     link: { rotulo: 'GitHub', href: coreufabc.link.href },
-    midia: 'rastro',
+    midia: 'celulares',
     cor: 'verde',
   },
 ];

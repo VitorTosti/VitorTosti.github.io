@@ -1,6 +1,6 @@
 ---
 // Página de detalhe de cada projeto: problema, solução, o rastro completo e o que só cabe aqui
-// (correções do MCP, avaliação do Cardápio, capturas do InfoMachine, números do InfoCAIJ, o time de
+// (correções do MCP, avaliação do Cardápio, capturas do InfoMachine e do CoreUFABC, números do InfoCAIJ, o time de
 // agentes do Encaixe).
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
@@ -33,6 +33,11 @@ import encaixeHoje from '../../assets/encaixe-painel-hoje.webp';
 import encaixeRetornos from '../../assets/encaixe-painel-retornos.webp';
 import encaixeServicos from '../../assets/encaixe-cliente-servicos.webp';
 import encaixePente from '../../assets/encaixe-cliente-pente.webp';
+import coreInicio from '../../assets/core-inicio.webp';
+import corePlano from '../../assets/core-plano.webp';
+import coreNotas from '../../assets/core-notas.webp';
+import coreHistorico from '../../assets/core-historico.webp';
+import coreGrade from '../../assets/core-grade.webp';
 
 export function getStaticPaths() {
   return cartoes.map((c) => ({ params: { slug: c.slug } }));
@@ -72,6 +77,13 @@ const telasPc = [
 const telasCel = [
   { src: encaixeServicos, legenda: 'Página pública: escolha do serviço', alt: 'Página pública do Encaixe no celular, com a lista de serviços (dados fictícios).' },
   { src: encaixePente, legenda: 'O "Pente": dia e horários livres', alt: 'Página pública do Encaixe no celular, com a escolha do dia e dos horários (dados fictícios).' },
+];
+const telasCore = [
+  { src: coreInicio, legenda: 'Início: CR, progressão e próximas pela rota', alt: 'CoreUFABC, tela Início (histórico fictício).' },
+  { src: corePlano, legenda: 'Plano: rota curricular por bacharelado', alt: 'CoreUFABC, tela Plano (histórico fictício).' },
+  { src: coreNotas, legenda: 'Notas: CR, CA, CP e simulador de CR', alt: 'CoreUFABC, tela Notas (histórico fictício).' },
+  { src: coreHistorico, legenda: 'Histórico: progresso por eixo', alt: 'CoreUFABC, tela Histórico (histórico fictício).' },
+  { src: coreGrade, legenda: 'Grade: horário do próximo quadrimestre', alt: 'CoreUFABC, tela Grade com quatro turmas (histórico fictício).' },
 ];
 const num = String(i + 1).padStart(2, '0');
 ---
@@ -162,6 +174,23 @@ const num = String(i + 1).padStart(2, '0');
               </li>
             ))}
           </ul>
+        </div>
+      )
+    }
+    {
+      c.midia === 'celulares' && (
+        <div class="destaque">
+          <ul class="celulares">
+            {telasCore.map((t) => (
+              <li data-fade>
+                <figure>
+                  <Image src={t.src} alt={t.alt} widths={[320, 480, 720]} sizes="(min-width: 900px) 18vw, 45vw" loading="lazy" />
+                  <figcaption>{t.legenda}</figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+          <p class="nota-fig">Telas com o histórico fictício do repositório (Aluno Mock UFA), não com dados reais.</p>
         </div>
       )
     }
@@ -559,6 +588,31 @@ const num = String(i + 1).padStart(2, '0');
   .telas-cel {
     grid-template-columns: 1fr 1fr;
   }
+  /* CoreUFABC: as cinco telas do app, como celulares lado a lado. */
+  .celulares {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .celulares figure {
+    margin: 0;
+  }
+  .celulares :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 1.25rem;
+    border: 2px solid var(--ink-soft);
+  }
+  .nota-fig {
+    margin: 1rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
   .time {
     list-style: none;
     margin: 1.5rem 0 0;
@@ -847,6 +901,9 @@ const num = String(i + 1).padStart(2, '0');
     }
     .telas-cel {
       grid-template-columns: 1fr;
+    }
+    .celulares {
+      grid-template-columns: repeat(5, 1fr);
     }
     .time li {
       grid-template-columns: 11rem 1fr;
