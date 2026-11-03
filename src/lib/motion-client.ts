@@ -1,9 +1,8 @@
-// Movimento da página: entrada ao rolar, cursor magnético, carrossel, o "Sobre" gerado pela
+// Movimento da página: entrada ao rolar, carrossel, o "Sobre" gerado pela
 // rolagem e a pilha de projetos. Tudo funciona sem JS (conteúdo visível, sem movimento) e respeita
 // movimento reduzido.
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const fino = matchMedia('(pointer: fine)').matches;
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
 /** Elementos [data-fade] entram subindo 24px quando chegam à tela; --d dá o atraso. */
@@ -30,35 +29,6 @@ function entradas() {
     // Só anima o que ainda está abaixo da tela; o que já está visível fica como está.
     if (el.getBoundingClientRect().top > innerHeight) io.observe(el);
   });
-}
-
-/** O cursor do nome segue o mouse quando ele chega perto (efeito ímã). */
-function ima() {
-  const el = document.querySelector<HTMLElement>('[data-magnet]');
-  if (!el || reduce || !fino) return;
-  const RAIO = 150;
-  const FORCA = 3;
-  let ativo = false;
-  addEventListener(
-    'pointermove',
-    (e) => {
-      const r = el.getBoundingClientRect();
-      const cx = r.left + r.width / 2;
-      const cy = r.top + r.height / 2;
-      const perto =
-        e.clientX > r.left - RAIO && e.clientX < r.right + RAIO && e.clientY > r.top - RAIO && e.clientY < r.bottom + RAIO;
-      if (perto) {
-        if (!ativo) el.style.transition = 'transform 0.3s ease-out';
-        ativo = true;
-        el.style.transform = `translate3d(${(e.clientX - cx) / FORCA}px, ${(e.clientY - cy) / FORCA}px, 0)`;
-      } else if (ativo) {
-        ativo = false;
-        el.style.transition = 'transform 0.6s ease-in-out';
-        el.style.transform = '';
-      }
-    },
-    { passive: true },
-  );
 }
 
 type Tarefa = () => void;
@@ -208,6 +178,5 @@ function carrosseis() {
 entradas();
 linhas();
 carrosseis();
-ima();
 sobre();
 pilha();
