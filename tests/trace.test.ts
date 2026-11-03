@@ -67,7 +67,7 @@ describe('jsonTokens', () => {
 describe('outros projetos', () => {
   it('todos os rastros são válidos e etapas descritivas vêm marcadas', async () => {
     const { outrosProjetos } = await import('../src/data/projetos');
-    expect(outrosProjetos.map((p) => p.slug)).toEqual(['cardapio-em-1-minuto', 'infocaij', 'infomachine', 'coreufabc', 'encaixe']);
+    expect(outrosProjetos.map((p) => p.slug)).toEqual(['cardapio-em-1-minuto', 'infocaij', 'infomachine', 'coreufabc', 'kairo']);
     for (const p of outrosProjetos) {
       expect(validarRastro(p.rastro), p.slug).toEqual([]);
       for (const passo of p.rastro) if (passo.tipo === 'chamada') expect(passo.etapa, p.slug).toBe(true);

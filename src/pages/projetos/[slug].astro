@@ -1,7 +1,7 @@
 ---
 // Página de detalhe de cada projeto: problema, solução, o rastro completo e o que só cabe aqui
 // (correções do MCP, avaliação do Cardápio, capturas do InfoMachine, do CoreUFABC e do InfoCAIJ, o time de
-// agentes do Encaixe).
+// agentes do Kairo).
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Trace from '../../components/Trace.astro';
@@ -10,15 +10,15 @@ import { cartoes, numeros } from '../../data/cartoes';
 import {
   avaliacaoCardapio as av,
   cardapio,
-  copilotoEncaixe,
+  copilotoKairo,
   coreufabc,
-  encaixe,
+  kairo,
   ferramentasMcp,
   infocaij,
   infocaijMcp as mcp,
   infomachine,
-  regrasEncaixe,
-  timeEncaixe,
+  regrasKairo,
+  timeKairo,
   type ProjetoCurto,
 } from '../../data/projetos';
 import type { Passo } from '../../lib/trace';
@@ -32,10 +32,10 @@ import maqTestes from '../../assets/maq-testes.webp';
 import maqTeclado from '../../assets/maq-teclado.webp';
 import maqTouchpad from '../../assets/maq-touchpad.webp';
 import maqEtiqueta from '../../assets/maq-etiqueta.webp';
-import encaixeHoje from '../../assets/encaixe-painel-hoje.webp';
-import encaixeRetornos from '../../assets/encaixe-painel-retornos.webp';
-import encaixeServicos from '../../assets/encaixe-cliente-servicos.webp';
-import encaixePente from '../../assets/encaixe-cliente-pente.webp';
+import kairoHoje from '../../assets/kairo-painel-hoje.webp';
+import kairoRetornos from '../../assets/kairo-painel-retornos.webp';
+import kairoServicos from '../../assets/kairo-cliente-servicos.webp';
+import kairoPente from '../../assets/kairo-cliente-pente.webp';
 import caijFluxo from '../../assets/caij-fluxo.webp';
 import caijVenda from '../../assets/caij-venda.webp';
 import caijEmbalagem from '../../assets/caij-embalagem.webp';
@@ -60,7 +60,7 @@ const curtos: Record<string, ProjetoCurto> = {
   [infocaij.slug]: infocaij,
   [infomachine.slug]: infomachine,
   [coreufabc.slug]: coreufabc,
-  [encaixe.slug]: encaixe,
+  [kairo.slug]: kairo,
 };
 const curto = curtos[slug!];
 const ehMcp = slug === mcp.slug;
@@ -97,12 +97,12 @@ const galerias: Record<string, { nota: string; capturas: { src: ImageMetadata; l
 };
 const galeria = galerias[slug!];
 const telasPc = [
-  { src: encaixeHoje, legenda: 'Hoje: o dia de cada barbeiro, com horários livres e o espaço do copiloto', alt: 'Tela Hoje do painel do Encaixe (dados fictícios).' },
-  { src: encaixeRetornos, legenda: 'Retornos: quem está na hora de voltar, convites enviados e quem voltou', alt: 'Tela Retornos do painel do Encaixe (dados fictícios).' },
+  { src: kairoHoje, legenda: 'Hoje: o dia de cada barbeiro, com horários livres e o espaço do copiloto', alt: 'Tela Hoje do painel do Kairo (dados fictícios).' },
+  { src: kairoRetornos, legenda: 'Retornos: quem está na hora de voltar, convites enviados e quem voltou', alt: 'Tela Retornos do painel do Kairo (dados fictícios).' },
 ];
 const telasCel = [
-  { src: encaixeServicos, legenda: 'Página pública: escolha do serviço', alt: 'Página pública do Encaixe no celular, com a lista de serviços (dados fictícios).' },
-  { src: encaixePente, legenda: 'O "Pente": dia e horários livres', alt: 'Página pública do Encaixe no celular, com a escolha do dia e dos horários (dados fictícios).' },
+  { src: kairoServicos, legenda: 'Página pública: escolha do serviço', alt: 'Página pública do Kairo no celular, com a lista de serviços (dados fictícios).' },
+  { src: kairoPente, legenda: 'O "Pente": dia e horários livres', alt: 'Página pública do Kairo no celular, com a escolha do dia e dos horários (dados fictícios).' },
 ];
 const telasCore = [
   { src: coreInicio, legenda: 'Início: CR, progressão e próximas pela rota', alt: 'CoreUFABC, tela Início (histórico fictício).' },
@@ -266,7 +266,7 @@ const num = String(i + 1).padStart(2, '0');
     </section>
 
     {
-      slug === encaixe.slug && (
+      slug === kairo.slug && (
         <section class="bloco" aria-labelledby="h-time">
           <h2 id="h-time" class="rot">O time de agentes</h2>
           <div>
@@ -276,7 +276,7 @@ const num = String(i + 1).padStart(2, '0');
               qa-seguranca entram nas próximas fases.
             </p>
             <ol class="time" data-fade>
-              {timeEncaixe.map((a) => (
+              {timeKairo.map((a) => (
                 <li>
                   <p class="ag">{a.agente}</p>
                   <p class="dono">{a.dono}</p>
@@ -289,11 +289,11 @@ const num = String(i + 1).padStart(2, '0');
       )
     }
     {
-      slug === encaixe.slug && (
+      slug === kairo.slug && (
         <section class="bloco" aria-labelledby="h-regras">
           <h2 id="h-regras" class="rot">Regras do time</h2>
           <ul class="lista" data-fade>
-            {regrasEncaixe.map((r) => (
+            {regrasKairo.map((r) => (
               <li>{r}</li>
             ))}
           </ul>
@@ -301,7 +301,7 @@ const num = String(i + 1).padStart(2, '0');
       )
     }
     {
-      slug === encaixe.slug && (
+      slug === kairo.slug && (
         <section class="bloco" aria-labelledby="h-copiloto">
           <h2 id="h-copiloto" class="rot">Próxima etapa: copiloto</h2>
           <div data-fade>
@@ -310,20 +310,20 @@ const num = String(i + 1).padStart(2, '0');
               quatro agentes nomeados. O modelo propõe; a pessoa decide. Está especificado e ainda não foi construído.
             </p>
             <ul class="chips" aria-label="Agentes do copiloto">
-              {copilotoEncaixe.agentes.map((a) => (
+              {copilotoKairo.agentes.map((a) => (
                 <li>
                   <strong>{a.nome}</strong> · {a.cuida}
                 </li>
               ))}
             </ul>
             <ul class="lista sub-lista">
-              {copilotoEncaixe.regras.map((r) => (
+              {copilotoKairo.regras.map((r) => (
                 <li>{r}</li>
               ))}
             </ul>
             <h3 class="sub">Metas da avaliação, num conjunto dourado de 40+ pedidos</h3>
             <dl class="aval">
-              {copilotoEncaixe.metas.map((m) => (
+              {copilotoKairo.metas.map((m) => (
                 <div>
                   <dt>{m.v}</dt>
                   <dd>{m.r}</dd>
@@ -591,7 +591,7 @@ const num = String(i + 1).padStart(2, '0');
     border-radius: 1.25rem;
     border: 2px solid var(--ink-soft);
   }
-  /* Encaixe: duas telas do painel grandes e as duas do celular ao lado. */
+  /* Kairo: duas telas do painel grandes e as duas do celular ao lado. */
   .telas {
     display: grid;
     gap: 1rem;

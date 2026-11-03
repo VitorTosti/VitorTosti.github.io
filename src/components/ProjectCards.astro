@@ -13,8 +13,8 @@ import maqEquipamento from '../assets/maq-equipamento.webp';
 import maqTeclado from '../assets/maq-teclado.webp';
 import maqEtiqueta from '../assets/maq-etiqueta.webp';
 import maqTestes from '../assets/maq-testes.webp';
-import encaixeHoje from '../assets/encaixe-painel-hoje.webp';
-import encaixePente from '../assets/encaixe-cliente-pente.webp';
+import kairoHoje from '../assets/kairo-painel-hoje.webp';
+import kairoPente from '../assets/kairo-cliente-pente.webp';
 import caijFluxo from '../assets/caij-fluxo.webp';
 import caijVenda from '../assets/caij-venda.webp';
 import caijEmbalagem from '../assets/caij-embalagem.webp';
@@ -155,16 +155,16 @@ const celulares = [
                 <figure class="telas">
                   <Image
                     class="tela-pc"
-                    src={encaixeHoje}
-                    alt="Painel do Encaixe, tela Hoje: o dia de cada barbeiro em blocos, com horários livres e o espaço do copiloto (dados fictícios)."
+                    src={kairoHoje}
+                    alt="Painel do Kairo, tela Hoje: o dia de cada barbeiro em blocos, com horários livres e o espaço do copiloto (dados fictícios)."
                     widths={[640, 960, 1400]}
                     sizes="(min-width: 900px) 46vw, 100vw"
                     loading="lazy"
                   />
                   <Image
                     class="tela-cel"
-                    src={encaixePente}
-                    alt="Página pública do Encaixe no celular: escolha do dia e dos horários livres (dados fictícios)."
+                    src={kairoPente}
+                    alt="Página pública do Kairo no celular: escolha do dia e dos horários livres (dados fictícios)."
                     widths={[240, 360, 480]}
                     sizes="(min-width: 900px) 12vw, 30vw"
                     loading="lazy"
@@ -439,7 +439,7 @@ const celulares = [
     display: inline;
   }
 
-  /* Encaixe: o painel no computador, com a página pública no celular por cima, no canto. */
+  /* Kairo: o painel no computador, com a página pública no celular por cima, no canto. */
   .telas {
     position: relative;
     margin: 0;

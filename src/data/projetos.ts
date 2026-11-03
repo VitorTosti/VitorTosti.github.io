@@ -214,9 +214,9 @@ export const coreufabc: ProjetoCurto = {
   link: { rotulo: 'github.com/VitorTosti/CoreUFABC', href: 'https://github.com/VitorTosti/CoreUFABC' },
 };
 
-export const encaixe: ProjetoCurto = {
-  slug: 'encaixe',
-  nome: 'Encaixe',
+export const kairo: ProjetoCurto = {
+  slug: 'kairo',
+  nome: 'Kairo',
   status: 'em construção',
   resumo:
     'Agenda online para pequenos negócios de beleza, construída por um time de agentes de IA: um orquestrador e cinco especialistas, cada um dono de uma área do código, com contratos de tipos, um branch por agente, testes antes de cada merge e, desde a Fase 2b, revisão independente. O cliente agenda pelo celular sem criar senha; o profissional vê o dia, encaixa a lista de espera nos horários vagos e avisa quem já deveria ter voltado. Piloto: uma barbearia de São Bernardo do Campo. Próxima etapa: um copiloto com agentes nomeados em que o modelo propõe e a pessoa confirma.',
@@ -249,8 +249,8 @@ export const encaixe: ProjetoCurto = {
   link: { rotulo: 'github.com/VitorTosti/sistema-agenda', href: 'https://github.com/VitorTosti/sistema-agenda' },
 };
 
-/** O time de agentes do Encaixe: quem é dono de quê e o que entregou. */
-export const timeEncaixe = [
+/** O time de agentes do Kairo: quem é dono de quê e o que entregou. */
+export const timeKairo = [
   { agente: 'Orquestrador', dono: 'contratos, integração, merges', entregou: 'Plano de cada fase, contratos de tipos, integração na main e o registro de andamento.' },
   { agente: 'motor-agenda', dono: 'packages/domain', entregou: 'Horários livres, reserva, remarcação, buracos, fechamento de período, lista de espera e indicadores. 191 testes, 99,3% de cobertura.' },
   { agente: 'banco-dados', dono: 'supabase/', entregou: '22 tabelas com RLS, restrição contra dois atendimentos no mesmo horário, RPCs atômicas e 146 asserções pgTAP.' },
@@ -260,7 +260,7 @@ export const timeEncaixe = [
 ];
 
 /** As regras que fizeram o time funcionar. */
-export const regrasEncaixe = [
+export const regrasKairo = [
   'Contratos primeiro: os tipos compartilhados só mudam pelo orquestrador, que avisa os outros agentes.',
   'Um branch por agente (agent/<nome>), num worktree isolado; o orquestrador faz o merge.',
   'Subagente não chama subagente: toda coordenação passa pela sessão principal.',
@@ -269,7 +269,7 @@ export const regrasEncaixe = [
 ];
 
 /** O copiloto (próxima etapa): agentes nomeados, todos com escrita em duas fases. */
-export const copilotoEncaixe = {
+export const copilotoKairo = {
   agentes: [
     { nome: 'Recepção', cuida: 'agenda, remarcações e bloqueios' },
     { nome: 'Retorno', cuida: 'clientes na hora de voltar' },
@@ -288,4 +288,4 @@ export const copilotoEncaixe = {
   ],
 };
 
-export const outrosProjetos = [cardapio, infocaij, infomachine, coreufabc, encaixe];
+export const outrosProjetos = [cardapio, infocaij, infomachine, coreufabc, kairo];

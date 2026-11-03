@@ -1,6 +1,6 @@
 // Os seis projetos como cartões: resumo, fatos, cor e o tipo de mídia. Usado na página inicial
 // (cartões empilhados) e nas páginas de detalhe de cada projeto.
-import { avaliacaoCardapio as av, cardapio, coreufabc, encaixe, infocaij, infocaijMcp as mcp, infomachine } from './projetos';
+import { avaliacaoCardapio as av, cardapio, coreufabc, kairo, infocaij, infocaijMcp as mcp, infomachine } from './projetos';
 
 const [erroA, erroB] = av.preliminar.erros;
 
@@ -33,8 +33,8 @@ export const cartoes: Cartao[] = [
     cor: 'ambar',
   },
   {
-    slug: encaixe.slug,
-    nome: encaixe.nome,
+    slug: kairo.slug,
+    nome: kairo.nome,
     status: 'time de agentes',
     resumo:
       'Agenda online para negócios de beleza construída por um time de agentes de IA: um orquestrador e cinco especialistas, com contratos, um branch por agente e testes antes de cada merge.',
@@ -43,7 +43,7 @@ export const cartoes: Cartao[] = [
       '22 tabelas isoladas por negócio com RLS e 146 asserções pgTAP',
       'Próxima etapa: copiloto em que o modelo propõe e a pessoa confirma',
     ],
-    link: { rotulo: 'GitHub', href: encaixe.link.href },
+    link: { rotulo: 'GitHub', href: kairo.link.href },
     midia: 'telas',
     cor: 'azul',
   },
