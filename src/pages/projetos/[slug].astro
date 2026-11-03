@@ -1,6 +1,6 @@
 ---
 // Página de detalhe de cada projeto: problema, solução, o rastro completo e o que só cabe aqui
-// (correções do MCP, avaliação do Cardápio, capturas do InfoMachine e do CoreUFABC, números do InfoCAIJ, o time de
+// (correções do MCP, avaliação do Cardápio, capturas do InfoMachine, do CoreUFABC e do InfoCAIJ, o time de
 // agentes do Encaixe).
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
@@ -26,13 +26,20 @@ import { ptBR as s } from '../../i18n/pt-BR';
 import posterSrc from '../../assets/mcp-poster.webp';
 import videoUrl from '../../assets/infocaij-mcp-demo.mp4?url';
 import gif from '../../assets/mcp-demo.gif';
-import painel from '../../assets/painel.png';
-import testes from '../../assets/testes.png';
-import etiqueta from '../../assets/etiqueta.png';
+import maqEquipamento from '../../assets/maq-equipamento.webp';
+import maqRastreador from '../../assets/maq-rastreador.webp';
+import maqTestes from '../../assets/maq-testes.webp';
+import maqTeclado from '../../assets/maq-teclado.webp';
+import maqTouchpad from '../../assets/maq-touchpad.webp';
+import maqEtiqueta from '../../assets/maq-etiqueta.webp';
 import encaixeHoje from '../../assets/encaixe-painel-hoje.webp';
 import encaixeRetornos from '../../assets/encaixe-painel-retornos.webp';
 import encaixeServicos from '../../assets/encaixe-cliente-servicos.webp';
 import encaixePente from '../../assets/encaixe-cliente-pente.webp';
+import caijFluxo from '../../assets/caij-fluxo.webp';
+import caijVenda from '../../assets/caij-venda.webp';
+import caijEmbalagem from '../../assets/caij-embalagem.webp';
+import caijEstoque from '../../assets/caij-estoque.webp';
 import coreInicio from '../../assets/core-inicio.webp';
 import corePlano from '../../assets/core-plano.webp';
 import coreNotas from '../../assets/core-notas.webp';
@@ -65,11 +72,30 @@ const solucao = ehMcp ? mcp.solucao : curto.resumo;
 const passos = ehMcp ? rastro : rastro.filter((p) => p.tipo !== 'pergunta');
 
 const poster = await getImage({ src: posterSrc, format: 'webp', width: 1600, quality: 75 });
-const capturas = [
-  { src: painel, legenda: 'Painel: hardware lido da máquina', alt: 'Painel do InfoMachine com o hardware lido da máquina (valores de exemplo).' },
-  { src: testes, legenda: 'Testes: câmera, teclado, som, tela e touchpad', alt: 'Tela de testes do InfoMachine (valores de exemplo).' },
-  { src: etiqueta, legenda: 'Etiqueta térmica, impressa por um serviço no NAS', alt: 'Pré-visualização da etiqueta térmica gerada pelo InfoMachine (valores de exemplo).' },
-];
+// Galerias por projeto; `nota` acompanha cada legenda.
+const galerias: Record<string, { nota: string; capturas: { src: ImageMetadata; legenda: string; alt: string }[] }> = {
+  [infomachine.slug]: {
+    nota: 'em uso na bancada',
+    capturas: [
+      { src: maqEquipamento, legenda: 'Leitura: 7 informações do hardware e o andamento em 4 etapas', alt: 'InfoMachine: hardware lido de um Lenovo ThinkPad E14 e o andamento da bancada.' },
+      { src: maqRastreador, legenda: 'Rastreador: histórico por serial e cadastro no AlterTag (nomes borrados)', alt: 'InfoMachine: cadastro de rastreador com técnico, produto do catálogo e histórico por serial.' },
+      { src: maqTestes, legenda: 'Testes: câmera, teclado, som, tela e touchpad, com resumo automático', alt: 'InfoMachine: central com os 5 testes de hardware.' },
+      { src: maqTeclado, legenda: 'Teclado: mapa das 104 teclas, reconhecidas pelo código físico', alt: 'InfoMachine: teste de teclado com as teclas já reconhecidas em destaque.' },
+      { src: maqTouchpad, legenda: 'Touchpad: movimento, cliques e rolagem contados', alt: 'InfoMachine: teste de mouse e touchpad com os contadores de movimento, cliques e rolagem.' },
+      { src: maqEtiqueta, legenda: 'Etiqueta térmica de 80 × 50 mm, impressa por um serviço no NAS', alt: 'InfoMachine: prévia da etiqueta térmica com serial, configuração, rastreador e QR Code.' },
+    ],
+  },
+  [infocaij.slug]: {
+    nota: 'em produção',
+    capturas: [
+      { src: caijFluxo, legenda: 'Fluxo operacional no modo TV: a fila da bancada e as vendas do dia', alt: 'InfoCAIJ no modo TV: pedidos do dia, fila da bancada e vendas por empresa.' },
+      { src: caijVenda, legenda: 'Nova venda: o pedido entra com código automático e vai para a bancada', alt: 'InfoCAIJ, tela Nova venda: dados da venda, produto e resumo do pedido.' },
+      { src: caijEmbalagem, legenda: 'Embalagem: rastreador e nota fiscal antes de embalar (nome borrado)', alt: 'InfoCAIJ, tela Embalagem: pedido com rastreador e nota fiscal aguardando embalagem.' },
+      { src: caijEstoque, legenda: 'Estoque: máquinas por modelo, conciliadas com o ERP', alt: 'InfoCAIJ, tela Estoque: 1.609 máquinas em 166 modelos, com a quantidade por modelo.' },
+    ],
+  },
+};
+const galeria = galerias[slug!];
 const telasPc = [
   { src: encaixeHoje, legenda: 'Hoje: o dia de cada barbeiro, com horários livres e o espaço do copiloto', alt: 'Tela Hoje do painel do Encaixe (dados fictícios).' },
   { src: encaixeRetornos, legenda: 'Retornos: quem está na hora de voltar, convites enviados e quem voltou', alt: 'Tela Retornos do painel do Encaixe (dados fictícios).' },
@@ -139,12 +165,14 @@ const num = String(i + 1).padStart(2, '0');
     }
     {
       c.midia === 'carrossel' && (
-        <ul class="destaque galeria">
-          {capturas.map((cap) => (
+        <ul class:list={['destaque galeria', { duas: galeria.capturas.length === 4 }]}>
+          {galeria.capturas.map((cap) => (
             <li data-fade>
               <figure>
                 <Image src={cap.src} alt={cap.alt} widths={[640, 960, 1280]} sizes="(min-width: 900px) 33vw, 100vw" loading="lazy" />
-                <figcaption>{cap.legenda} · valores de exemplo</figcaption>
+                <figcaption>
+                  {cap.legenda} · {galeria.nota}
+                </figcaption>
               </figure>
             </li>
           ))}
@@ -195,7 +223,7 @@ const num = String(i + 1).padStart(2, '0');
       )
     }
     {
-      c.midia === 'numeros' && (
+      slug === infocaij.slug && (
         <dl class="destaque nums">
           {numeros.map((n) => (
             <div data-fade>
@@ -894,6 +922,10 @@ const num = String(i + 1).padStart(2, '0');
     }
     .galeria {
       grid-template-columns: repeat(3, 1fr);
+    }
+    /* Quatro capturas largas (InfoCAIJ): duas por linha. */
+    .galeria.duas {
+      grid-template-columns: repeat(2, 1fr);
     }
     .telas {
       grid-template-columns: 3fr 1.15fr;

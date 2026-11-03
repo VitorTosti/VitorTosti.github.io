@@ -1,17 +1,18 @@
 ---
 // Abertura em uma tela: o nome no centro de uma esfera 3D de fragmentos dos projetos.
-// 24 cartões (prints e números reais) ficam numa esfera de Fibonacci; arrastar gira a esfera e o
+// 25 cartões (prints e números reais) ficam numa esfera de Fibonacci; arrastar gira a esfera e o
 // nome continua no centro, de frente para a câmera. Cada cartão leva à página do projeto.
 // Sem JS, a esfera fica parada no ângulo inicial; com movimento reduzido, não há inércia de entrada.
 import { getImage } from 'astro:assets';
 import foto from '../assets/vitor.webp';
 import poster from '../assets/mcp-poster.webp';
-import painel from '../assets/painel.png';
-import testes from '../assets/testes.png';
-import etiqueta from '../assets/etiqueta.png';
+import painel from '../assets/maq-equipamento.webp';
+import testes from '../assets/maq-teclado.webp';
+import etiqueta from '../assets/maq-etiqueta.webp';
 import cardapio009 from '../assets/cardapio_009.jpg';
 import cardapio017 from '../assets/cardapio_017.jpg';
 import encaixeHoje from '../assets/encaixe-painel-hoje.webp';
+import caijFluxo from '../assets/caij-fluxo.webp';
 import { ptBR as s } from '../i18n/pt-BR';
 import { splitFallback } from '../lib/tokenize';
 import { CURRICULO, temCurriculo } from '../lib/curriculo';
@@ -55,6 +56,7 @@ const frags: Frag[] = [
   { tipo: 'img', src: await img(etiqueta), ...MACH },
   { tipo: 'txt', v: 'InfoCAIJ', r: '15 usuários · 8 etapas', ...CAIJ, rot: 'em produção', titulo: true },
   { tipo: 'txt', v: '66', r: 'testes · CI no GitHub', ...CORE },
+  { tipo: 'img', src: await img(caijFluxo), ...CAIJ },
   { tipo: 'txt', v: num('eventos de histórico'), r: 'eventos de histórico', ...CAIJ },
   { tipo: 'img', src: await img(encaixeHoje), ...ENC },
   { tipo: 'txt', v: 'SHA-256', r: 'atualizações verificadas', ...MACH },

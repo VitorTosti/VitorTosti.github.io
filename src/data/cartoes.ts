@@ -11,7 +11,7 @@ export type Cartao = {
   resumo: string;
   fatos: string[];
   link: { rotulo: string; href: string | null };
-  midia: 'video' | 'cardapio' | 'numeros' | 'carrossel' | 'celulares' | 'telas';
+  midia: 'video' | 'cardapio' | 'carrossel' | 'celulares' | 'telas';
   /** Cor do projeto: número, status e detalhes do cartão. */
   cor: 'ambar' | 'coral' | 'agua' | 'violeta' | 'verde' | 'azul';
 };
@@ -67,9 +67,14 @@ export const cartoes: Cartao[] = [
     nome: infocaij.nome,
     status: 'em produção',
     resumo: 'Plataforma interna que tirou do WhatsApp a venda e a preparação de notebooks da CAIJ Informática.',
-    fatos: ['Fila de 8 etapas com checklist técnico de 10 itens', 'Integração com o ERP, nota fiscal e garantia com QR Code', 'Código privado'],
+    fatos: [
+      '~300 máquinas e pedidos por mês, 15 usuários em 4 perfis',
+      'Fila de 8 etapas com checklist técnico de 10 itens',
+      'Integração com o ERP, nota fiscal e garantia com QR Code',
+      'Código privado',
+    ],
     link: { rotulo: 'Estudo de caso', href: infocaij.link.href },
-    midia: 'numeros',
+    midia: 'carrossel',
     cor: 'agua',
   },
   {

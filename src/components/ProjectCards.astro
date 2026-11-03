@@ -4,27 +4,51 @@
 import { Image, getImage } from 'astro:assets';
 import BigTitle from './BigTitle.astro';
 import CardapioJson from './CardapioJson.astro';
-import { avaliacao, cartoes, numeros } from '../data/cartoes';
+import { avaliacao, cartoes } from '../data/cartoes';
 import { ptBR as s } from '../i18n/pt-BR';
 import posterSrc from '../assets/mcp-poster.webp';
 import videoUrl from '../assets/infocaij-mcp-demo.mp4?url';
 import gif from '../assets/mcp-demo.gif';
-import painel from '../assets/painel.png';
-import testes from '../assets/testes.png';
-import etiqueta from '../assets/etiqueta.png';
+import maqEquipamento from '../assets/maq-equipamento.webp';
+import maqTeclado from '../assets/maq-teclado.webp';
+import maqEtiqueta from '../assets/maq-etiqueta.webp';
+import maqTestes from '../assets/maq-testes.webp';
 import encaixeHoje from '../assets/encaixe-painel-hoje.webp';
 import encaixePente from '../assets/encaixe-cliente-pente.webp';
+import caijFluxo from '../assets/caij-fluxo.webp';
+import caijVenda from '../assets/caij-venda.webp';
+import caijEmbalagem from '../assets/caij-embalagem.webp';
+import caijEstoque from '../assets/caij-estoque.webp';
 import coreInicio from '../assets/core-inicio.webp';
 import coreNotas from '../assets/core-notas.webp';
 import coreHistorico from '../assets/core-historico.webp';
 
 const poster = await getImage({ src: posterSrc, format: 'webp', width: 960, quality: 75 });
 
-const capturas = [
-  { src: painel, legenda: 'painel', alt: 'Painel do InfoMachine com o hardware lido da máquina (valores de exemplo).' },
-  { src: testes, legenda: 'testes', alt: 'Tela de testes do InfoMachine: câmera, teclado, som, tela e touchpad (valores de exemplo).' },
-  { src: etiqueta, legenda: 'etiqueta', alt: 'Pré-visualização da etiqueta térmica gerada pelo InfoMachine (valores de exemplo).' },
-];
+// Carrosséis de capturas por projeto; `nota` aparece na etiqueta de cada slide.
+// `inteiro`: telas largas aparecem sem corte, em vez de preencher o quadro.
+const carrosseis: Record<string, { nota: string; inteiro?: boolean; capturas: { src: ImageMetadata; legenda: string; alt: string }[] }> = {
+  infomachine: {
+    nota: 'em uso na bancada',
+    inteiro: true,
+    capturas: [
+      { src: maqEquipamento, legenda: 'leitura do hardware', alt: 'InfoMachine: hardware lido de um Lenovo ThinkPad E14 e o andamento da bancada em 4 etapas.' },
+      { src: maqTeclado, legenda: 'teste de teclado', alt: 'InfoMachine: teste de teclado com o mapa das 104 teclas e as já reconhecidas em destaque.' },
+      { src: maqEtiqueta, legenda: 'etiqueta térmica', alt: 'InfoMachine: prévia da etiqueta térmica de 80 × 50 mm com serial, configuração, rastreador e QR Code.' },
+      { src: maqTestes, legenda: 'central de testes', alt: 'InfoMachine: central com os 5 testes de hardware e o resumo automático.' },
+    ],
+  },
+  infocaij: {
+    nota: 'em produção',
+    inteiro: true,
+    capturas: [
+      { src: caijFluxo, legenda: 'fluxo ao vivo', alt: 'InfoCAIJ no modo TV: pedidos do dia, fila da bancada e vendas por empresa.' },
+      { src: caijVenda, legenda: 'nova venda', alt: 'InfoCAIJ, tela Nova venda: dados da venda, produto e resumo do pedido.' },
+      { src: caijEmbalagem, legenda: 'embalagem', alt: 'InfoCAIJ, tela Embalagem: pedido com rastreador e nota fiscal aguardando embalagem.' },
+      { src: caijEstoque, legenda: 'estoque', alt: 'InfoCAIJ, tela Estoque: 1.609 máquinas em 166 modelos, com a quantidade por modelo.' },
+    ],
+  },
+};
 
 // CoreUFABC: três telas do app, com o histórico fictício do repositório.
 const celulares = [
@@ -91,11 +115,19 @@ const celulares = [
                 <CardapioJson />
               )}
               {c.midia === 'carrossel' && (
-                <div class="carrossel" data-carrossel role="group" aria-roledescription="carrossel" aria-label="Capturas do InfoMachine">
-                  {capturas.map((cap, k) => (
+                <div
+                  class:list={['carrossel', { inteiro: carrosseis[c.slug].inteiro }]}
+                  data-carrossel
+                  role="group"
+                  aria-roledescription="carrossel"
+                  aria-label={`Capturas do ${c.nome}`}
+                >
+                  {carrosseis[c.slug].capturas.map((cap, k) => (
                     <figure class:list={['slide', { ativo: k === 0 }]} aria-hidden={k === 0 ? undefined : 'true'}>
                       <Image src={cap.src} alt={cap.alt} widths={[480, 800, 1200]} sizes="(min-width: 900px) 46vw, 100vw" loading="lazy" />
-                      <figcaption class="chip">{cap.legenda} · valores de exemplo</figcaption>
+                      <figcaption class="chip">
+                        {cap.legenda} · {carrosseis[c.slug].nota}
+                      </figcaption>
                     </figure>
                   ))}
                   <div class="ctl">
@@ -105,12 +137,12 @@ const celulares = [
                         <path class="i-play" d="M5 3l8 5-8 5z" fill="currentColor" />
                       </svg>
                     </button>
-                    {capturas.map((cap, k) => (
+                    {carrosseis[c.slug].capturas.map((cap, k, todas) => (
                       <button
                         type="button"
                         class="dot"
                         data-ir={k}
-                        aria-label={`Mostrar ${cap.legenda} (${k + 1} de ${capturas.length})`}
+                        aria-label={`Mostrar ${cap.legenda} (${k + 1} de ${todas.length})`}
                         aria-current={k === 0 ? 'true' : undefined}
                       >
                         <i />
@@ -118,16 +150,6 @@ const celulares = [
                     ))}
                   </div>
                 </div>
-              )}
-              {c.midia === 'numeros' && (
-                <dl class="nums">
-                  {numeros.map((n) => (
-                    <div>
-                      <dt>{n.v}</dt>
-                      <dd>{n.r}</dd>
-                    </div>
-                  ))}
-                </dl>
               )}
               {c.midia === 'telas' && (
                 <figure class="telas">
@@ -334,7 +356,7 @@ const celulares = [
     color: var(--ink-2);
   }
 
-  /* InfoMachine: as três capturas trocam sozinhas; a nova entra por cima e assenta devagar. */
+  /* InfoMachine e InfoCAIJ: as capturas trocam sozinhas; a nova entra por cima e assenta devagar. */
   .carrossel {
     position: relative;
     aspect-ratio: 16 / 10;
@@ -354,6 +376,20 @@ const celulares = [
   }
   .slide.ativo {
     opacity: 1;
+  }
+  .carrossel.inteiro .slide :global(img) {
+    object-fit: contain;
+    padding: clamp(0.75rem, 2vw, 1.5rem) clamp(0.75rem, 2vw, 1.5rem) clamp(3.25rem, 5vw, 3.75rem);
+  }
+  /* Celular: a etiqueta sobe para o topo, para não disputar o pé com os controles. */
+  @media (max-width: 899px) {
+    .carrossel.inteiro .slide :global(img) {
+      padding-top: 3rem;
+    }
+    .carrossel.inteiro .chip {
+      top: 0.75rem;
+      bottom: auto;
+    }
   }
   .slide.ativo :global(img) {
     transform: none;
@@ -429,31 +465,6 @@ const celulares = [
     border-radius: 1.1rem;
     border: 3px solid #050506;
     box-shadow: 0 1.25rem 2.5rem rgb(0 0 0 / 0.6);
-  }
-  .nums {
-    margin: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  .nums div {
-    padding: clamp(1rem, 2.5vw, 2rem);
-    display: grid;
-    align-content: end;
-    gap: 0.375rem;
-    border: 1px solid var(--rule);
-    margin: -1px 0 0 -1px;
-  }
-  .nums dt {
-    font-size: clamp(2.25rem, 5vw, 4rem);
-    line-height: 1;
-    letter-spacing: -0.03em;
-    color: var(--cor);
-  }
-  .nums dd {
-    margin: 0;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--ink-2);
   }
   /* CoreUFABC: três telas do app lado a lado, a do meio um pouco acima. */
   .celulares {
