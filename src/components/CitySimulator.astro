@@ -1,0 +1,212 @@
+---
+import CityExperience from './CityExperience.astro';
+---
+<header class="app-header">
+  <a class="wordmark" href="/projetos/entrevias/" aria-label="Entre vias, início">entre<span>vias</span><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><path d="M3 25 25 3M3 3l22 22M14 0v28M0 14h28" stroke="currentColor" stroke-width="1.5"/></svg></a>
+  <p>Uma cidade.<br />Outras escolhas.</p>
+  <nav aria-label="Navegação"><a href="#modelo">Como funciona</a><a href="/#projetos">Voltar ao portfólio <span aria-hidden="true">↗</span></a></nav>
+</header>
+
+<main>
+  <CityExperience />
+  <section class="workspace" aria-label="Laboratório de mobilidade">
+    <div class="map-column">
+      <div class="map-heading"><h1>O movimento é uma escolha.</h1><span class="running" data-running>Pausado</span></div>
+      <div class="view-bar">
+        <div class="view-switch" role="group" aria-label="Visualização da cidade"><button type="button" data-view="3d" aria-pressed="true">Cidade 3D</button><button type="button" data-view="2d" aria-pressed="false">Mapa 2D</button></div>
+        <p data-camera-hint>Preparando a maquete 3D…</p>
+      </div>
+      <div class="camera-panel" data-camera-panel>
+        <div class="camera-presets" role="group" aria-label="Vistas da câmera">
+          <button type="button" data-camera="geral" aria-pressed="true">Visão geral</button>
+          <button type="button" data-camera="cruzamento" aria-pressed="false">Cruzamento</button>
+          <button type="button" data-camera="avenida" aria-pressed="false">Avenida</button>
+          <button type="button" data-camera="parque" aria-pressed="false">Parque</button>
+          <button type="button" data-focus>Focar seleção</button>
+        </div>
+        <label class="camera-zoom" for="camera-zoom">Zoom <input id="camera-zoom" type="range" min="0.7" max="8" step="0.1" value="1" /><output data-camera-zoom>1,0×</output></label>
+      </div>
+      <div class="map-wrap">
+        <canvas id="city-map" width="1100" height="760" role="img" tabindex="0" aria-label="Mapa de uma cidade fictícia. Clique em uma interseção ou use as setas do teclado para inspecionar. Use os botões para ampliar. Carros em laranja e ônibus em verde. Os indicadores abaixo resumem a simulação."></canvas>
+        <canvas id="city-map-3d" role="img" tabindex="-1" aria-label="Maquete 3D da cidade. Arraste com o mouse para girar. No celular, use dois dedos. Use as setas para inspecionar interseções ou os botões de câmera para girar e ampliar." hidden></canvas>
+        <div class="map-tools" aria-label="Controles do mapa"><button type="button" data-rotate="-1" aria-label="Girar câmera à esquerda" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 10a8 8 0 1 1 2 8M4 4v6h6"/></svg></button><button type="button" data-rotate="1" aria-label="Girar câmera à direita" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20 10a8 8 0 1 0-2 8M20 4v6h-6"/></svg></button><button type="button" data-zoom="in" aria-label="Ampliar mapa">+</button><button type="button" data-zoom="out" aria-label="Reduzir mapa">−</button><button type="button" data-zoom="reset">Recentrar</button></div>
+        <div class="map-key"><span><i class="car-key"></i>Carro · 1 pessoa</span><span><i class="bus-key"></i>Ônibus · 12 pessoas</span></div>
+        <button class="fullscreen" type="button" data-fullscreen aria-label="Ampliar cidade em tela cheia"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg><span>Tela cheia</span></button>
+        <div class="map-note">CIDADE EXPERIMENTAL <span>8 × 6 interseções</span></div>
+      </div>
+      <p class="inspect" data-inspect aria-live="polite">Explore o mapa: selecione uma interseção para ver seu movimento.</p>
+      <p class="signal-note"><i class="red"></i>Parar <i class="amber"></i>Transição <i class="green"></i>Seguir <span>Semáforos sincronizados com a simulação.</span></p>
+      <div class="transport" aria-label="Reprodução da simulação">
+        <button type="button" class="play" data-play aria-pressed="false">Iniciar simulação</button>
+        <button type="button" data-reset>Recomeçar</button>
+        <label class="speed">Velocidade <select data-speed><option value="1">1×</option><option value="2" selected>2×</option><option value="4">4×</option></select></label>
+        <output data-clock aria-label="Tempo simulado">00:00</output>
+      </div>
+      <div class="metrics" aria-label="Indicadores simulados">
+        <div><span>Pessoas que chegaram</span><strong data-completed>0</strong><small>viagens concluídas</small></div>
+        <div><span>Tempo médio de viagem</span><strong data-average>—</strong><small>segundos simulados</small></div>
+        <div><span>Veículos na rede</span><strong data-active>0</strong><small data-waiting>0 parados · 0 aguardando entrada</small></div>
+      </div>
+      <div class="comparison"><button type="button" data-compare>Guardar referência</button><p data-comparison aria-live="polite">Guarde um resultado e teste outra escolha para comparar.</p></div>
+    </div>
+
+    <aside class="controls" aria-labelledby="controls-title">
+      <h2 id="controls-title">Mude o caminho<br />da cidade.</h2>
+      <p class="control-intro">O mesmo mapa, decisões diferentes. Ajuste a cidade e observe o que acontece nas ruas.</p>
+      <fieldset class="presets"><legend>Comece por um cenário</legend>
+        <button type="button" data-preset="equilibrio" aria-pressed="true"><span>Equilíbrio</span><small>Demanda moderada, vias compartilhadas</small></button>
+        <button type="button" data-preset="rush" aria-pressed="false"><span>Hora do rush</span><small>Mais viagens, mais carros na rede</small></button>
+        <button type="button" data-preset="coletivo" aria-pressed="false"><span>Mais transporte público</span><small>Mesma demanda do rush, mais ônibus</small></button>
+      </fieldset>
+      <div class="sliders">
+        <label for="demand">Demanda de viagens <output id="demand-value">55%</output></label>
+        <input type="range" id="demand" min="10" max="100" value="55" step="5" aria-describedby="demand-help" />
+        <small id="demand-help">Intensidade de chegada de pessoas à rede.</small>
+        <label for="transit">Pessoas que usam ônibus <output id="transit-value">25%</output></label>
+        <input type="range" id="transit" min="0" max="90" value="25" step="5" />
+        <label for="signal">Ciclo do semáforo <output id="signal-value">12 s</output></label>
+        <input type="range" id="signal" min="6" max="30" value="12" step="2" />
+      </div>
+      <label class="switch"><input type="checkbox" id="bus-lane" /><span>Faixa exclusiva de ônibus<small>Separa ônibus das filas de carros.</small></span></label>
+      <label class="switch"><input type="checkbox" id="works" /><span>Obra na avenida central<small>Novas viagens desviam do trecho fechado.</small></span></label>
+      <p class="change-note">Ajustes valem para a simulação em curso. Ao escolher um cenário, o relógio recomeça.</p>
+      <button type="button" class="share" data-share>Compartilhar este cenário <span aria-hidden="true">↗</span></button>
+      <p class="share-result" data-share-result role="status"></p>
+    </aside>
+  </section>
+
+  <section class="model" id="modelo" aria-labelledby="model-title">
+    <div><h2 id="model-title">Um laboratório,<br />não uma previsão.</h2><p>Entre vias é uma simulação educativa de mobilidade criada por Vitor Tosti. A cidade é fictícia e não utiliza dados reais de trânsito.</p></div>
+    <div class="model-details">
+      <details><summary>O que está sendo simulado?</summary><p>Pessoas chegam às bordas de uma rede de 48 interseções. Cada carro leva uma pessoa; cada ônibus representa 12. As viagens seguem o menor caminho em número de trechos. Os veículos respeitam distância de fila e semáforos; ônibus fazem uma parada a cada três trechos. O mapa mostra a posição de cada veículo calculada pelo modelo.</p></details>
+      <details><summary>Como comparar os cenários?</summary><p>Rode um cenário por pelo menos dois minutos simulados e guarde a referência. Depois escolha outro cenário e rode pelo mesmo tempo. “Hora do rush” e “Mais transporte público” têm a mesma demanda. O tempo médio inclui apenas quem já chegou: congestionamentos podem deixar as viagens mais demoradas ainda na rede. Observe também os veículos parados e a fila de entrada.</p></details>
+      <details><summary>Quais são os limites?</summary><p>Não há pedestres, acidentes, conversões complexas, linhas e horários reais de ônibus nem calibração com uma cidade. O ciclo controla o tempo de verde por direção. A faixa exclusiva adiciona um canal independente para ônibus, sem retirar a capacidade dos carros. Obras afetam apenas as rotas de novas viagens. Os resultados não servem para planejar trânsito real.</p></details>
+      <p class="built">Astro · TypeScript · Three.js · mapa 2D e maquete 3D do mesmo modelo</p>
+    </div>
+  </section>
+</main>
+<footer>Entre vias · um experimento de Vitor Tosti <a href="/">Conheça os outros projetos ↗</a></footer>
+
+<script>
+  import { initCity } from '../lib/city-client';
+  initCity();
+</script>
+
+<style>
+  :global(:root) { color-scheme: dark; --city-dark: #101f2a; --city-muted: #a7bcc4; --city-line: #304651; --city-orange: #f0ad66; }
+  .app-header { display: flex; align-items: center; gap: 3rem; padding: 1.5rem 3vw; border-bottom: 1px solid var(--city-line); }
+  .wordmark { display: flex; gap: .12rem; align-items: center; font-family: 'Newsreader Variable', Georgia, serif; font-size: 2.75rem; text-decoration: none; letter-spacing: -.04em; }
+  .wordmark span { font-style: italic; }
+  .wordmark svg { margin-left: .7rem; color: var(--city-orange); }
+  .app-header p { color: var(--city-muted); font-size: .85rem; line-height: 1.4; margin: 0; }
+  nav { margin-left: auto; display: flex; gap: 2rem; font-size: .85rem; }
+  nav a { text-decoration: none; padding-block: .7rem; }
+  nav a:hover { color: var(--city-orange); }
+  .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 340px; }
+  .map-column { min-width: 0; padding: 2rem 2.5vw 1rem; }
+  .map-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  h1 { font: 400 clamp(1.8rem, 2.6vw, 2.8rem)/1.15 'Newsreader Variable', Georgia, serif; margin: 0; letter-spacing: -.025em; }
+  .running { color: var(--city-orange); font-size: .8rem; white-space: nowrap; }
+  .view-bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1.25rem; }
+  .view-switch { display: flex; flex-shrink: 0; gap: .25rem; }
+  .view-switch button { border-color: transparent; padding: .6rem .8rem; }
+  .view-switch button[aria-pressed="true"] { background: #d6ded8; color: #10232e; }
+  .view-switch button:disabled { opacity: .6; cursor: default; }
+  .view-bar p { color: var(--city-muted); font-size: .7rem; line-height: 1.5; margin: 0; text-align: right; }
+  .camera-panel { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; padding: .75rem 0; border-bottom: 1px solid var(--city-line); }
+  .camera-presets { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .camera-presets button { font-size: .72rem; padding: .5rem .7rem; }
+  .camera-presets button[aria-pressed="true"] { border-color: var(--city-orange); color: var(--city-orange); }
+  .camera-zoom { display: flex; align-items: center; gap: .65rem; font-size: .75rem; }
+  .camera-zoom input { width: 100px; accent-color: var(--city-orange); }
+  .camera-zoom output { min-width: 3rem; font-variant-numeric: tabular-nums; }
+  .fullscreen { position: absolute; right: .5rem; bottom: .6rem; display: flex; align-items: center; gap: .5rem; background: #101f2a; }
+  .map-wrap:fullscreen { width: 100vw; height: 100dvh; background: #101f2a; }
+  .map-wrap:fullscreen #city-map { width: 100%; height: 100%; max-height: none; aspect-ratio: auto; }
+  .signal-note { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; color: #b7cad1; font-size: .7rem; line-height: 1.5; margin: .5rem 0 1rem; }
+  .signal-note i { width: 7px; height: 7px; border-radius: 50%; margin-left: .4rem; }
+  .signal-note .red { background: #ff574b; } .signal-note .amber { background: #ffca5d; } .signal-note .green { background: #64f1a4; }
+  .signal-note span { margin-left: .5rem; }
+  .map-wrap { position: relative; margin-top: .5rem; overflow: hidden; }
+  .map-wrap[data-mode="3d"] { background: #101f2a; }
+  #city-map-3d { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; cursor: grab; touch-action: pan-y; }
+  #city-map-3d:active { cursor: grabbing; }
+  .map-tools { position: absolute; right: .4rem; top: .25rem; display: flex; gap: .3rem; }
+  .map-tools button { background: #101f2a; padding: .4rem .7rem; min-width: 40px; min-height: 40px; }
+  .inspect { color: #b7cad1; font-size: .75rem; line-height: 1.5; margin: .3rem 0 .8rem; min-height: 1.2rem; }
+  canvas { display: block; width: 100%; aspect-ratio: 11/7.6; max-height: 65vh; }
+  .map-key { position: absolute; bottom: 1rem; left: .5rem; display: flex; gap: 1.2rem; font-size: .72rem; color: #c4d3d7; pointer-events: none; }
+  .map-key span { display: flex; gap: .5rem; align-items: center; }
+  .map-key i { height: 5px; width: 12px; background: #f0ad66; }
+  .map-key .bus-key { width: 20px; background: #75dbc1; }
+  .map-note { position: absolute; left: .5rem; top: .25rem; color: #a7bcc4; font: .65rem 'JetBrains Mono Variable', monospace; letter-spacing: .1em; pointer-events: none; }
+  .map-note span { color: #829ca7; margin-left: 1rem; letter-spacing: 0; }
+  .transport { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; padding-block: 1rem; border-top: 1px solid var(--city-line); }
+  button { border: 1px solid #56717d; border-radius: 4px; padding: .7rem 1rem; background: transparent; color: inherit; font-size: .85rem; min-height: 44px; }
+  button:hover { border-color: var(--city-orange); }
+  .play { background: var(--city-orange); color: #101f2a; border-color: transparent; font-weight: 600; min-width: 145px; }
+  .speed { display: flex; align-items: center; gap: .6rem; margin-left: auto; font-size: .8rem; color: #c4d3d7; }
+  select { background: #1c3341; color: #eef0eb; border: 1px solid #56717d; border-radius: 4px; padding: .5rem; min-height: 44px; }
+  [data-clock] { min-width: 5rem; text-align: right; font: .85rem 'JetBrains Mono Variable', monospace; color: var(--city-muted); }
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--city-line); }
+  .metrics > div { padding: 1.3rem 0; }
+  .metrics span, .metrics small { display: block; font-size: .78rem; color: #b7cad1; line-height: 1.5; }
+  .metrics strong { display: block; font: 400 2.5rem/1.2 'JetBrains Mono Variable', monospace; font-variant-numeric: tabular-nums; padding-block: .35rem; }
+  .comparison { display: flex; align-items: center; gap: 1rem; padding-block: 1rem; }
+  .comparison button { flex-shrink: 0; }
+  .comparison p { margin: 0; color: var(--city-muted); font-size: .8rem; line-height: 1.5; }
+  .controls { color-scheme: light; background: #efeee8; color: #182e39; padding: 2rem 1.5rem 1rem; }
+  .controls h2 { font: 400 2.5rem/1.02 'Newsreader Variable', Georgia, serif; letter-spacing: -.03em; margin: 0 0 1rem; }
+  .control-intro, .change-note { color: #4d6067; font-size: .85rem; line-height: 1.6; }
+  fieldset { padding: 0; margin: 1.75rem 0; border: 0; }
+  legend { font-size: .8rem; font-weight: 600; margin-bottom: .75rem; }
+  .presets button { display: block; width: 100%; text-align: left; border: 0; border-bottom: 1px solid #c6ceca; border-radius: 0; padding: .85rem .6rem; }
+  .presets button[aria-pressed="true"] { background: #173b41; color: #fff; }
+  .presets button small { display: block; margin-top: .35rem; font-size: .7rem; line-height: 1.4; }
+  .sliders { display: grid; gap: .6rem; }
+  .sliders label { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: .8rem; margin-top: .7rem; }
+  .sliders output { font-weight: 600; font-variant-numeric: tabular-nums; }
+  input[type="range"] { width: 100%; accent-color: #173b41; cursor: pointer; height: 24px; }
+  .sliders small { font-size: .7rem; color: #4d6067; margin-top: -.4rem; }
+  .switch { display: flex; align-items: start; gap: .7rem; padding-top: 1.3rem; font-size: .8rem; cursor: pointer; }
+  .switch input { accent-color: #173b41; width: 18px; height: 18px; margin: 0; flex-shrink: 0; }
+  .switch small { display: block; color: #4d6067; font-size: .7rem; line-height: 1.5; margin-top: .4rem; }
+  .change-note { font-size: .7rem; margin-block: 1.5rem; }
+  .share { width: 100%; border-color: #a2b1b0; display: flex; justify-content: space-between; gap: .5rem; }
+  .share-result { overflow-wrap: anywhere; font-size: .75rem; line-height: 1.5; }
+  .model { display: grid; grid-template-columns: 1fr 1.25fr; gap: 6vw; padding: 4rem 5vw; border-top: 1px solid var(--city-line); }
+  .model h2 { font: 400 2.8rem/1.05 'Newsreader Variable', Georgia, serif; margin: 0 0 1.5rem; }
+  .model p { color: #b7cad1; font-size: .9rem; line-height: 1.7; max-width: 65ch; }
+  details { border-bottom: 1px solid var(--city-line); padding: 1rem 0; }
+  summary { cursor: pointer; font-size: .95rem; padding-block: .3rem; }
+  .built { margin-top: 1.5rem; font-size: .75rem !important; }
+  footer { display: flex; justify-content: space-between; gap: 1rem; padding: 1.5rem 3vw; border-top: 1px solid var(--city-line); font-size: .75rem; color: #b7cad1; }
+  @media (min-width: 1600px) { .workspace { grid-template-columns: minmax(0, 1fr) 390px; } .controls { padding: 2.5rem; } }
+  @media (max-width: 1000px) { .workspace { grid-template-columns: minmax(0, 1fr) 300px; } .controls { padding-inline: 1rem; } .metrics strong { font-size: 1.8rem; } .metrics span, .metrics small { font-size: .65rem; } .map-heading { flex-wrap: wrap; } .map-key { gap: .7rem; font-size: .65rem; } }
+  @media (max-width: 760px) {
+    .app-header { padding: 1rem 5vw; gap: 1rem; flex-wrap: wrap; }
+    .wordmark { font-size: 2.3rem; } .app-header p { margin-left: auto; font-size: .75rem; }
+    nav { margin: 0; width: 100%; justify-content: space-between; gap: 1rem; font-size: .75rem; }
+    .workspace { display: flex; flex-direction: column; }
+    .map-column { padding: 1.5rem 5vw 0; } h1 { font-size: 1.8rem; }
+    canvas { aspect-ratio: 1.1; max-height: none; }
+    .view-bar { flex-wrap: wrap; gap: .5rem; }
+    .view-bar p { text-align: left; font-size: .65rem; }
+    .camera-panel { gap: .5rem; }
+    .camera-zoom { width: 100%; } .camera-zoom input { flex: 1; }
+    .signal-note span { flex-basis: 100%; margin: 0; }
+    .fullscreen { padding: .5rem; min-height: 38px; bottom: .25rem; right: 0; }
+    .fullscreen span { display: none; }
+    .map-tools { right: 0; gap: .2rem; }
+    .map-tools button { padding: .35rem .55rem; min-width: 35px; }
+    .map-note { font-size: .55rem; top: 2.7rem; } .map-note span { display: none; }
+    .map-key { font-size: .58rem; left: 0; gap: .8rem; bottom: .5rem; }
+    .speed { margin-left: 0; } .transport { gap: .5rem; } .transport .speed { font-size: .7rem; } [data-clock] { margin-left: auto; }
+    .metrics { gap: .7rem; } .metrics strong { font-size: 1.8rem; } .metrics span { min-height: 2rem; }
+    .comparison { align-items: start; flex-direction: column; }
+    .controls { padding: 2rem 5vw; } .controls h2 br { display: none; }
+    .presets { display: grid; grid-template-columns: 1fr; }
+    .model { grid-template-columns: 1fr; gap: 1rem; padding-block: 3rem; }
+    .model h2 { font-size: 2.4rem; } footer { flex-direction: column; padding: 1.5rem 5vw; }
+  }
+</style>

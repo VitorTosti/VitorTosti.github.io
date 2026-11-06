@@ -1,0 +1,37 @@
+---
+import { Image } from 'astro:assets';
+import poster from '../assets/entrevias-city.webp';
+---
+<div class="city-preview" data-city-preview>
+  <div class="preview-stage">
+    <Image src={poster} alt="Maquete do Entre vias com prédios, parques, rio e pontes. A prévia 3D interativa carrega ao entrar na tela." widths={[480, 800, 1200, 1440]} sizes="(min-width: 1250px) 1200px, 100vw" loading="lazy" />
+    <canvas data-preview-canvas role="img" tabindex="0" aria-label="Prévia 3D do Entre vias. Carros e ônibus percorrem a cidade. Arraste para girar, use mais e menos para aproximar ou as setas para girar pelo teclado." hidden></canvas>
+    <div class="preview-controls" data-preview-controls hidden role="group" aria-label="Controles da prévia 3D">
+      <button type="button" data-preview-play aria-pressed="false">Iniciar movimento</button>
+      <button type="button" data-preview-zoom="in" aria-label="Aproximar prévia 3D">+</button>
+      <button type="button" data-preview-zoom="out" aria-label="Afastar prévia 3D">−</button>
+      <button type="button" data-preview-zoom="reset">Recentrar</button>
+    </div>
+  </div>
+  <div class="preview-caption"><p data-preview-status role="status">Prévia da cidade. O 3D carrega quando você chega a esta seção.</p><a href="/projetos/entrevias/">Abrir app completo <span aria-hidden="true">↗</span></a></div>
+</div>
+<script>
+  import { initCityPreviews } from '../lib/city-preview';
+  initCityPreviews();
+</script>
+<style>
+  [hidden] { display: none !important; }
+  .city-preview { border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; background: #101f2a; }
+  .preview-stage { position: relative; aspect-ratio: 16 / 9; }
+  .preview-stage :global(img) { display: block; width: 100%; height: 100%; object-fit: cover; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: pan-y; }
+  canvas:active { cursor: grabbing; }
+  .preview-controls { position: absolute; bottom: 1rem; left: 1rem; display: flex; gap: .4rem; flex-wrap: wrap; }
+  button { border: 1px solid #5e7b87; border-radius: 5px; background: #10232e; color: #ecf0eb; padding: .6rem .8rem; min-height: 44px; min-width: 44px; font: inherit; font-size: .85rem; cursor: pointer; }
+  button:first-child { border-color: #f0ad66; color: #f0ad66; }
+  button:hover { border-color: #f0ad66; }
+  .preview-caption { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem; border-top: 1px solid #304651; font-size: .9rem; color: #b9cdd3; }
+  .preview-caption p { margin: 0; max-width: 60ch; }
+  .preview-caption a { color: #eef0eb; flex-shrink: 0; padding-block: .5rem; }
+  @media (max-width: 600px) { .preview-stage { aspect-ratio: 1; } .preview-stage :global(img) { object-fit: contain; } .preview-controls { bottom: .6rem; left: .6rem; right: .6rem; gap: .3rem; } button { font-size: .75rem; padding: .5rem .6rem; } .preview-caption { align-items: start; flex-direction: column; padding: .9rem; font-size: .8rem; gap: .4rem; } }
+</style>

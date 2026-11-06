@@ -1,0 +1,100 @@
+<div class="experience-actions"><button type="button" data-tour-open>Ver introdução guiada</button><button type="button" data-challenge-open>Encarar o desafio</button></div>
+
+<section class="challenge" data-challenge hidden aria-labelledby="challenge-title">
+  <div class="challenge-brief"><h2 id="challenge-title">Faça a cidade fluir.</h2><p>Faça pelo menos 20% mais pessoas chegarem, com menos veículos parados e sem aumentar a fila de entrada. A demanda permanece em 95%.</p><p class="method">Cada teste: 2 minutos simulados, mesma cidade, mesma semente e partida sem veículos.</p></div>
+  <div class="challenge-play">
+    <p data-challenge-status role="status">Preparando referência…</p>
+    <progress data-challenge-progress max="120" value="0" aria-label="Tempo calculado do experimento"></progress>
+    <table><caption>Resultados aos dois minutos simulados</caption><thead><tr><th scope="col">Indicador</th><th scope="col">Referência</th><th scope="col">Sua solução</th></tr></thead><tbody>
+      <tr><th scope="row">Pessoas que chegaram</th><td data-ref="completed">—</td><td data-solution="completed">—</td></tr>
+      <tr><th scope="row">Veículos parados</th><td data-ref="waiting">—</td><td data-solution="waiting">—</td></tr>
+      <tr><th scope="row">Pessoas na fila de entrada</th><td data-ref="queued">—</td><td data-solution="queued">—</td></tr>
+      <tr><th scope="row">Tempo médio das concluídas</th><td data-ref="average">—</td><td data-solution="average">—</td></tr>
+    </tbody></table>
+    <div class="challenge-buttons"><button type="button" data-challenge-test disabled>Testar minha solução</button><button type="button" data-challenge-stop>Sair do desafio</button></div>
+    <p class="challenge-help">O teste calcula o período completo em velocidade acelerada. O tempo médio considera apenas viagens concluídas; observe também as filas.</p>
+  </div>
+</section>
+
+<dialog class="city-tour" data-tour aria-labelledby="tour-title" aria-describedby="tour-copy">
+  <div class="tour-panel" data-tour-panel>
+    <button type="button" class="tour-skip" data-tour-skip aria-label="Pular introdução e explorar a cidade">Pular introdução <span aria-hidden="true">↗</span></button>
+    <div data-tour-text>
+      <h2 id="tour-title" tabindex="-1">O futuro desta cidade começa com uma escolha sua.</h2>
+      <p id="tour-copy">Entre vias é um laboratório de mobilidade. Altere o transporte, observe o trânsito e descubra como fazer mais pessoas chegarem ao destino.</p>
+    </div>
+    <div class="tour-readings" data-tour-readings hidden><div><span>Demanda</span><strong data-tour-demand>55%</strong></div><div><span>Uso do ônibus</span><strong data-tour-transit>25%</strong></div><div><span>Veículos parados</span><strong data-tour-waiting>0</strong></div></div>
+    <p class="tour-detail" data-tour-detail>Cidade fictícia. Simulação educativa, sem dados reais de trânsito.</p>
+    <div class="tour-buttons"><button type="button" data-tour-back hidden>Voltar</button><button type="button" class="tour-primary" data-tour-next>Começar a experiência</button><button type="button" data-tour-auto hidden>Pausar guia</button></div>
+    <div class="tour-footer"><span data-tour-step>1 de 6</span><div class="tour-dots" aria-hidden="true">{Array.from({ length: 6 }, (_, i) => <i data-tour-dot={i}></i>)}</div><span data-tour-timing>Você pode pular a qualquer momento.</span></div>
+  </div>
+</dialog>
+
+<style is:global>
+  .experience-actions button, .challenge button, .city-tour button { font: inherit; font-size: .85rem; min-height: 44px; padding: .7rem 1rem; border: 1px solid #56717d; border-radius: 4px; background: transparent; color: inherit; cursor: pointer; }
+  .experience-actions button:hover, .challenge button:hover, .city-tour button:hover { border-color: #f0ad66; }
+  .experience-actions { display: flex; justify-content: flex-end; gap: .6rem; padding: .8rem 3vw; border-bottom: 1px solid #304651; }
+  .experience-actions button { font-size: .78rem; }
+  .experience-actions button:last-child { border-color: #f0ad66; color: #f0ad66; }
+  .challenge { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; padding: 2rem 3vw; background: #1b343d; border-bottom: 1px solid #45616b; }
+  .challenge h2 { font: 400 clamp(2rem, 4vw, 3.8rem)/1.05 'Newsreader Variable', Georgia, serif; margin: 0 0 1rem; }
+  .challenge-brief p { color: #d0dfdf; font-size: 1rem; line-height: 1.6; max-width: 50ch; }
+  .challenge .method, .challenge-help { color: #b7cdd0; font-size: .75rem; line-height: 1.5; }
+  [data-challenge-status] { margin: 0 0 .8rem; font-size: .95rem; line-height: 1.5; }
+  .challenge progress { width: 100%; height: 5px; accent-color: #f0ad66; }
+  .challenge table { width: 100%; border-collapse: collapse; font-size: .8rem; margin: .6rem 0 1rem; }
+  .challenge caption { text-align: left; color: #b7cdd0; font-size: .7rem; margin-bottom: .5rem; }
+  .challenge th, .challenge td { text-align: left; border-bottom: 1px solid #45616b; padding: .6rem .3rem; }
+  .challenge th { font-weight: 400; } .challenge thead th { color: #b7cdd0; }
+  .challenge td { font-variant-numeric: tabular-nums; }
+  .challenge-buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
+  [data-challenge-test] { background: #f0ad66; color: #10232e; border-color: transparent; }
+  [data-challenge-test]:disabled { background: #465b61; color: #d3dedf; cursor: wait; }
+  .city-tour { position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none; margin: 0; border: 0; padding: 3vw; background: transparent; color: #eef0eb; overflow: auto; }
+  .city-tour::backdrop { background: rgb(9 23 31 / .94); }
+  .city-tour[open] { display: grid; place-items: center; }
+  .city-tour.is-demo { pointer-events: none; }
+  .city-tour.is-demo::backdrop { background: rgb(9 23 31 / .08); }
+  .city-tour.is-demo[open] { align-items: end; justify-items: start; }
+  .tour-panel { width: min(100%, 1060px); position: relative; pointer-events: auto; }
+  .city-tour.is-demo .tour-panel { width: min(100%, 570px); background: #10232e; padding: 1.75rem; border: 1px solid #4b626a; border-radius: 12px; box-shadow: 0 12px 45px rgb(0 0 0 / .25); }
+  .tour-skip { display: flex; gap: .75rem; align-items: center; margin: 0 0 2rem auto; background: transparent; color: #d2deda; border: 0; font-size: .8rem; }
+  .city-tour h2 { font: 400 clamp(2.6rem, 6vw, 6rem)/1.02 'Newsreader Variable', Georgia, serif; letter-spacing: -.035em; margin: 0 0 1.5rem; max-width: 19ch; text-wrap: balance; }
+  .city-tour h2:focus { outline: none; }
+  .city-tour #tour-copy { max-width: 55ch; font-size: clamp(1.05rem, 2vw, 1.35rem); line-height: 1.6; color: #c4d5d6; margin: 0; }
+  .city-tour.is-demo h2 { font-size: clamp(2rem, 3vw, 3.25rem); margin-bottom: .75rem; }
+  .city-tour.is-demo #tour-copy { font-size: 1rem; }
+  .city-tour.is-demo .tour-skip { margin-bottom: .75rem; }
+  .tour-readings { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; border-block: 1px solid #45616b; padding-block: .8rem; margin-top: 1rem; }
+  .tour-readings span { display: block; font-size: .7rem; color: #b7cdd0; margin-bottom: .3rem; }
+  .tour-readings strong { font: 400 1.4rem 'JetBrains Mono Variable', monospace; }
+  .tour-detail { color: #b7cdd0; font-size: .75rem; line-height: 1.5; margin: 1rem 0; max-width: 70ch; }
+  .tour-buttons { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; margin-top: 1.5rem; }
+  .tour-primary { background: #f0ad66 !important; color: #10232e !important; border-color: transparent !important; padding-inline: 1.3rem !important; }
+  .tour-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: 1.75rem; font-size: .7rem; color: #b7cdd0; }
+  .tour-dots { display: flex; gap: .4rem; } .tour-dots i { width: 20px; height: 2px; background: #45616b; } .tour-dots i.active { background: #f0ad66; }
+  .tour-highlight { outline: 3px solid #f0ad66 !important; outline-offset: 5px; border-radius: 3px; }
+  body.tutorial-active { overflow: hidden; }
+  @media (max-width: 760px) {
+    .experience-actions { justify-content: center; padding-inline: 5vw; } .experience-actions button { flex: 1; font-size: .7rem; }
+    .challenge { grid-template-columns: 1fr; gap: .75rem; padding: 1.5rem 5vw; }
+    .challenge h2 { font-size: 2.5rem; } .challenge-brief p { font-size: .9rem; }
+    .challenge table { font-size: .7rem; } .challenge th:first-child { max-width: 13ch; }
+    .city-tour { padding: 1rem; }
+    .city-tour.is-demo { padding: .6rem; }
+    .city-tour.is-demo .tour-panel { padding: 1rem; max-height: 58dvh; overflow: auto; }
+    .city-tour h2 { font-size: clamp(2.7rem, 10vw, 4rem); }
+    .city-tour.is-demo h2 { font-size: 2rem; }
+    .city-tour.is-demo #tour-copy { font-size: .85rem; line-height: 1.5; }
+    .city-tour.is-demo .tour-buttons { margin-top: .75rem; gap: .4rem; }
+    .city-tour.is-demo .tour-buttons button { font-size: .75rem; padding: .55rem .7rem; }
+    .city-tour.is-demo .tour-footer { margin-top: .75rem; gap: .5rem; }
+    .tour-readings { margin-top: .75rem; padding-block: .6rem; } .tour-readings span { font-size: .6rem; } .tour-readings strong { font-size: 1.15rem; }
+    body.tutorial-demo .app-header, body.tutorial-demo .experience-actions, body.tutorial-demo .map-heading, body.tutorial-demo .view-bar, body.tutorial-demo .camera-panel { display: none !important; }
+    body.tutorial-demo .map-column { padding-top: .3rem; }
+    body.tutorial-demo #city-map { height: 44dvh; max-height: none; aspect-ratio: auto; }
+    body.tutorial-demo .map-tools, body.tutorial-demo .map-note, body.tutorial-demo .fullscreen { display: none; }
+    body.tutorial-demo .map-key { bottom: .2rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .city-tour *, .tour-highlight { animation: none !important; transition: none !important; } }
+</style>

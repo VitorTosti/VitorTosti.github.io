@@ -5,7 +5,7 @@
 // Sem JS, a esfera fica parada no ângulo inicial; com movimento reduzido, não há inércia de entrada.
 import { getImage } from 'astro:assets';
 import foto from '../assets/vitor.webp';
-import poster from '../assets/mcp-poster.webp';
+import cityPreview from '../assets/entrevias-city.webp';
 import painel from '../assets/maq-equipamento.webp';
 import testes from '../assets/maq-teclado.webp';
 import etiqueta from '../assets/maq-etiqueta.webp';
@@ -37,15 +37,17 @@ const MACH = { href: pj('infomachine'), rot: 'InfoMachine', cor: 'violeta' } as 
 const CORE = { href: pj('coreufabc'), rot: 'CoreUFABC', cor: 'verde' } as const;
 const ENC = { href: pj('kairo'), rot: 'Kairo', cor: 'azul' } as const;
 const EU = { href: '#sobre', rot: 'Sobre', cor: 'tinta' } as const;
+const CITY = { href: '/projetos/entrevias/', rot: 'Entre vias', cor: 'ambar' } as const;
+const SITE = { href: '#projetos', rot: 'CAIJ.com.br', cor: 'agua' } as const;
 
 // Ordem pensada para a esfera: prints e números se alternam, e cada projeto aparece espalhado.
 const frags: Frag[] = [
-  { tipo: 'img', src: await img(poster), ...MCP },
-  { tipo: 'txt', v: 'InfoCAIJ MCP', r: '8 ferramentas · 3 prompts', ...MCP, rot: 'destaque', titulo: true },
+  { tipo: 'img', src: await img(cityPreview), ...CITY },
+  { tipo: 'txt', v: 'CAIJ.com.br', r: 'explore o site no portfólio', ...SITE, titulo: true },
   { tipo: 'img', src: await img(cardapio017), ...CARD },
   { tipo: 'txt', v: num('máquinas e pedidos por mês'), r: 'máquinas e pedidos por mês', ...CAIJ },
   { tipo: 'img', src: await img(painel), ...MACH },
-  { tipo: 'txt', v: 'Cardápio em 1 minuto', r: 'foto → JSON validado', ...CARD, rot: 'em andamento', titulo: true },
+  { tipo: 'txt', v: 'Entre vias', r: 'experimente uma cidade em movimento', ...CITY, titulo: true },
   { tipo: 'txt', v: 'Kairo', r: 'orquestrador + 5 agentes', ...ENC, rot: 'time de agentes', titulo: true },
   { tipo: 'txt', v: 'InfoMachine', r: '~100 máquinas por semana', ...MACH, rot: 'em uso na bancada', titulo: true },
   { tipo: 'img', src: await img(testes), ...MACH },
@@ -116,7 +118,7 @@ const pontos = frags.map((_, i) => {
           })
         }
       </div>
-      <h1 class="nome" aria-label={s.nome}>
+      <p class="nome" aria-label={s.nome}>
         <span class="inner">
           {
             tokens.map((t, i) => (
@@ -129,7 +131,7 @@ const pontos = frags.map((_, i) => {
           }
           <span class="cur-wrap" aria-hidden="true"><span class="cur"></span></span>
         </span>
-      </h1>
+      </p>
     </div>
   </div>
   <div class="vig" aria-hidden="true"></div>
@@ -147,8 +149,13 @@ const pontos = frags.map((_, i) => {
   <p class="cue" aria-hidden="true"><s></s>Arraste para girar</p>
 
   <div class="base">
-    <p class="intro">{s.intro}</p>
+    <div class="apresentacao">
+      <h1>Construo sistemas e aplicações com IA para resolver problemas reais.</h1>
+      <p class="intro">Estudante de Ciência da Computação na UFABC. Do site público à operação interna, transformo problemas do dia a dia em software que funciona.</p>
+    </div>
     <div class="botoes">
+      <a class="pill" href="/projetos/entrevias/">Explorar Entre vias</a>
+      <a class="ghost" href="#projetos">Ver projetos</a>
       {
         temCurriculo && (
           <a class="ghost" href={CURRICULO} download>
@@ -156,7 +163,7 @@ const pontos = frags.map((_, i) => {
           </a>
         )
       }
-      <a class="pill" href={`mailto:${s.links.email}`}>{s.falar}</a>
+      <a class="ghost" href={`mailto:${s.links.email}`}>{s.falar}</a>
     </div>
   </div>
 </header>
@@ -542,7 +549,13 @@ const pontos = frags.map((_, i) => {
     justify-content: space-between;
     align-items: flex-end;
     gap: 1.5rem;
+    position: relative;
+    z-index: 2;
   }
+  .apresentacao { max-width: 46rem; }
+  .apresentacao h1 { font-size: clamp(1.8rem, 3.3vw, 3rem); line-height: 1.12; margin: 0 0 1rem; }
+  .apresentacao .intro { max-width: 62ch; font-family: var(--serif); font-size: 1.125rem; text-transform: none; letter-spacing: 0; }
+  .stage { bottom: 15%; }
   .intro {
     margin: 0;
     max-width: 19rem;
@@ -616,6 +629,9 @@ const pontos = frags.map((_, i) => {
       flex-direction: column;
       align-items: flex-start;
     }
+    .stage { bottom: 28%; }
+    .apresentacao h1 { font-size: 1.8rem; }
+    .apresentacao .intro { font-size: 1rem; }
   }
   @media (max-width: 380px) {
     .hero {

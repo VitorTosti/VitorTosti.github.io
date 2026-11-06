@@ -17,6 +17,30 @@ npm test           # testes unitários (Vitest)
 npm run build      # gera dist/
 ```
 
+## Entre vias: simulador de mobilidade
+
+A demonstração independente fica em `/projetos/entrevias/`. O modelo executa localmente no navegador, sem API, mapas externos ou dados de trânsito reais. Há cenários de demanda, participação de ônibus, semáforos, faixa exclusiva e uma obra com desvio das novas rotas. O mapa permite ampliar e inspecionar interseções por clique ou teclado.
+
+O motor está em `src/lib/city-engine.ts`; renderização e controles, em `src/lib/city-client.ts`. A maquete 3D em `src/lib/city-3d.ts` usa Three.js, com geometrias compartilhadas, prédios, parques, veículos, sinalização e obras. O modelo e os indicadores são os mesmos nas duas visualizações. A câmera permite girar e aproximar; em celular, dois dedos controlam a maquete e um dedo preserva a rolagem. Sem suporte a WebGL, ou se o contexto for perdido, o mapa 2D assume automaticamente.
+
+Uma semente fixa torna as execuções reproduzíveis com a mesma sequência de ajustes e passos de tempo. O tempo médio contabiliza apenas viagens concluídas e não inclui espera anterior à entrada na rede. Os indicadores são educativos, não previsões de trânsito.
+
+`npm test` cobre caminhos, desvio, conservação de passageiros e reprodução do modelo. Com o servidor local rodando, `node tests/city-browser.mjs` verifica controles, movimento reduzido, cenários por URL, teclado, acessibilidade e ausência de erros em desktop e celular. `--capture-preview` atualiza a imagem da demonstração usada no portfólio.
+
+`node tests/city-camera.mjs` valida o gesto de dois dedos para zoom, a rolagem com um dedo e o retorno ao mapa 2D com preservação de estado após perda do contexto WebGL.
+
+`node tests/city-detail.mjs` verifica vistas próximas, zoom até 8×, foco e tela cheia em desktop e celular. Os semáforos 3D têm vermelho, amarelo e verde sincronizados com a função `trafficSignal` compartilhada com o mapa e o motor. O entorno (rio, pontes, árvores e passeios) é cenográfico e não acrescenta demanda à rede.
+
+### Introdução e desafio
+
+A seção principal do portfólio contém uma prévia 3D real em `CityPreview.astro` e `city-preview.ts`. O módulo gráfico carrega somente quando a seção entra na tela. Veículos usam o mesmo motor do app; a prévia tem giro, zoom e pausa, suspende fora da tela e respeita movimento reduzido. Sem WebGL, permanece a imagem com acesso ao app completo.
+
+No primeiro acesso da sessão, uma introdução de seis etapas explica o propósito do laboratório e demonstra mudanças reais de demanda, ônibus, semáforos e obras. Há avanço automático, pausa, voltar, pular, Escape e repetição pelo botão “Ver introdução guiada”. Com movimento reduzido, a pessoa avança manualmente e os cenários aparecem sem animação espacial. Sair restaura o cenário anterior. Links com parâmetros abrem diretamente no cenário compartilhado.
+
+O desafio fixa a demanda em 95%. Referência e tentativas começam sem veículos, com a mesma semente, e executam 2.400 passos de 0,05 segundo (dois minutos simulados). A meta é aumentar as chegadas em pelo menos 20%, reduzir os veículos parados e não aumentar a fila de entrada. O tempo médio das viagens concluídas também é exibido, sem ocultar possíveis pioras. Alterar os ajustes após um teste sinaliza que a tabela ainda se refere ao resultado anterior. O cálculo ocorre em blocos que cedem tempo à interface e pode ser cancelado.
+
+O fluxo fica em `src/lib/city-experience.ts`; cálculo e avaliação, em `src/lib/city-experiment.ts`. `node tests/city-experience.mjs` verifica introdução, preferências de movimento, restauração, comparação reproduzível e cancelamento.
+
 ## Probabilidades reais do Gemini
 
 O site lê `src/data/alternativas.json` no build e nunca chama API em produção. O arquivo que está no repositório é **ilustrativo** (escrito à mão), e o rodapé do site diz isso.

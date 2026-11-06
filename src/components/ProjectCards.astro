@@ -5,7 +5,6 @@ import { Image, getImage } from 'astro:assets';
 import BigTitle from './BigTitle.astro';
 import CardapioJson from './CardapioJson.astro';
 import { avaliacao, cartoes } from '../data/cartoes';
-import { ptBR as s } from '../i18n/pt-BR';
 import posterSrc from '../assets/mcp-poster.webp';
 import videoUrl from '../assets/infocaij-mcp-demo.mp4?url';
 import gif from '../assets/mcp-demo.gif';
@@ -24,6 +23,9 @@ import coreNotas from '../assets/core-notas.webp';
 import coreHistorico from '../assets/core-historico.webp';
 
 const poster = await getImage({ src: posterSrc, format: 'webp', width: 960, quality: 75 });
+interface Props { featured?: boolean; }
+const { featured = false } = Astro.props;
+const lista = cartoes.filter((c) => featured ? c.slug === 'infocaij' : c.slug !== 'infocaij');
 
 // Carrosséis de capturas por projeto; `nota` aparece na etiqueta de cada slide.
 // `inteiro`: telas largas aparecem sem corte, em vez de preencher o quadro.
@@ -58,11 +60,11 @@ const celulares = [
 ];
 ---
 
-<section class="section projetos" id="projetos">
-  <BigTitle text={s.titulos.projetos} />
+<section class:list={['section', 'projetos', { destaque: featured }]} id={featured ? 'infocaij-destaque' : 'outros-projetos'} aria-label={featured ? 'InfoCAIJ em destaque' : 'Outros projetos'}>
+  {!featured && <BigTitle text="Outros projetos" />}
   <div class="pilha" data-pilha>
     {
-      cartoes.map((c, i) => (
+      lista.map((c, i) => (
         <article class="cartao" id={c.slug} aria-labelledby={`h-${c.slug}`} style={`--i:${i};--cor:var(--c-${c.cor})`} data-cartao>
           <header class="topo">
             <span class="num" aria-hidden="true">
@@ -189,6 +191,9 @@ const celulares = [
 </section>
 
 <style>
+  .destaque { padding-top: 1rem; }
+  .destaque .cartao { position: relative; top: auto; min-height: auto; }
+  .destaque .pilha { padding-bottom: 0; }
   .projetos {
     padding-inline: var(--gutter);
     /* Os cartões presos dependem da altura real da seção. */

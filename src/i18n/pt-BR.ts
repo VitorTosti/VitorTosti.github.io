@@ -109,7 +109,7 @@ export const ptBR = {
     { onde: 'ETEC Lauro Gomes', texto: 'Técnico em Eletrônica', quando: '2024' },
   ],
   idiomas: 'Inglês B2 (Cambridge PET, Grade A)',
-  contato: 'Procuro estágio construindo com IA. Se quiser ver um desses rastros rodando de verdade, me chame.',
+  contato: 'Tem um projeto ou um problema real para resolver? Vamos conversar sobre tecnologia, IA e soluções que funcionam na prática.',
   painel: {
     dica: 'Passe o mouse ou toque numa palavra para ver o que o modelo quase escreveu.',
     foraDoTop: 'fora do top-5',

@@ -31,10 +31,10 @@ await page.goto(url, { waitUntil: 'networkidle' });
 await page.keyboard.press('Tab');
 await page.keyboard.press('Tab');
 const foco = await page.evaluate(() => document.activeElement?.textContent?.trim());
-const h1 = await page.locator('h1').getAttribute('aria-label');
+const h1 = await page.locator('h1').textContent();
 const sobre = await page.locator('#sobre .sr-only').textContent();
 console.log(`teclado: segundo Tab chega em "${foco}"; h1 = "${h1}"; sobre legível: ${(sobre ?? '').length} caracteres`);
-if (foco !== 'Sobre' || h1 !== 'Vitor Tosti' || !sobre) falhas++;
+if (foco !== 'Sobre' || !h1?.includes('resolver problemas reais') || !sobre) falhas++;
 
 await browser.close();
 process.exitCode = falhas ? 1 : 0;

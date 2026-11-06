@@ -1,0 +1,52 @@
+import { chromium } from 'playwright';
+import AxeBuilder from '@axe-core/playwright';
+import assert from 'node:assert/strict';
+import { mkdirSync } from 'node:fs';
+mkdirSync('.codex/city-qa', { recursive: true });
+const browser = await chromium.launch();
+try {
+  for (const width of [1440, 375]) {
+    const context = await browser.newContext({ viewport: { width, height: 1000 }, reducedMotion: 'reduce' });
+    const page = await context.newPage();
+    const errors = []; page.on('pageerror', e => errors.push(e.message));
+    await page.goto('http://127.0.0.1:4321/', { waitUntil: 'domcontentloaded' });
+    await page.addStyleTag({ content: 'astro-dev-toolbar{display:none!important}' });
+    await page.evaluate(() => document.fonts.ready);
+    await page.screenshot({ path: `.codex/city-qa/portfolio-app-hero-${width}.png` });
+    assert.deepEqual(await page.locator('#projetos h3').allTextContents(), ['Entre vias', 'CAIJ.com.br', 'InfoCAIJ']);
+    assert.equal(await page.getByRole('link', { name: 'Explorar Entre vias', exact: true }).getAttribute('href'), '/projetos/entrevias/');
+    await page.locator('.city-feature').scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => document.querySelector('[data-city-preview]').dataset.ready === '3d');
+    assert.equal(await page.locator('[data-preview-play]').getAttribute('aria-pressed'), 'false');
+    const canvas = page.locator('[data-preview-canvas]');
+    const before = await canvas.screenshot();
+    await page.locator('[data-preview-play]').click();
+    await page.waitForTimeout(1000);
+    await page.locator('[data-preview-play]').click();
+    assert.notDeepEqual(await canvas.screenshot(), before);
+    await page.getByRole('button', { name: 'Aproximar prévia 3D' }).click();
+    await page.locator('[data-preview-zoom=reset]').click();
+    await page.locator('.city-feature').screenshot({ path: `.codex/city-qa/portfolio-app-feature-${width}.png` });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    const axe = await new AxeBuilder({ page }).include('.city-feature').withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
+    assert.deepEqual(axe.violations.map(v => v.id), []);
+    await page.getByRole('link', { name: 'Aceitar o desafio', exact: false }).click();
+    await page.waitForSelector('[data-challenge]:not([hidden])');
+    assert.equal(await page.locator('[data-tour]').isVisible(), false);
+    assert.equal(await page.locator('#demand').inputValue(), '95');
+    await page.locator('[data-challenge-stop]').click();
+    assert.equal(await page.locator('[data-challenge]').isVisible(), false);
+    assert.deepEqual(errors, []);
+    console.log(`${width}px: prévia 3D no portfólio, movimento, pausa, zoom, acessibilidade e desafio OK`);
+    await context.close();
+  }
+  const normal = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  const page = await normal.newPage();
+  await page.goto('http://127.0.0.1:4321/', { referer: 'http://127.0.0.1:4321/projetos/entrevias/', waitUntil: 'domcontentloaded' });
+  await page.locator('[data-city-preview]').scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => document.querySelector('[data-city-preview]').dataset.running === 'true');
+  await page.evaluate(() => scrollTo(0, 0));
+  await page.waitForFunction(() => document.querySelector('[data-city-preview]').dataset.running === 'false');
+  console.log('Movimento automático suspende ao sair da tela');
+  await normal.close();
+} finally { await browser.close(); }

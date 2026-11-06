@@ -1,0 +1,27 @@
+---
+import CityPreview from './CityPreview.astro';
+---
+<article class="city-feature wide" id="entrevias" aria-labelledby="entrevias-title">
+  <header class="feature-heading">
+    <div class="title"><h3 id="entrevias-title">Entre vias</h3><p class="lead">Uma cidade. Suas escolhas.</p></div>
+    <div class="copy"><p>Um laboratório de mobilidade que você pode experimentar. Explore a cidade em 3D, mude o transporte e tente fazer mais pessoas chegarem ao destino.</p><div class="actions"><a class="pill" href="/projetos/entrevias/">Explorar cidade 3D <span aria-hidden="true">↗</span></a><a class="challenge-link" href="/projetos/entrevias/?desafio=1">Aceitar o desafio <span aria-hidden="true">→</span></a></div></div>
+  </header>
+  <CityPreview />
+  <footer class="feature-footer"><p>Gire, aproxime e explore os cruzamentos. O tutorial acompanha suas primeiras escolhas.</p><span>Three.js · TypeScript · simulação educativa</span></footer>
+</article>
+<style>
+  .city-feature { max-width: 81rem; padding-block: clamp(2rem, 5vw, 4rem) clamp(3rem, 7vw, 6rem); display: grid; gap: 2rem; }
+  .feature-heading { display: grid; gap: 1.5rem; }
+  h3 { font-size: clamp(3.8rem, 8vw, 6rem); line-height: .95; }
+  .lead { font-size: clamp(1.5rem, 2.5vw, 2rem); margin: 1rem 0 0; color: var(--ink); }
+  .copy > p { color: var(--ink-2); max-width: 47ch; font-size: clamp(1.15rem, 1.7vw, 1.4rem); }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
+  .challenge-link { font-size: 1rem; padding-block: .75rem; }
+  .feature-footer { display: flex; justify-content: space-between; gap: 1rem 2rem; color: var(--ink-2); font-size: .9rem; }
+  .feature-footer p { margin: 0; max-width: 48ch; }
+  .feature-footer span { flex-shrink: 0; }
+  @media (min-width: 900px) {
+    .feature-heading { grid-template-columns: 1fr 1fr; align-items: end; gap: 3rem; }
+  }
+  @media (max-width: 600px) { .feature-footer { flex-direction: column; font-size: .8rem; } }
+</style>
