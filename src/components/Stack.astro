@@ -1,0 +1,34 @@
+---
+// Tecnologias agrupadas por projeto, cada linha levando à página do projeto.
+import BigTitle from './BigTitle.astro';
+import { stackPorProjeto } from '../data/stack';
+interface Props { en?: boolean }
+const { en = false } = Astro.props;
+const titulo = en ? 'Stack by project' : 'Stack por projeto';
+---
+
+<section class="section stack wide" id="stack">
+  <BigTitle text={titulo} />
+  <ul class="lin">
+    {
+      stackPorProjeto.map((l) => (
+        <li class="l" data-fade>
+          <a class="n" href={`/projetos/${l.slug}/`}>{l.nome}</a>
+          <ul class="chips">
+            {(en ? l.itensEn : l.itens).map((i) => <li>{i}</li>)}
+          </ul>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .lin { list-style: none; margin: 2rem 0 0; padding: 0; display: grid; gap: 1.25rem; }
+  .l { display: grid; grid-template-columns: minmax(9rem, 14rem) 1fr; gap: 1rem; align-items: baseline; padding-top: 1.25rem; border-top: 1px solid var(--rule); }
+  .n { font-size: 1.25rem; text-decoration: none; }
+  .n:hover { text-decoration: underline; }
+  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chips li { font-family: var(--mono); font-size: 0.75rem; padding: 0.35rem 0.7rem; border: 1px solid var(--rule); border-radius: 999px; color: var(--ink-soft); }
+  @media (max-width: 640px) { .l { grid-template-columns: 1fr; gap: 0.6rem; } }
+</style>

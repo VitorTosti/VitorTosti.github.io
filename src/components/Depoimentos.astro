@@ -1,0 +1,29 @@
+---
+import BigTitle from './BigTitle.astro';
+import { depoimentos } from '../data/depoimentos';
+interface Props { en?: boolean }
+const { en = false } = Astro.props;
+---
+
+{
+  depoimentos.length > 0 && (
+    <section class="section dep wide" id="depoimentos">
+      <BigTitle text={en ? 'What people say' : 'Quem já trabalhou comigo'} />
+      <div class="g">
+        {depoimentos.map((d) => (
+          <figure data-fade>
+            <blockquote>“{en ? (d.textoEn ?? d.texto) : d.texto}”</blockquote>
+            <figcaption>{d.autor} · {en ? (d.papelEn ?? d.papel) : d.papel}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .g { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  figure { margin: 0; padding: 1.5rem; border: 1px solid var(--rule); border-radius: 1.25rem; background: var(--surface); }
+  blockquote { margin: 0 0 1rem; font-size: 1.1875rem; line-height: 1.5; }
+  figcaption { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-2); letter-spacing: 0.04em; }
+</style>

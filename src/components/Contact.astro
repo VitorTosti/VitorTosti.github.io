@@ -3,6 +3,10 @@
 import BigTitle from './BigTitle.astro';
 import { ptBR as s } from '../i18n/pt-BR';
 import { CURRICULO, temCurriculo } from '../lib/curriculo';
+
+// Endpoint do formulário (Formspree, Web3Forms...): PUBLIC_FORM_ENDPOINT. Sem ele, o formulário abre o app de e-mail.
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
+const plausible = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN as string | undefined;
 ---
 
 <section class="section contato" id="contato">
@@ -22,10 +26,32 @@ import { CURRICULO, temCurriculo } from '../lib/curriculo';
       )
     }
   </ul>
-  <p class="rodape">© {new Date().getFullYear()} {s.nome} · feito com Astro, sem rastreamento</p>
+  <form class="form" data-form data-endpoint={endpoint ?? ''} data-email={s.links.email} data-fade style="--d:260ms">
+    <h3 class="form-t">Ou escreva por aqui</h3>
+    <label>Nome<input name="nome" required autocomplete="name" /></label>
+    <label>E-mail<input name="email" type="email" required autocomplete="email" /></label>
+    <label>Mensagem<textarea name="mensagem" rows="4" required></textarea></label>
+    <input name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="mel" />
+    <button class="pill" type="submit">Enviar mensagem</button>
+    <p class="form-s" role="status" aria-live="polite"></p>
+  </form>
+  <p class="rodape">© {new Date().getFullYear()} {s.nome} · feito com Astro{plausible ? ', estatísticas sem cookies' : ', sem rastreamento'}</p>
 </section>
 
+<script>
+  import { iniciarFormulario } from '../lib/formulario';
+  document.querySelectorAll<HTMLFormElement>('[data-form]').forEach((f) => iniciarFormulario(f));
+</script>
+
 <style>
+  .form { width: min(100%, 34rem); display: grid; gap: 1rem; text-align: left; margin-top: 1rem; padding: 1.5rem; border: 1px solid var(--rule); border-radius: 1.25rem; background: var(--surface); }
+  .form-t { margin: 0; font-size: 1.25rem; font-weight: 500; }
+  .form label { display: grid; gap: 0.35rem; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+  .form input, .form textarea { font: inherit; font-family: var(--serif); font-size: 1.0625rem; text-transform: none; letter-spacing: 0; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 0.6rem; padding: 0.7rem 0.85rem; min-height: 44px; }
+  .form input:focus-visible, .form textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+  .form .mel { position: absolute; left: -9999px; }
+  .form .pill { justify-self: start; border: 0; cursor: pointer; }
+  .form-s { margin: 0; min-height: 1.4em; font-size: 0.9375rem; color: var(--ink-2); }
   .contato {
     position: relative;
     background: var(--paper);

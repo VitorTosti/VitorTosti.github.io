@@ -10,13 +10,38 @@ import { ptBR as s } from '../i18n/pt-BR';
 interface Props {
   title?: string;
   description?: string;
+  /** Idioma da página; muda o atributo lang, o og:locale e os textos fixos do layout. */
+  lang?: 'pt-BR' | 'en';
+  /** Imagem de compartilhamento (caminho em /public). Cada projeto tem a sua. */
+  image?: string;
+  /** Caminhos equivalentes em cada idioma, para hreflang e o alternador de idioma. */
+  alternates?: { 'pt-BR'?: string; en?: string };
+  /** Dados estruturados da pessoa (só nas páginas iniciais). */
+  pessoa?: boolean;
 }
-const { title = s.meta.title, description = s.meta.description } = Astro.props;
+const { title = s.meta.title, description = s.meta.description, lang = 'pt-BR', image = '/og.png', alternates, pessoa = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const imagemAbs = new URL(image, Astro.site);
+const ehEn = lang === 'en';
+// Estatísticas sem cookies (Plausible): só carrega se PUBLIC_PLAUSIBLE_DOMAIN estiver definido no build.
+const plausible = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN as string | undefined;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Vitor Tosti',
+  url: String(new URL('/', Astro.site)),
+  image: String(new URL('/og.png', Astro.site)),
+  jobTitle: 'AI Builder',
+  description,
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Universidade Federal do ABC (UFABC)' },
+  address: { '@type': 'PostalAddress', addressLocality: 'São Bernardo do Campo', addressRegion: 'SP', addressCountry: 'BR' },
+  knowsAbout: ['Inteligência artificial', 'Model Context Protocol', 'Avaliação de LLMs', 'TypeScript', 'Python', 'PostgreSQL'],
+  sameAs: [s.links.github, s.links.linkedin],
+};
 ---
 
 <!doctype html>
-<html lang={s.lang}>
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -24,18 +49,36 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#0E0E10" />
+    {alternates?.['pt-BR'] && <link rel="alternate" hreflang="pt-BR" href={new URL(alternates['pt-BR'], Astro.site)} />}
+    {alternates?.en && <link rel="alternate" hreflang="en" href={new URL(alternates.en, Astro.site)} />}
+    {alternates?.['pt-BR'] && <link rel="alternate" hreflang="x-default" href={new URL(alternates['pt-BR'], Astro.site)} />}
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href={serifUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale" content={ehEn ? 'en_US' : 'pt_BR'} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta property="og:image" content={imagemAbs} />
+    <meta name="twitter:image" content={imagemAbs} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    {pessoa && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    {plausible && <script defer data-domain={plausible} src="https://plausible.io/js/script.js" />}
+    <script is:inline>
+      // Tema: escuro por padrão (é a identidade do site); a escolha da pessoa fica guardada.
+      (function () {
+        try {
+          var t = localStorage.getItem('tema');
+          if (t === 'claro' || t === 'escuro') document.documentElement.dataset.tema = t;
+        } catch (e) {}
+      })();
+    </script>
     <script is:inline>
       // Antes da primeira pintura: se a geração token a token vai rodar.
       (function () {
@@ -45,11 +88,62 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </script>
   </head>
   <body>
-    <a class="skip sr-only" href="#conteudo">Pular para o conteúdo</a>
+    <a class="skip sr-only" href="#conteudo">{ehEn ? 'Skip to content' : 'Pular para o conteúdo'}</a>
     <main id="conteudo">
       <slot />
     </main>
     <slot name="footer" />
-
+    <nav class="ctl" aria-label={ehEn ? 'Site preferences' : 'Preferências do site'}>
+      {
+        alternates?.['pt-BR'] && alternates?.en && (
+          <a
+            class="ctl-b"
+            href={ehEn ? alternates['pt-BR'] : alternates.en}
+            hreflang={ehEn ? 'pt-BR' : 'en'}
+            lang={ehEn ? 'pt-BR' : 'en'}
+            aria-label={ehEn ? 'PT, ver em português' : 'EN, view in English'}
+          >
+            {ehEn ? 'PT' : 'EN'}
+          </a>
+        )
+      }
+      <button type="button" class="ctl-b" id="tema-btn" aria-label={ehEn ? 'Switch to light theme' : 'Mudar para o tema claro'} data-claro={ehEn ? 'Switch to light theme' : 'Mudar para o tema claro'} data-escuro={ehEn ? 'Switch to dark theme' : 'Mudar para o tema escuro'}>
+        <span aria-hidden="true" class="ctl-i"></span>
+      </button>
+    </nav>
+    <script is:inline>
+      (function () {
+        var b = document.getElementById('tema-btn');
+        if (!b) return;
+        var raiz = document.documentElement;
+        function claro() { return raiz.dataset.tema === 'claro'; }
+        function pintar() {
+          var c = claro();
+          b.setAttribute('aria-label', c ? b.dataset.escuro : b.dataset.claro);
+          b.setAttribute('aria-pressed', c ? 'true' : 'false');
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', c ? '#F4F1EA' : '#0E0E10');
+        }
+        b.addEventListener('click', function () {
+          raiz.dataset.tema = claro() ? 'escuro' : 'claro';
+          try { localStorage.setItem('tema', raiz.dataset.tema); } catch (e) {}
+          pintar();
+        });
+        pintar();
+      })();
+    </script>
   </body>
 </html>
+
+<style is:global>
+  .ctl { position: fixed; top: max(0.6rem, env(safe-area-inset-top)); right: max(0.6rem, env(safe-area-inset-right)); z-index: 50; display: flex; gap: 0.4rem; }
+  .ctl-b {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 44px; min-height: 44px; padding: 0 0.7rem; border-radius: 999px;
+    border: 1px solid var(--rule); background: color-mix(in srgb, var(--paper) 78%, transparent);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    color: var(--ink); font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-decoration: none; cursor: pointer;
+  }
+  .ctl-b:hover { color: var(--accent-text); border-color: var(--accent); }
+  .ctl-i { width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+</style>

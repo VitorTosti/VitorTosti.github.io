@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import { notas, formatarData } from '../../lib/notas';
+---
+
+<Base title="Notas · Vitor Tosti" description="Textos curtos sobre decisões técnicas e o que deu errado nos meus projetos de IA.">
+  <section class="section col pg">
+    <p class="label"><a href="/">← início</a></p>
+    <h1>Notas</h1>
+    <p class="lead">Decisões técnicas e o que deu errado no caminho.</p>
+    <ul class="lista">
+      {
+        notas.map((n) => (
+          <li>
+            <a href={`/notas/${n.slug}/`}>
+              <time datetime={n.data}>{formatarData(n.data)}</time>
+              <strong>{n.titulo}</strong>
+              <span>{n.resumo}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .pg { padding-top: 6rem; }
+  h1 { font-size: clamp(2.25rem, 8vw, 4rem); font-weight: 400; margin: 1rem 0; }
+  .lead { color: var(--ink-2); margin: 0 0 2rem; }
+  .lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+  .lista a { display: grid; gap: 0.4rem; padding: 1.25rem 1.5rem; border: 1px solid var(--rule); border-radius: 1.25rem; background: var(--surface); text-decoration: none; }
+  .lista a:hover { border-color: var(--accent); }
+  time { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-2); }
+  strong { font-weight: 500; font-size: 1.375rem; }
+  span { color: var(--ink-2); }
+</style>

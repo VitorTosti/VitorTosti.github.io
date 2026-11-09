@@ -25,7 +25,14 @@ const pontos = JSON.stringify(pontosDaTerra());
     try {
       interno = !!document.referrer && new URL(document.referrer).origin === location.origin;
     } catch (e) {}
-    if (interno || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    // Dispositivo fraco, economia de dados ou conexão lenta: abre direto, sem a Terra em WebGL.
+    var con = navigator.connection || {};
+    var fraco =
+      con.saveData ||
+      /(^|-)2g$/.test(con.effectiveType || '') ||
+      (navigator.deviceMemory && navigator.deviceMemory <= 2) ||
+      (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+    if (interno || fraco || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     d.classList.add('intro-on');
     var desistir = function () {
       // O script da introdução já começou: ela mesma decide quando terminar.

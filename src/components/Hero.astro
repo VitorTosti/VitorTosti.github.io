@@ -118,7 +118,8 @@ const pontos = frags.map((_, i) => {
           })
         }
       </div>
-      <p class="nome" aria-label={s.nome}>
+      <p class="nome">
+        <span class="sr-only">{s.nome}</span>
         <span class="inner">
           {
             tokens.map((t, i) => (
@@ -495,6 +496,8 @@ const pontos = frags.map((_, i) => {
   .nav {
     display: flex;
     justify-content: space-between;
+    /* Espaço para os botões fixos de idioma e tema. */
+    padding-right: 6.5rem;
     gap: 1rem;
     animation: desce 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }

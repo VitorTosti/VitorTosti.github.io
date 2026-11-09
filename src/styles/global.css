@@ -39,6 +39,51 @@
   color-scheme: dark;
 }
 
+/* Tema claro, opcional: o escuro continua sendo a identidade do site. Escolha guardada em localStorage. */
+:root[data-tema='claro'] {
+  --paper: #f4f1ea;
+  --surface: #e9e5db;
+  --ink: #1a1a1c;
+  --ink-2: #55524b;
+  --rule: #d2cdc0;
+  --bar: #a8a398;
+  --accent: #8f5200;
+  --accent-text: #8f5200;
+  --ink-soft: #2e2d2a;
+  --c-ambar: #8f5200;
+  --c-coral: #9c3018;
+  --c-agua: #0b7a6c;
+  --c-violeta: #5b3fc4;
+  --c-verde: #3f7a1f;
+  --c-azul: #2a52c9;
+  color-scheme: light;
+}
+
+/* A abertura (Terra, esfera de projetos) e a prévia 3D da cidade são feitas para o escuro: continuam escuras no tema claro. */
+:root[data-tema='claro'] .hero,
+:root[data-tema='claro'] .intro-terra,
+:root[data-tema='claro'] .city-preview {
+  --paper: #0e0e10;
+  --surface: #17171a;
+  --ink: #eceae4;
+  --ink-2: #9a978f;
+  --rule: #2a2a2e;
+  --bar: #4a4943;
+  --accent: #f2a33a;
+  --accent-text: #f2a33a;
+  --ink-soft: #d7d4cc;
+  --c-ambar: #f2a33a;
+  --c-coral: #ff7a5c;
+  --c-agua: #3fd0bd;
+  --c-violeta: #b39dff;
+  --c-verde: #8ad66b;
+  --c-azul: #7aa2ff;
+  --focus: #f2a33a;
+  background-color: var(--paper);
+  color: var(--ink);
+  color-scheme: dark;
+}
+
 *,
 *::before,
 *::after {

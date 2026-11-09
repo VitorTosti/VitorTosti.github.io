@@ -10,9 +10,12 @@ import Contact from '../components/Contact.astro';
 import SitePreview from '../components/SitePreview.astro';
 import BigTitle from '../components/BigTitle.astro';
 import CityFeature from '../components/CityFeature.astro';
+import Stack from '../components/Stack.astro';
+import Depoimentos from '../components/Depoimentos.astro';
+import NotasTeaser from '../components/NotasTeaser.astro';
 ---
 
-<Base>
+<Base pessoa alternates={{ 'pt-BR': '/', en: '/en/' }}>
   <Intro />
   <Hero />
   <section id="projetos" class="destaques" aria-label="Projetos em destaque">
@@ -24,7 +27,10 @@ import CityFeature from '../components/CityFeature.astro';
   <ProjectCards />
   <Marquee />
   <About />
+  <Stack />
   <Timeline />
+  <Depoimentos />
+  <NotasTeaser />
   <Contact />
 </Base>
 

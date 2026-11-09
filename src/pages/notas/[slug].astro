@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import { notas, formatarData } from '../../lib/notas';
+
+export function getStaticPaths() {
+  return notas.map((n) => ({ params: { slug: n.slug }, props: { nota: n } }));
+}
+const { nota } = Astro.props;
+const { Content } = nota;
+---
+
+<Base title={`${nota.titulo} · Vitor Tosti`} description={nota.resumo}>
+  <article class="section col nota">
+    <p class="label"><a href="/notas/">← notas</a></p>
+    <h1>{nota.titulo}</h1>
+    <time datetime={nota.data}>{formatarData(nota.data)}</time>
+    <div class="corpo"><Content /></div>
+  </article>
+</Base>
+
+<style>
+  .nota { padding-top: 6rem; }
+  h1 { font-size: clamp(2rem, 6vw, 3.25rem); font-weight: 400; line-height: 1.1; margin: 1rem 0 0.75rem; }
+  time { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-2); }
+  .corpo { margin-top: 2rem; line-height: 1.6; }
+  .corpo :global(h2) { font-weight: 500; font-size: 1.5rem; margin: 2rem 0 0.5rem; }
+  .corpo :global(p), .corpo :global(ul) { margin: 0 0 1rem; }
+  .corpo :global(code) { background: var(--sheet); padding: 0.1em 0.35em; border-radius: 4px; }
+</style>

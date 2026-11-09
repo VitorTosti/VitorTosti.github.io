@@ -22,6 +22,7 @@ import {
   type ProjetoCurto,
 } from '../../data/projetos';
 import type { Passo } from '../../lib/trace';
+import { impacto } from '../../data/impacto';
 import { ptBR as s } from '../../i18n/pt-BR';
 import posterSrc from '../../assets/mcp-poster.webp';
 import videoUrl from '../../assets/infocaij-mcp-demo.mp4?url';
@@ -63,6 +64,7 @@ const curtos: Record<string, ProjetoCurto> = {
   [kairo.slug]: kairo,
 };
 const curto = curtos[slug!];
+const imp = impacto[slug!];
 const ehMcp = slug === mcp.slug;
 const rastro: Passo[] = ehMcp ? mcp.rastro! : curto.rastro;
 const perguntaInicial = rastro.find((p) => p.tipo === 'pergunta');
@@ -114,7 +116,7 @@ const telasCore = [
 const num = String(i + 1).padStart(2, '0');
 ---
 
-<Base title={`${c.nome} · ${s.nome}`} description={c.resumo}>
+<Base title={`${c.nome} · ${s.nome}`} description={c.resumo} image={`/og/${c.slug}.png`}>
   <div class="pg" style={`--cor:var(--c-${c.cor})`}>
     <nav class="barra" aria-label="Navegação">
       <a href="/">← {s.nome}</a>
@@ -257,6 +259,25 @@ const num = String(i + 1).padStart(2, '0');
         {curto?.nota && <p class="stack">{curto.nota}</p>}
       </div>
     </section>
+
+    {
+      imp && (
+        <section class="bloco" aria-labelledby="h-impacto">
+          <h2 id="h-impacto" class="rot">Decisão e resultado</h2>
+          <div data-fade>
+            <p class="texto">{imp.decisao}</p>
+            <ul class="imp">
+              {imp.numeros.map((n) => (
+                <li>
+                  <strong>{n.v}</strong>
+                  <span>{n.r}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
 
     <section class="bloco" aria-labelledby="h-rastro">
       <h2 id="h-rastro" class="rot">{ehMcp ? 'Uma execução real' : 'Como funciona'}</h2>
@@ -680,6 +701,17 @@ const num = String(i + 1).padStart(2, '0');
     border-radius: clamp(1.25rem, 3vw, 2.5rem);
     overflow: hidden;
   }
+  .imp {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 1rem;
+  }
+  .imp li { display: grid; gap: 0.35rem; padding-top: 0.9rem; border-top: 2px solid var(--cor); }
+  .imp strong { font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1; font-weight: 400; color: var(--cor); }
+  .imp span { font-family: var(--mono); font-size: 0.8125rem; color: var(--ink-2); }
   .nums div {
     padding: clamp(1.25rem, 3vw, 2.5rem);
     border: 1px solid var(--rule);

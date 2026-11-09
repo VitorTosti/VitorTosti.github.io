@@ -103,3 +103,15 @@ src/
   assets/                       imagens, vídeo e gabarito do cardápio
 scripts/gerar-alternativas.ts, gerar-og.mjs
 ```
+
+## Recursos adicionais
+
+- **Inglês**: `/en/` (texto em `src/i18n/en.ts`). O alternador PT/EN fica no canto superior direito.
+- **Tema claro/escuro**: botão no canto superior direito; a escolha fica em `localStorage`. A abertura 3D continua escura.
+- **SEO**: sitemap (`@astrojs/sitemap`), hreflang, JSON-LD `Person` e imagem OG por projeto (`npm run og` gera `public/og/<slug>.png`).
+- **Notas**: Markdown em `src/content/notas/*.md` (frontmatter `titulo`, `data`, `resumo`).
+- **Depoimentos**: preencha `src/data/depoimentos.ts`; vazio, a seção some.
+- **Variáveis opcionais** (ver `.env.example`; no GitHub, em Settings › Variables › Actions):
+  `PUBLIC_PLAUSIBLE_DOMAIN` liga estatísticas sem cookies; `PUBLIC_FORM_ENDPOINT` envia o formulário de contato
+  (sem ele, o formulário abre o app de e-mail).
+- **CI**: `.github/workflows/qualidade.yml` roda testes, `astro check`, build, axe e Lighthouse em PRs e branches.

@@ -1,0 +1,34 @@
+---
+import BigTitle from './BigTitle.astro';
+import { notas, formatarData } from '../lib/notas';
+---
+
+{
+  notas.length > 0 && (
+    <section class="section nt wide" id="notas">
+      <BigTitle text="Notas" />
+      <ul class="lista">
+        {notas.slice(0, 3).map((n) => (
+          <li data-fade>
+            <a href={`/notas/${n.slug}/`}>
+              <time datetime={n.data}>{formatarData(n.data)}</time>
+              <strong>{n.titulo}</strong>
+              <span>{n.resumo}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="todas"><a class="ghost" href="/notas/">Todas as notas</a></p>
+    </section>
+  )
+}
+
+<style>
+  .lista { list-style: none; margin: 2rem 0 0; padding: 0; display: grid; gap: 1rem; }
+  .lista a { display: grid; gap: 0.4rem; padding: 1.25rem 1.5rem; border: 1px solid var(--rule); border-radius: 1.25rem; background: var(--surface); text-decoration: none; }
+  .lista a:hover { border-color: var(--accent); }
+  time { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-2); }
+  strong { font-weight: 500; font-size: 1.375rem; }
+  span { color: var(--ink-2); }
+  .todas { margin: 1.5rem 0 0; }
+</style>
