@@ -2,7 +2,7 @@
 export type LinhaStack = { slug: string; nome: string; itens: string[]; itensEn: string[] };
 
 export const stackPorProjeto: LinhaStack[] = [
-  { slug: 'infocaij-mcp', nome: 'InfoCAIJ MCP', itens: ['MCP (tool use)', 'TypeScript', 'Banco somente leitura', 'Sem dependências', '20 testes'], itensEn: ['MCP (tool use)', 'TypeScript', 'Read-only database', 'Zero dependencies', '20 tests'] },
+  { slug: 'infocaij-mcp', nome: 'InfoCAIJ MCP', itens: ['MCP (tool use)', 'TypeScript', 'SQLite e PostgreSQL somente leitura', 'Saída estruturada', 'Horas úteis', '56 testes'], itensEn: ['MCP (tool use)', 'TypeScript', 'Read-only SQLite and PostgreSQL', 'Structured output', 'Business hours', '56 tests'] },
   { slug: 'kairo', nome: 'Kairo', itens: ['Next.js 16', 'TypeScript', 'Tailwind 4', 'Supabase (Postgres, Auth, RLS)', 'Vitest', 'Playwright', 'pgTAP', 'Time de agentes de IA'], itensEn: ['Next.js 16', 'TypeScript', 'Tailwind 4', 'Supabase (Postgres, Auth, RLS)', 'Vitest', 'Playwright', 'pgTAP', 'AI agent team'] },
   { slug: 'cardapio-em-1-minuto', nome: 'Cardápio em 1 minuto', itens: ['Gemini', 'Saída em JSON com esquema', 'Avaliação com gabarito'], itensEn: ['Gemini', 'Schema-validated JSON output', 'Ground-truth evaluation'] },
   { slug: 'infocaij', nome: 'InfoCAIJ', itens: ['React', 'TypeScript', 'Node.js', 'Express', 'Zod', 'SQLite / PostgreSQL', 'Vitest', 'Deploy em VPS'], itensEn: ['React', 'TypeScript', 'Node.js', 'Express', 'Zod', 'SQLite / PostgreSQL', 'Vitest', 'VPS deploy'] },

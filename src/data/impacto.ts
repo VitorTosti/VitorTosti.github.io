@@ -9,7 +9,7 @@ export const impacto: Record<string, Impacto> = {
       { v: '93 de 135', r: 'máquinas pulavam a etapa "Pronta"' },
       { v: '77,8 h', r: 'p90 na etapa que a mediana escondia' },
       { v: '8', r: 'ferramentas e 3 prompts prontos' },
-      { v: '20', r: 'testes, incluindo o de vazamento' },
+      { v: '56', r: 'testes, incluindo o de vazamento' },
     ],
   },
   kairo: {

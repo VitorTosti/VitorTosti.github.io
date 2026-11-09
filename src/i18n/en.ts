@@ -36,7 +36,7 @@ export const en = {
       status: 'featured',
       problem: 'Management at CAIJ Informática had to open screens and build spreadsheets to find where the machine queue got stuck.',
       solution:
-        'A read-only MCP (Model Context Protocol) server that connects the internal InfoCAIJ system to Claude. 8 tools, 3 ready-made prompts and 20 tests. Zero dependencies: the protocol is implemented directly in TypeScript and the database opens read-only.',
+        'A read-only MCP (Model Context Protocol) server that connects the internal InfoCAIJ system to Claude. 8 tools, 3 ready-made prompts and 56 tests. Every tool also returns schema-described structured output, and times can be measured in business hours. Reads SQLite or PostgreSQL, always read-only. No required dependencies: the protocol is implemented directly in TypeScript and the PostgreSQL driver is optional.',
       results: [
         'Found that 93 of 135 machines skipped the "Ready" stage',
         'Bottleneck was picked by median (0.8 h); real problem was a long tail in "Awaiting pickup" (p90 77.8 h). Now picked by total hours, with a long-tail regression test',

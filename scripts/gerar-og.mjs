@@ -37,7 +37,7 @@ const home = `<div><p class="nome">Vitor Tosti</p>
 
 // slug, nome, status, resumo curto, cor do projeto (as mesmas de global.css)
 const projetos = [
-  ['infocaij-mcp', 'InfoCAIJ MCP', 'destaque', 'Servidor MCP somente leitura que liga o sistema interno ao Claude: 8 ferramentas, 20 testes, sem dependências.', '#F2A33A'],
+  ['infocaij-mcp', 'InfoCAIJ MCP', 'destaque', 'Servidor MCP somente leitura que liga o sistema interno ao Claude: 8 ferramentas, 56 testes, SQLite ou PostgreSQL, sem dependências obrigatórias.', '#F2A33A'],
   ['kairo', 'Kairo', 'time de agentes', 'Agenda online para negócios de beleza, construída por um orquestrador e cinco agentes especialistas. 471 testes.', '#7AA2FF'],
   ['cardapio-em-1-minuto', 'Cardápio em 1 minuto', 'em andamento', 'A foto do cardápio vira cardápio digital estruturado, com avaliação em 60 cardápios com gabarito.', '#FF7A5C'],
   ['infocaij', 'InfoCAIJ', 'em produção', 'Plataforma interna que tirou do WhatsApp a venda e a preparação de notebooks. ~300 máquinas por mês.', '#3FD0BD'],

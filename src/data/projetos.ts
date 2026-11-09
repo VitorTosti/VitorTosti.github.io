@@ -19,7 +19,7 @@ export const infocaijMcp: Projeto = {
   problema:
     'A gestão da CAIJ Informática precisava abrir telas e montar planilhas para saber onde a fila de máquinas travava.',
   solucao:
-    'Um servidor MCP (Model Context Protocol) somente leitura que conecta o sistema interno InfoCAIJ ao Claude. São 8 ferramentas, 3 prompts prontos (relatório semanal, diagnóstico de gargalo e status para vendedor) e 20 testes. Zero dependências: o protocolo é implementado direto em TypeScript, e o banco abre em modo somente leitura.',
+    'Um servidor MCP (Model Context Protocol) somente leitura que conecta o sistema interno InfoCAIJ ao Claude. São 8 ferramentas, 3 prompts prontos (relatório semanal, diagnóstico de gargalo e status para vendedor) e 56 testes. Cada ferramenta devolve também saída estruturada com esquema, e os tempos podem ser medidos em horas úteis. Lê SQLite ou PostgreSQL, sempre em modo somente leitura. Sem dependências obrigatórias: o protocolo é implementado direto em TypeScript, e o driver do PostgreSQL é opcional.',
   rastro: [
     {
       tipo: 'pergunta',
@@ -37,7 +37,7 @@ export const infocaijMcp: Projeto = {
       texto: 'Mediana de 48 minutos entre a venda registrada e a máquina pronta.',
       aviso: '93 de 135 máquinas pularam a etapa "Pronta".',
     },
-    { tipo: 'avaliacao', itens: ['20/20 testes', 'somente leitura', '0 dados de clientes'] },
+    { tipo: 'avaliacao', itens: ['56/56 testes', 'somente leitura', '0 dados de clientes'] },
   ],
   correcoes: [
     {
