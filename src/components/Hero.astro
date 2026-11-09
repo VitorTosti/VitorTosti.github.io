@@ -155,11 +155,11 @@ const pontos = frags.map((_, i) => {
       <p class="intro">Estudante de Ciência da Computação na UFABC. Do site público à operação interna, transformo problemas do dia a dia em software que funciona.</p>
     </div>
     <div class="botoes">
-      <a class="pill" href="/projetos/entrevias/">Explorar Entre vias</a>
+      <a class="pill b-extra" href="/projetos/entrevias/">Explorar Entre vias</a>
       <a class="ghost" href="#projetos">Ver projetos</a>
       {
         temCurriculo && (
-          <a class="ghost" href={CURRICULO} download>
+          <a class="ghost b-extra" href={CURRICULO} download>
             {s.curriculo}
           </a>
         )
@@ -632,9 +632,14 @@ const pontos = frags.map((_, i) => {
       flex-direction: column;
       align-items: flex-start;
     }
-    .stage { bottom: 28%; }
-    .apresentacao h1 { font-size: 1.8rem; }
-    .apresentacao .intro { font-size: 1rem; }
+    .stage { bottom: 24%; }
+    /* Menos texto sobre a esfera: o parágrafo e os botões extras ficam para telas maiores. */
+    .apresentacao h1 { font-size: 1.5rem; margin-bottom: 0; }
+    .apresentacao .intro,
+    .botoes .b-extra { display: none; }
+    .botoes a[href='#projetos'] { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+    .nav { margin-top: 2.75rem; padding-right: 0; }
+    .nav-a { font-size: 0.6875rem; letter-spacing: 0.05em; }
   }
   @media (max-width: 380px) {
     .hero {

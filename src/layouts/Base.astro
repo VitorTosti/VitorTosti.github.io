@@ -93,7 +93,7 @@ const jsonLd = {
       <slot />
     </main>
     <slot name="footer" />
-    <nav class="ctl" aria-label={ehEn ? 'Site preferences' : 'Preferências do site'}>
+    <nav class="pref" aria-label={ehEn ? 'Site preferences' : 'Preferências do site'}>
       {
         alternates?.['pt-BR'] && alternates?.en && (
           <a
@@ -136,7 +136,9 @@ const jsonLd = {
 </html>
 
 <style is:global>
-  .ctl { position: fixed; top: max(0.6rem, env(safe-area-inset-top)); right: max(0.6rem, env(safe-area-inset-right)); z-index: 50; display: flex; gap: 0.4rem; }
+  /* Rola junto com a página: fixo, ficava por cima do conteúdo no celular. */
+  .pref { position: absolute; top: max(0.6rem, env(safe-area-inset-top)); right: max(0.6rem, env(safe-area-inset-right)); z-index: 50; display: flex; gap: 0.4rem; }
+  @media (max-width: 639px) { .pref .ctl-b { min-width: 40px; min-height: 40px; padding: 0 0.55rem; font-size: 0.6875rem; } }
   .ctl-b {
     display: inline-flex; align-items: center; justify-content: center;
     min-width: 44px; min-height: 44px; padding: 0 0.7rem; border-radius: 999px;

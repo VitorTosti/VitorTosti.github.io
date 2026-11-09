@@ -388,8 +388,30 @@ const celulares = [
   }
   /* Celular: a etiqueta sobe para o topo, para não disputar o pé com os controles. */
   @media (max-width: 899px) {
+    /* A foto vem logo depois do título; o texto longo fica para depois, e só os 2 primeiros fatos aparecem. */
+    .corpo > .midia {
+      order: -1;
+    }
+    .fatos li:nth-child(n + 3) {
+      display: none;
+    }
+    .resumo {
+      font-size: 1.0625rem;
+      margin-bottom: 0.75rem;
+    }
+    /* Capturas largas precisam de altura para não virarem uma tira: quadro mais alto e controles menores. */
+    .carrossel {
+      aspect-ratio: 5 / 4;
+    }
     .carrossel.inteiro .slide :global(img) {
-      padding-top: 3rem;
+      padding: 2.5rem 0.5rem 2.75rem;
+    }
+    .ctl button {
+      min-width: 28px;
+      height: 28px;
+    }
+    .carrossel.inteiro .slide :global(img) {
+      padding-top: 2.5rem;
     }
     .carrossel.inteiro .chip {
       top: 0.75rem;
