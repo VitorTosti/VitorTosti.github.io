@@ -1,7 +1,7 @@
 # Design
 
 ## Portfólio existente
-Preservar papel quase preto, texto claro, destaque âmbar, Newsreader Variable e JetBrains Mono. A esfera de projetos permanece na abertura; a mensagem de trabalho e os caminhos de ação ficam explícitos. Entre vias é o primeiro destaque, com atalho na abertura, apresentação editorial e prévia ampla da cidade 3D. CAIJ.com.br e InfoCAIJ continuam na seção de destaques. Acesso ao app inicia a experiência guiada; o atalho de desafio usa `?desafio=1` para iniciar diretamente a comparação.
+Preservar papel quase preto, texto claro, destaque âmbar, Newsreader Variable e JetBrains Mono. A esfera de projetos permanece na abertura; a mensagem de trabalho e os caminhos de ação ficam explícitos. Entre vias é o primeiro destaque, com atalho na abertura, apresentação editorial e prévia ampla da cidade 3D. InfoCAIJ continua na seção de destaques. Acesso ao app inicia a experiência guiada; o atalho de desafio usa `?desafio=1` para iniciar diretamente a comparação.
 
 ## Entre vias — /projetos/entrevias/
 Laboratório de mobilidade educativo independente. Mapa como superfície principal, fundo azul-marinho, vias azul-acinzentadas, veículos laranja e ônibus verde-água. Painel de controles claro na lateral em desktop e abaixo do mapa em celular. Títulos editoriais Newsreader, controles sem serifa e números monoespaçados. Geometria no Canvas representa a rede real do modelo. Não usar uma imagem decorativa no lugar da simulação.

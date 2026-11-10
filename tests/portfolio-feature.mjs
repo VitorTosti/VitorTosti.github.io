@@ -13,7 +13,7 @@ try {
     await page.addStyleTag({ content: 'astro-dev-toolbar{display:none!important}' });
     await page.evaluate(() => document.fonts.ready);
     await page.screenshot({ path: `.codex/city-qa/portfolio-app-hero-${width}.png` });
-    assert.deepEqual(await page.locator('#projetos h3').allTextContents(), ['Entre vias', 'CAIJ.com.br', 'InfoCAIJ']);
+    assert.deepEqual(await page.locator('#projetos h3').allTextContents(), ['Entre vias', 'InfoCAIJ']);
     assert.equal(await page.getByRole('link', { name: 'Explorar Entre vias', exact: true }).getAttribute('href'), '/projetos/entrevias/');
     await page.locator('.city-feature').scrollIntoViewIfNeeded();
     await page.waitForFunction(() => document.querySelector('[data-city-preview]').dataset.ready === '3d');

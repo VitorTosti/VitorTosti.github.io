@@ -38,12 +38,10 @@ const CORE = { href: pj('coreufabc'), rot: 'CoreUFABC', cor: 'verde' } as const;
 const ENC = { href: pj('kairo'), rot: 'Kairo', cor: 'azul' } as const;
 const EU = { href: '#sobre', rot: 'Sobre', cor: 'tinta' } as const;
 const CITY = { href: '/projetos/entrevias/', rot: 'Entre vias', cor: 'ambar' } as const;
-const SITE = { href: '#projetos', rot: 'CAIJ.com.br', cor: 'agua' } as const;
 
 // Ordem pensada para a esfera: prints e números se alternam, e cada projeto aparece espalhado.
 const frags: Frag[] = [
   { tipo: 'img', src: await img(cityPreview), ...CITY },
-  { tipo: 'txt', v: 'CAIJ.com.br', r: 'explore o site no portfólio', ...SITE, titulo: true },
   { tipo: 'img', src: await img(cardapio017), ...CARD },
   { tipo: 'txt', v: num('máquinas e pedidos por mês'), r: 'máquinas e pedidos por mês', ...CAIJ },
   { tipo: 'img', src: await img(painel), ...MACH },
