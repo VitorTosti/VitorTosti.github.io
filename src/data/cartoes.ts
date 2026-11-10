@@ -22,7 +22,7 @@ export const cartoes: Cartao[] = [
     nome: mcp.nome,
     status: 'destaque',
     resumo:
-      'Servidor MCP somente leitura que liga o sistema interno InfoCAIJ ao Claude: 8 ferramentas com saída estruturada, horas úteis, SQLite ou PostgreSQL e 56 testes, sem dependências obrigatórias.',
+      'Servidor MCP somente leitura que liga o sistema interno InfoCAIJ ao Claude: 8 ferramentas com saída estruturada, horas úteis com feriados, tendência semanal, SQLite ou PostgreSQL e 65 testes, sem dependências obrigatórias.',
     fatos: [
       '✗ gargalo escolhido pela mediana (0,8 h) → ✓ pela soma de horas, com teste da cauda longa',
       '✗ descrição ambígua de ferramenta → ✓ passou a dizer qual data define o período',
