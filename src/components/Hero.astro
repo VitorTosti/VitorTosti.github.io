@@ -1,889 +1,263 @@
 ---
-// Abertura em uma tela: o nome no centro de uma esfera 3D de fragmentos dos projetos.
-// 25 cartões (prints e números reais) ficam numa esfera de Fibonacci; arrastar gira a esfera e o
-// nome continua no centro, de frente para a câmera. Cada cartão leva à página do projeto.
-// Sem JS, a esfera fica parada no ângulo inicial; com movimento reduzido, não há inércia de entrada.
-import { getImage } from 'astro:assets';
-import foto from '../assets/vitor.webp';
-import cityPreview from '../assets/entrevias-city.webp';
-import painel from '../assets/maq-equipamento.webp';
-import testes from '../assets/maq-teclado.webp';
-import etiqueta from '../assets/maq-etiqueta.webp';
-import cardapio009 from '../assets/cardapio_009.jpg';
-import cardapio017 from '../assets/cardapio_017.jpg';
-import kairoHoje from '../assets/kairo-painel-hoje.webp';
-import caijFluxo from '../assets/caij-fluxo.webp';
 import { ptBR as s } from '../i18n/pt-BR';
-import { splitFallback } from '../lib/tokenize';
 import { CURRICULO, temCurriculo } from '../lib/curriculo';
-import { avaliacao as av, numeros } from '../data/cartoes';
 
-const tokens = splitFallback(s.nome);
-const pj = (slug: string) => `/projetos/${slug}/`;
-const img = async (src: ImageMetadata) => (await getImage({ src, format: 'webp', width: 560, quality: 72 })).src;
-const num = (r: string) => numeros.find((n) => n.r === r)!.v;
-const aval = (r: string) => av.find((a) => a.r === r)!.v;
-
-type Cor = 'ambar' | 'coral' | 'agua' | 'violeta' | 'verde' | 'azul' | 'tinta';
-// Todo cartão diz de qual projeto é (rot) e carrega a cor dele.
-type Frag =
-  | { tipo: 'img'; src: string; href: string; rot: string; cor: Cor; alto?: boolean }
-  | { tipo: 'txt'; v: string; r: string; href: string; rot: string; cor: Cor; titulo?: boolean };
-
-const MCP = { href: pj('infocaij-mcp'), rot: 'InfoCAIJ MCP', cor: 'ambar' } as const;
-const CARD = { href: pj('cardapio-em-1-minuto'), rot: 'Cardápio', cor: 'coral' } as const;
-const CAIJ = { href: pj('infocaij'), rot: 'InfoCAIJ', cor: 'agua' } as const;
-const MACH = { href: pj('infomachine'), rot: 'InfoMachine', cor: 'violeta' } as const;
-const CORE = { href: pj('coreufabc'), rot: 'CoreUFABC', cor: 'verde' } as const;
-const ENC = { href: pj('kairo'), rot: 'Kairo', cor: 'azul' } as const;
-const EU = { href: '#sobre', rot: 'Sobre', cor: 'tinta' } as const;
-const CITY = { href: '/projetos/entrevias/', rot: 'Entre vias', cor: 'ambar' } as const;
-
-// Ordem pensada para a esfera: prints e números se alternam, e cada projeto aparece espalhado.
-const frags: Frag[] = [
-  { tipo: 'img', src: await img(cityPreview), ...CITY },
-  { tipo: 'img', src: await img(cardapio017), ...CARD },
-  { tipo: 'txt', v: num('máquinas e pedidos por mês'), r: 'máquinas e pedidos por mês', ...CAIJ },
-  { tipo: 'img', src: await img(painel), ...MACH },
-  { tipo: 'txt', v: 'Entre vias', r: 'experimente uma cidade em movimento', ...CITY, titulo: true },
-  { tipo: 'txt', v: 'Kairo', r: 'orquestrador + 5 agentes', ...ENC, rot: 'time de agentes', titulo: true },
-  { tipo: 'txt', v: 'InfoMachine', r: '~100 máquinas por semana', ...MACH, rot: 'em uso na bancada', titulo: true },
-  { tipo: 'img', src: await img(testes), ...MACH },
-  { tipo: 'txt', v: 'CoreUFABC', r: 'CR · CA · CPk', ...CORE, rot: 'protótipo', titulo: true },
-  { tipo: 'img', src: await img(cardapio009), ...CARD },
-  { tipo: 'txt', v: aval('itens'), r: 'itens com gabarito', ...CARD },
-  { tipo: 'txt', v: '65/65', r: 'testes passando', ...MCP },
-  { tipo: 'img', src: await img(etiqueta), ...MACH },
-  { tipo: 'txt', v: 'InfoCAIJ', r: '15 usuários · 8 etapas', ...CAIJ, rot: 'em produção', titulo: true },
-  { tipo: 'txt', v: '66', r: 'testes · CI no GitHub', ...CORE },
-  { tipo: 'img', src: await img(caijFluxo), ...CAIJ },
-  { tipo: 'txt', v: num('eventos de histórico'), r: 'eventos de histórico', ...CAIJ },
-  { tipo: 'img', src: await img(kairoHoje), ...ENC },
-  { tipo: 'txt', v: 'SHA-256', r: 'atualizações verificadas', ...MACH },
-  { tipo: 'txt', v: '0', r: 'dados de clientes expostos', ...MCP },
-  { tipo: 'txt', v: aval('armadilhas'), r: 'armadilhas no teste', ...CARD },
-  { tipo: 'txt', v: '471', r: 'testes · 146 asserções no banco', ...ENC },
-  { tipo: 'img', src: await img(foto), ...EU, rot: 'Vitor Tosti', alto: true },
-  { tipo: 'txt', v: 'UFABC', r: 'Ciência da Computação', ...EU, rot: 'formação', titulo: true },
-];
-
-// Esfera de Fibonacci: posição unitária e orientação de cada cartão, calculadas no build.
-const N = frags.length;
-const GA = Math.PI * (3 - Math.sqrt(5));
-const r4 = (n: number) => Math.round(n * 1e4) / 1e4;
-const pontos = frags.map((_, i) => {
-  const y = 1 - (i / (N - 1)) * 2;
-  const rad = Math.sqrt(Math.max(0, 1 - y * y));
-  const th = i * GA;
-  const x = Math.cos(th) * rad;
-  const z = Math.sin(th) * rad;
-  return { x: r4(x), y: r4(y), z: r4(z), lat: r4((Math.asin(y) * 180) / Math.PI), lon: r4((Math.atan2(x, z) * 180) / Math.PI) };
-});
+const projetos = [
+  { nome: 'InfoCAIJ MCP', tipo: 'IA + dados reais', href: '/projetos/infocaij-mcp/', cor: 'ambar' },
+  { nome: 'InfoCAIJ', tipo: 'Em produção', href: '/projetos/infocaij/', cor: 'agua' },
+  { nome: 'Kairo', tipo: 'Agentes + produto', href: '/projetos/kairo/', cor: 'azul' },
+] as const;
 ---
 
-<header class="hero">
-  <div class="stage" data-esfera>
-    <div class="world">
-      <div class="orb" aria-hidden="true">
-        {
-          frags.map((f, i) => {
-            const p = pontos[i];
-            return (
-              <a
-                class:list={['card', f.tipo, f.tipo === 'img' && f.alto && 'alto', f.tipo === 'txt' && f.titulo && 'titulo']}
-                href={f.href}
-                tabindex="-1"
-                draggable="false"
-                data-u={`${p.x},${p.y},${p.z}`}
-                style={`--x:${p.x};--y:${p.y};--z:${p.z};--lat:${p.lat}deg;--lon:${p.lon}deg;--i:${i};--cor:var(--c-${f.cor})`}
-              >
-                <figure>
-                  {f.tipo === 'img' ? (
-                    <>
-                      <img src={f.src} alt="" loading="eager" decoding="async" draggable="false" />
-                      <figcaption class="rot">{f.rot}</figcaption>
-                    </>
-                  ) : (
-                    <figcaption>
-                      <span class="rot">{f.rot}</span>
-                      <b>{f.v}</b>
-                      <small>{f.r}</small>
-                    </figcaption>
-                  )}
-                </figure>
-              </a>
-            );
-          })
-        }
-      </div>
-      <p class="nome">
-        <span class="sr-only">{s.nome}</span>
-        <span class="inner">
-          {
-            tokens.map((t, i) => (
-              <span class="mask" aria-hidden="true">
-                <span class="t" style={`--i:${i}`}>
-                  {t}
-                </span>
-              </span>
-            ))
-          }
-          <span class="cur-wrap" aria-hidden="true"><span class="cur"></span></span>
-        </span>
-      </p>
-    </div>
-  </div>
-  <div class="vig" aria-hidden="true"></div>
+<header class="hero" data-hero>
+  <canvas class="campo" data-campo aria-hidden="true"></canvas>
+  <div class="luz" aria-hidden="true"></div>
 
   <nav class="nav" aria-label="Seções">
-    {
-      s.nav.map((l) => (
-        <a href={l.href} class="nav-a">
-          {l.rotulo}
-        </a>
-      ))
-    }
+    <a class="assinatura" href="/" aria-label="Vitor Tosti, início">VT<span>.</span></a>
+    <div class="nav-links">
+      {s.nav.map((link) => <a href={link.href}>{link.rotulo}</a>)}
+    </div>
   </nav>
 
-  <p class="cue" aria-hidden="true"><s></s>Arraste para girar</p>
+  <div class="miolo">
+    <div class="apresentacao">
+      <p class="sobretitulo"><span class="sinal" aria-hidden="true"></span> Vitor Tosti <span class="barra">/</span> Software & IA aplicada</p>
+      <h1>Ideias que viram <em>sistemas.</em></h1>
+      <p class="descricao">Da pesquisa ao produto em uso. Construo tecnologia para resolver problemas reais.</p>
+      <div class="acoes">
+        <a class="pill principal" href="#projetos">Ver projetos <span aria-hidden="true">↗</span></a>
+        <a class="ghost" href="#contato">Fale comigo</a>
+        {temCurriculo && <a class="curriculo" href={CURRICULO} download>{s.curriculo} ↗</a>}
+      </div>
+    </div>
+
+    <div class="constelacao" aria-label="Projetos em destaque">
+      <div class="trilhas" aria-hidden="true">
+        <span class="trilha trilha-a"></span>
+        <span class="trilha trilha-b"></span>
+        <span class="trilha trilha-c"></span>
+        <span class="nucleo"><span>DO CÓDIGO<br />AO USO REAL</span></span>
+      </div>
+      {projetos.map((projeto, index) => (
+        <a class:list={['projeto', `projeto-${index + 1}`]} href={projeto.href} style={`--cor: var(--c-${projeto.cor})`}>
+          <span class="indice">0{index + 1} <span aria-hidden="true">↗</span></span>
+          <strong>{projeto.nome}</strong>
+          <small>{projeto.tipo}</small>
+        </a>
+      ))}
+      <p class="explore">Explore os pontos <span aria-hidden="true">↗</span></p>
+    </div>
+  </div>
 
   <div class="base">
-    <div class="apresentacao">
-      <h1>Construo sistemas e aplicações com IA para resolver problemas reais.</h1>
-      <p class="intro">Estudante de Ciência da Computação na UFABC. Do site público à operação interna, transformo problemas do dia a dia em software que funciona.</p>
-    </div>
-    <div class="botoes">
-      <a class="pill b-extra" href="/projetos/entrevias/">Explorar Entre vias</a>
-      <a class="ghost" href="#projetos">Ver projetos</a>
-      {
-        temCurriculo && (
-          <a class="ghost b-extra" href={CURRICULO} download>
-            {s.curriculo}
-          </a>
-        )
-      }
-      <a class="ghost" href={`mailto:${s.links.email}`}>{s.falar}</a>
-    </div>
+    <span>São Bernardo do Campo, SP</span>
+    <a href="#projetos">Role para explorar <span aria-hidden="true">↓</span></a>
   </div>
 </header>
 
 <style>
   .hero {
-    --R: max(155px, min(480px, 46svh, 58vw));
-    --cw: calc(var(--R) * 0.47);
-    --persp: 1150px;
     position: relative;
-    min-height: 100svh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1.5rem var(--gutter) 1.75rem;
-    overflow: clip;
     isolation: isolate;
-  }
-
-  /* Palco: ocupa a abertura inteira; o ponto 0×0 de .world é o centro da esfera e do nome. */
-  .stage {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    perspective: var(--persp);
-    perspective-origin: 50% 50%;
-    overflow: hidden;
-    touch-action: pan-y;
-    cursor: grab;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  .stage.arrastando {
-    cursor: grabbing;
-  }
-  .world,
-  .orb {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    transform-style: preserve-3d;
-  }
-  .world {
-    top: 50%;
-    left: 50%;
-    transform: rotateX(-4deg);
-    will-change: transform;
-  }
-
-  /* Cada cartão sai do centro pela sua posição na esfera e fica virado para fora. --k é a entrada:
-     em 0 o cartão está no centro, pequeno e girado; em 1, no lugar (o padrão, sem JS). */
-  .card {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: var(--cw);
-    height: calc(var(--cw) / 1.5);
-    margin-left: calc(var(--cw) / -2);
-    margin-top: calc(var(--cw) / -3);
-    transform: translate3d(
-        calc(var(--x) * var(--R) * var(--k, 1)),
-        calc(var(--y) * var(--R) * var(--k, 1) * -1),
-        calc(var(--z) * var(--R) * var(--k, 1))
-      )
-      rotateY(var(--lon)) rotateX(var(--lat)) rotateZ(calc((1 - var(--k, 1)) * -50deg))
-      scale(calc(0.3 + 0.7 * var(--k, 1)));
-    color: inherit;
-    text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .card.alto {
-    height: calc(var(--cw) * 1.25);
-    margin-top: calc(var(--cw) * -0.625);
-  }
-  /* Brilho na cor do projeto: acende nos cartões de frente (--f, escrito pelo JS) e no hover. */
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 6px;
-    box-shadow:
-      0 0 calc(var(--cw) * 0.22) calc(var(--cw) * 0.01) color-mix(in srgb, var(--cor) 55%, transparent),
-      0 calc(var(--cw) * 0.08) calc(var(--cw) * 0.3) rgb(0 0 0 / 0.6);
-    opacity: calc(var(--f, 0) * 0.85);
-    transition: opacity 0.35s var(--ease);
-    pointer-events: none;
-  }
-  .card figure {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    overflow: hidden;
-    border-radius: 6px;
-    background: var(--surface);
-    transition: transform 0.5s var(--ease);
-  }
-  /* Profundidade: um véu escuro, não um filtro (filtro em 21 cartões 3D pesa no celular).
-     O contorno fino na cor do projeto fica no mesmo véu. */
-  .card figure::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    border-radius: 6px;
-    background: rgb(0 0 0 / var(--d, 0));
-    box-shadow:
-      inset 0 0 0 1px color-mix(in srgb, var(--cor) 55%, transparent),
-      inset 0 1px 0 rgb(255 255 255 / 0.12);
-    pointer-events: none;
-  }
-  /* Reflexo que atravessa o cartão uma vez, quando ele chega ao lugar. */
-  .card figure::before {
-    content: '';
-    position: absolute;
-    inset: -20% -60%;
-    z-index: 1;
-    background: linear-gradient(105deg, transparent 40%, rgb(255 255 255 / 0.2) 50%, transparent 60%);
-    transform: translateX(-70%);
-    pointer-events: none;
-  }
-  .hero.entrou .card figure::before {
-    animation: reflexo 1.1s calc(var(--chega, 0ms) + 60ms) var(--ease) both;
-  }
-  /* Cartão de costas: o conteúdo sairia espelhado, então só a moldura fica. */
-  .card img,
-  .card figcaption {
-    transition: opacity 0.3s var(--ease);
-  }
-  .card.costas img,
-  .card.costas figcaption {
-    opacity: 0;
-  }
-  .card img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    -webkit-user-drag: none;
-  }
-  .rot {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55em;
-    font-family: var(--mono);
-    font-size: max(7px, calc(var(--cw) * 0.05));
-    line-height: 1;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--ink);
-    white-space: nowrap;
-  }
-  .rot::before {
-    content: '';
-    flex: none;
-    width: 0.7em;
-    height: 0.7em;
-    border-radius: 50%;
-    background: var(--cor);
-    box-shadow: 0 0 0.8em var(--cor);
-  }
-  /* Nos prints, o projeto fica numa etiqueta sobre um degradê no pé da imagem. */
-  .img .rot {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: calc(var(--cw) * 0.14) calc(var(--cw) * 0.06) calc(var(--cw) * 0.05);
-    background: linear-gradient(to top, rgb(8 8 10 / 0.92), transparent);
-  }
-  .txt figure {
-    background:
-      radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--cor) 34%, transparent), transparent 62%),
-      linear-gradient(160deg, color-mix(in srgb, var(--cor) 12%, var(--surface)), #101013 70%);
-  }
-  /* Grade fina ao fundo, como papel milimetrado. */
-  .txt figcaption::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgb(255 255 255 / 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(255 255 255 / 0.04) 1px, transparent 1px);
-    background-size: calc(var(--cw) * 0.08) calc(var(--cw) * 0.08);
-    -webkit-mask-image: linear-gradient(to bottom, #000, transparent 85%);
-    mask-image: linear-gradient(to bottom, #000, transparent 85%);
-    pointer-events: none;
-  }
-  .txt figcaption {
-    position: relative;
-    height: 100%;
+    min-height: min(900px, 100svh);
+    padding: 1.25rem var(--gutter) 1.5rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: calc(var(--cw) * 0.02);
-    padding: calc(var(--cw) * 0.07) calc(var(--cw) * 0.08);
-  }
-  .txt .rot,
-  .txt b,
-  .txt small {
-    position: relative;
-  }
-  .txt b {
-    font-weight: 400;
-    font-size: calc(var(--cw) * 0.2);
-    font-variation-settings: 'opsz' 72;
-    line-height: 0.95;
-    letter-spacing: -0.035em;
-    color: var(--cor);
-    text-shadow: 0 0 calc(var(--cw) * 0.12) color-mix(in srgb, var(--cor) 45%, transparent);
-  }
-  .txt.titulo b {
-    font-size: calc(var(--cw) * 0.15);
-    font-style: italic;
-    color: var(--ink);
-    text-shadow: none;
-    text-wrap: balance;
-  }
-  .txt small {
-    font-family: var(--mono);
-    font-size: max(7.5px, calc(var(--cw) * 0.052));
-    line-height: 1.35;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--ink-2);
-  }
-  @media (hover: hover) {
-    .card:hover figure {
-      transform: scale(1.06);
-    }
-    .card:hover::before {
-      opacity: 1;
-    }
-    .stage:not(.arrastando) .card {
-      cursor: pointer;
-    }
-  }
-  @keyframes reflexo {
-    to {
-      transform: translateX(70%);
-    }
-  }
-
-  /* O nome fica no mesmo ponto do centro da esfera: margem negativa de meia largura e .inner
-     subindo metade da própria altura. O JS escreve só a rotação inversa e o translateZ no h1. */
-  .nome {
-    --hw: min(84vw, 760px);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: var(--hw);
-    margin: 0 0 0 calc(var(--hw) / -2);
-    text-align: center;
-    font-size: clamp(2.75rem, min(8.4vw, 13svh), 7.5rem);
-    font-weight: 400;
-    font-variation-settings: 'opsz' 72;
-    line-height: 0.9;
-    letter-spacing: -0.045em;
-    color: var(--ink);
-    text-shadow: 0 2px 34px rgb(0 0 0 / 0.6);
-    white-space: nowrap;
-    pointer-events: none;
-    transform: translateZ(calc(var(--R) * 0.62));
-  }
-  .nome .inner {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    transform: translateY(-50%);
-  }
-  /* Cada token sobe por trás de uma máscara, na ordem em que seria gerado. */
-  .mask {
-    display: inline-block;
     overflow: hidden;
-    /* Folga para ascendentes e descendentes: a máscara não pode cortar a barra do T. */
-    padding-block: 0.16em 0.08em;
-    margin-block: -0.16em -0.08em;
-    white-space: pre;
+    background: #0e0e10;
+    color: #eceae4;
   }
-  .t {
-    display: inline-block;
-    animation: sobe 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    animation-delay: calc(150ms + var(--i) * 170ms);
-  }
-  .cur-wrap {
-    display: inline-block;
-    margin-left: 0.06em;
-    margin-bottom: 0.1em;
-  }
-  .cur {
-    display: block;
-    width: 0.32em;
-    height: 0.62em;
-    background: var(--accent);
-    animation:
-      aparece 400ms 650ms both,
-      pisca 1.1s 1.2s steps(1) infinite;
-  }
-
-  /* Bordas escuras: os cartões somem nas laterais e o texto de cima e de baixo fica legível. */
-  .vig {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background:
-      linear-gradient(to bottom, var(--paper) 0, transparent 18%, transparent 74%, var(--paper) 100%),
-      radial-gradient(ellipse 88% 92% at 50% 50%, transparent 48%, rgb(14 14 16 / 0.3) 78%, rgb(14 14 16 / 0.8) 100%);
-  }
-
-  /* Camadas de cima deixam o arraste passar por onde não há texto ou botão. */
-  .nav,
-  .base,
-  .cue {
-    position: relative;
-    z-index: 2;
-    pointer-events: none;
-  }
-  .nav a,
-  .base > * {
-    pointer-events: auto;
-  }
-  .nav {
-    display: flex;
-    justify-content: space-between;
-    /* Espaço para os botões fixos de idioma e tema. */
-    padding-right: 6.5rem;
-    gap: 1rem;
-    animation: desce 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-  .nav-a {
-    font-family: var(--mono);
-    font-size: clamp(0.75rem, 1.3vw, 1.125rem);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    text-decoration: none;
-    padding-block: 0.75rem;
-    transition: color var(--t-fast) var(--ease);
-  }
-
-  .cue {
-    position: absolute;
-    left: 50%;
-    bottom: 1.75rem;
-    translate: -50% 0;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    font-family: var(--mono);
-    font-size: 0.6875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--ink-2);
-    white-space: nowrap;
-    animation: sobe-leve 700ms 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    transition: opacity var(--t-slow) var(--ease);
-  }
-  .cue s {
-    position: relative;
-    width: 44px;
-    height: 1px;
-    overflow: hidden;
-    background: var(--bar);
-  }
-  .cue s::after {
+  .hero::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: var(--accent);
-    animation: varre 2.6s var(--ease) infinite;
+    z-index: -2;
+    background:
+      linear-gradient(90deg, rgb(14 14 16 / 0.96) 0%, rgb(14 14 16 / 0.72) 48%, rgb(14 14 16 / 0.36) 100%),
+      radial-gradient(circle at 75% 50%, rgb(63 208 189 / 0.08), transparent 36%),
+      repeating-linear-gradient(0deg, transparent 0 55px, rgb(236 234 228 / 0.035) 56px),
+      repeating-linear-gradient(90deg, transparent 0 55px, rgb(236 234 228 / 0.035) 56px);
   }
-  .hero.girou .cue {
-    opacity: 0;
+  .campo { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; opacity: 0.8; }
+  .luz {
+    position: absolute;
+    z-index: -1;
+    width: 40rem;
+    height: 40rem;
+    top: calc(var(--py, 48%) - 20rem);
+    left: calc(var(--px, 72%) - 20rem);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(242 163 58 / 0.1), transparent 66%);
+    pointer-events: none;
+    transition: top 0.5s ease-out, left 0.5s ease-out;
   }
-
-  .base {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 1.5rem;
-    position: relative;
-    z-index: 2;
+  .nav, .miolo, .base { width: min(100%, 1440px); margin-inline: auto; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding-right: 7.25rem; position: relative; z-index: 2; }
+  .assinatura { font-family: var(--mono); font-size: 1.25rem; font-weight: 700; letter-spacing: -0.08em; text-decoration: none; }
+  .assinatura span { color: var(--accent); }
+  .nav-links { display: flex; gap: clamp(1rem, 3vw, 3.25rem); }
+  .nav-links a, .base { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; text-decoration: none; }
+  .nav-links a { color: #b3b0a9; padding-block: 0.75rem; transition: color 160ms; }
+  .nav-links a:hover { color: #fff; }
+  .miolo { position: relative; flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(430px, 0.9fr); align-items: center; gap: 2rem; }
+  .apresentacao { position: relative; z-index: 1; padding-block: 3rem; }
+  .sobretitulo { display: flex; align-items: center; gap: 0.65rem; margin: 0 0 1.75rem; color: #b7b2a7; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .sinal { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 1.1rem var(--accent); }
+  .barra { color: var(--accent); }
+  h1 { max-width: 12ch; font-size: clamp(4.25rem, 8vw, 9rem); line-height: 0.86; letter-spacing: -0.065em; font-weight: 400; }
+  h1 em { display: block; color: var(--accent); font-weight: 400; }
+  .descricao { max-width: 32ch; margin: 2rem 0 0; color: #b7b2a7; font-size: clamp(1.1rem, 1.8vw, 1.5rem); line-height: 1.35; }
+  .acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: 2.25rem; }
+  .principal { gap: 1.5rem; }
+  .curriculo { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 0.75rem; }
+  .constelacao { position: relative; height: min(600px, 69svh); min-height: 430px; }
+  .trilhas { position: absolute; inset: 8% 2%; opacity: 0.82; }
+  .trilhas::before, .trilhas::after { content: ''; position: absolute; inset: 17%; border: 1px solid rgb(242 163 58 / 0.15); border-radius: 50%; transform: rotate(-22deg) scaleX(1.12); }
+  .trilhas::after { inset: 29%; border-color: rgb(63 208 189 / 0.17); transform: rotate(28deg) scaleX(0.92); }
+  .trilha { position: absolute; height: 1px; transform-origin: left center; background: linear-gradient(90deg, transparent, rgb(242 163 58 / 0.38), transparent); }
+  .trilha-a { width: 57%; top: 31%; left: 20%; rotate: 24deg; }
+  .trilha-b { width: 62%; top: 63%; left: 15%; rotate: -22deg; }
+  .trilha-c { width: 45%; top: 27%; left: 56%; rotate: 100deg; }
+  .nucleo { position: absolute; top: 48%; left: 51%; translate: -50% -50%; width: clamp(7rem, 13vw, 11rem); aspect-ratio: 1; border: 1px solid rgb(242 163 58 / 0.5); border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle, rgb(242 163 58 / 0.13), rgb(14 14 16 / 0.92) 72%); box-shadow: 0 0 5rem rgb(242 163 58 / 0.12), inset 0 0 2rem rgb(242 163 58 / 0.06); }
+  .nucleo::before, .nucleo::after { content: ''; position: absolute; inset: -1.3rem; border: 1px dashed rgb(242 163 58 / 0.18); border-radius: 50%; animation: girar 34s linear infinite; }
+  .nucleo::after { inset: -2.7rem; border-color: rgb(63 208 189 / 0.1); animation-direction: reverse; animation-duration: 48s; }
+  .nucleo span { color: #f2a33a; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.13em; line-height: 1.7; text-align: center; }
+  .projeto { position: absolute; z-index: 1; width: clamp(9rem, 14vw, 13rem); min-height: 7.75rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.35rem; padding: 0.85rem 1rem; border: 1px solid color-mix(in srgb, var(--cor) 38%, transparent); border-radius: 0.8rem; background: rgb(18 18 21 / 0.88); box-shadow: 0 1.5rem 3rem rgb(0 0 0 / 0.28); text-decoration: none; backdrop-filter: blur(12px); transition: border-color 220ms, background 220ms, transform 300ms, box-shadow 300ms; }
+  .projeto:hover, .projeto:focus-visible { color: #fff; border-color: var(--cor); background: #202023; transform: translateY(-8px) scale(1.03); box-shadow: 0 1.5rem 3rem color-mix(in srgb, var(--cor) 12%, transparent); }
+  .projeto-1 { top: 6%; left: 4%; }
+  .projeto-2 { top: 18%; right: 0; }
+  .projeto-3 { bottom: 4%; left: 17%; }
+  .indice { display: flex; justify-content: space-between; color: var(--cor); font-family: var(--mono); font-size: 0.68rem; }
+  .projeto strong { font-size: 1.3rem; font-weight: 400; line-height: 1.05; }
+  .projeto small { color: #a7a39b; font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .explore { position: absolute; bottom: 1%; right: 0; margin: 0; color: #77746e; font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; }
+  .base { position: relative; z-index: 1; display: flex; justify-content: space-between; color: #858078; }
+  .base a { text-decoration: none; }
+  .base a span { color: var(--accent); margin-left: 0.5rem; }
+  @keyframes girar { to { rotate: 360deg; } }
+  @media (max-width: 960px) {
+    .hero { min-height: 760px; }
+    .miolo { grid-template-columns: minmax(0, 1fr) minmax(350px, 0.8fr); gap: 0; }
+    h1 { font-size: clamp(4.3rem, 8vw, 6.5rem); }
+    .constelacao { min-height: 400px; }
   }
-  .apresentacao { max-width: 46rem; }
-  .apresentacao h1 { font-size: clamp(1.8rem, 3.3vw, 3rem); line-height: 1.12; margin: 0 0 1rem; }
-  .apresentacao .intro { max-width: 62ch; font-family: var(--serif); font-size: 1.125rem; text-transform: none; letter-spacing: 0; }
-  .stage { bottom: 15%; }
-  .intro {
-    margin: 0;
-    max-width: 19rem;
-    font-family: var(--mono);
-    font-size: clamp(0.75rem, 1.1vw, 0.9375rem);
-    line-height: 1.6;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--ink-2);
-    animation: sobe-leve 700ms 350ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  @media (max-width: 720px) {
+    .hero { min-height: 100svh; padding-bottom: 1.25rem; }
+    .campo { opacity: 0.42; }
+    .nav { padding-right: 6.5rem; }
+    .nav-links { display: none; }
+    .miolo { display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 0.25rem; }
+    .apresentacao { padding-block: 2rem 0; }
+    h1 { max-width: 11ch; font-size: clamp(4.1rem, 13vw, 6.5rem); }
+    .descricao { margin-top: 1.25rem; font-size: 1.1rem; }
+    .acoes { margin-top: 1.5rem; gap: 0.5rem; }
+    .acoes :global(.pill), .acoes :global(.ghost) { padding-inline: 1.15rem; }
+    .principal { gap: 0.75rem; }
+    .constelacao { height: 305px; min-height: 305px; width: 100%; }
+    .nucleo { width: 6.5rem; }
+    .projeto { width: 8.75rem; min-height: 6.5rem; padding: 0.65rem 0.75rem; }
+    .projeto strong { font-size: 1.1rem; }
+    .projeto-1 { top: 2%; left: 0; }
+    .projeto-2 { top: 7%; right: 0; }
+    .projeto-3 { bottom: 3%; left: 8%; }
+    .explore { bottom: 8%; }
+    .base { display: none; }
   }
-  .botoes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.625rem;
-    animation: sobe-leve 700ms 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  @media (max-width: 390px) {
+    .sobretitulo { font-size: 0.58rem; }
+    h1 { font-size: 3.85rem; }
+    .constelacao { height: 295px; min-height: 295px; }
+    .projeto { width: 8rem; }
   }
-  @keyframes sobe {
-    from {
-      transform: translateY(105%);
-    }
-  }
-  @keyframes sobe-leve {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-  }
-  @keyframes desce {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-  }
-  @keyframes aparece {
-    from {
-      opacity: 0;
-    }
-  }
-  @keyframes pisca {
-    50% {
-      opacity: 0;
-    }
-  }
-  @keyframes varre {
-    0% {
-      transform: translateX(-100%);
-    }
-    55% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-  @media (max-width: 1024px) {
-    /* Entre o celular e o desktop, a frase e o botão do meio não podem disputar espaço. */
-    .cue {
-      display: none;
-    }
-  }
-  @media (max-width: 639px) {
-    .hero {
-      --R: max(120px, min(480px, 42svh, 66vw));
-      --cw: calc(var(--R) * 0.46);
-    }
-    .nome {
-      font-size: 15vw;
-    }
-    .base {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .stage { bottom: 24%; }
-    /* Menos texto sobre a esfera: o parágrafo e os botões extras ficam para telas maiores. */
-    .apresentacao h1 { font-size: 1.5rem; margin-bottom: 0; }
-    .apresentacao .intro,
-    .botoes .b-extra { display: none; }
-    .botoes a[href='#projetos'] { background: var(--accent); border-color: var(--accent); color: var(--paper); }
-    .nav { margin-top: 2.75rem; padding-right: 0; }
-    .nav-a { font-size: 0.6875rem; letter-spacing: 0.05em; }
-  }
-  @media (max-width: 380px) {
-    .hero {
-      --R: max(108px, min(480px, 38svh, 62vw));
-      --cw: calc(var(--R) * 0.44);
-    }
+  @media (max-width: 720px) and (max-height: 700px) {
+    .apresentacao { padding-top: 0.75rem; }
+    .sobretitulo { margin-bottom: 0.9rem; }
+    h1 { font-size: clamp(3.3rem, 12vw, 4rem); }
+    .descricao { margin-top: 0.75rem; font-size: 1rem; }
+    .acoes { margin-top: 1rem; }
+    .constelacao { height: 255px; min-height: 255px; }
+    .projeto { min-height: 5.7rem; }
+    .explore { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .nav,
-    .t,
-    .intro,
-    .botoes,
-    .cur,
-    .cue,
-    .cue s::after,
-    .card figure::before {
-      animation: none;
-    }
+    .nucleo::before, .nucleo::after { animation: none; }
+    .luz { display: none; }
+    .projeto { transition: none; }
   }
 </style>
 
 <script>
-  // Câmera da esfera: arraste com inércia, aproximação leve ao rolar e sombra por profundidade.
-  // O nome recebe a rotação inversa da esfera, então continua de frente e no centro.
-  const stage = document.querySelector<HTMLElement>('[data-esfera]');
-  if (stage) iniciar(stage);
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const canvas = hero?.querySelector<HTMLCanvasElement>('[data-campo]');
+  if (hero && canvas) {
+    const context = canvas.getContext('2d');
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const nodes = Array.from({ length: 48 }, (_, index) => ({
+      x: ((index * 73 + 19) % 101) / 101,
+      y: ((index * 41 + 11) % 97) / 97,
+      phase: index * 1.7,
+      size: index % 8 === 0 ? 2 : 1,
+    }));
+    let width = 0;
+    let height = 0;
+    let pointerX = 0.72;
+    let pointerY = 0.48;
+    let visible = true;
+    let frame = 0;
 
-  function iniciar(stage: HTMLElement) {
-    const hero = stage.closest<HTMLElement>('.hero')!;
-    const world = stage.querySelector<HTMLElement>('.world')!;
-    const nome = stage.querySelector<HTMLElement>('.nome')!;
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const grosso = matchMedia('(pointer: coarse)').matches;
-    const cards = [...stage.querySelectorAll<HTMLAnchorElement>('.card')].map((el) => {
-      const [x, y, z] = el.dataset.u!.split(',').map(Number);
-      // Coordenadas do CSS: y cresce para baixo.
-      return { el, x, y: -y, z, d: -1, o: -1, f: -1, k: -1, costas: false };
-    });
-
-    const RAD = Math.PI / 180;
-    const TILT = -4;
-    const LIMITE = 32;
-    let R = 400;
-    let persp = 1150;
-    let dragX = 0;
-    let dragY = 0;
-    // Entrada: a esfera chega girando e desacelera até parar, o que mostra que ela é 3D.
-    // Com a introdução na tela, o giro de entrada espera ela terminar.
-    const GIRO = reduce ? 0 : -2.6;
-    let velX = 0;
-    // Entrada dos cartões: saem do centro, atrás do nome, em onda de cima para baixo, e cada um
-    // passa um pouco do lugar antes de assentar. inicio = null enquanto a introdução está na tela.
-    const ONDA = 45;
-    const DURA = 1150;
-    let inicio: number | null = null;
-    let entrando = !reduce;
-    function entrar() {
-      if (inicio !== null) return;
-      inicio = performance.now();
-      velX = GIRO;
-      cards.forEach((c, i) => c.el.style.setProperty('--chega', `${Math.round(i * ONDA + DURA * 0.55)}ms`));
-      hero.classList.add('entrou');
-    }
-    const comIntro = document.documentElement.classList.contains('intro-on');
-    if (comIntro) document.addEventListener('intro:fim', entrar, { once: true });
-    let velY = 0;
-    let camZ = 0;
-    let arrastando = false;
-    let visivel = true;
-    let quadro = 0;
-
-    function medir() {
-      const w = innerWidth;
-      const h = innerHeight;
-      const hr = w <= 380 ? 0.38 : w <= 640 ? 0.42 : 0.46;
-      // No celular a esfera passa um pouco da largura da tela: os cartões ficam legíveis.
-      const wr = w <= 380 ? 0.62 : w <= 640 ? 0.66 : 0.58;
-      const piso = w <= 380 ? 108 : w <= 640 ? 120 : 155;
-      const esc = w <= 380 ? 0.44 : w <= 640 ? 0.46 : 0.47;
-      R = Math.max(piso, Math.min(480, h * hr, w * wr));
-      persp = w <= 380 ? 620 : w <= 640 ? 760 : w <= 900 ? 920 : 1150;
-      hero.style.setProperty('--R', `${R}px`);
-      hero.style.setProperty('--cw', `${Math.round(Math.max(72, R * esc))}px`);
-      hero.style.setProperty('--persp', `${persp}px`);
-    }
-
-    function desenhar() {
-      if (!arrastando) {
-        dragX += velX;
-        dragY += velY;
-        velX *= 0.94;
-        velY *= 0.94;
-        if (Math.abs(velX) < 0.002) velX = 0;
-        if (Math.abs(velY) < 0.002) velY = 0;
-      }
-      dragY = Math.max(-LIMITE - TILT, Math.min(LIMITE - TILT, dragY));
-
-      // Com a janela ainda sem altura (aba em segundo plano), p seria NaN e travaria a câmera.
-      const p = innerHeight > 0 ? Math.min(1, Math.max(0, scrollY / (innerHeight * 0.5))) : 0;
-      camZ += (p * Math.min(64, R * 0.12) - camZ) * 0.075;
-      if (!Number.isFinite(camZ)) camZ = 0;
-      const sx = TILT + dragY;
-      const sy = dragX;
-      world.style.transform = `translateZ(${camZ.toFixed(2)}px) rotateY(${sy.toFixed(3)}deg) rotateX(${sx.toFixed(3)}deg)`;
-      nome.style.transform = `rotateX(${(-sx).toFixed(3)}deg) rotateY(${(-sy).toFixed(3)}deg) translateZ(${(R * 0.62).toFixed(1)}px)`;
-      nome.style.opacity = String(Math.max(0, 1 - p * 0.55));
-
-      const cx = Math.cos(sx * RAD);
-      const snx = Math.sin(sx * RAD);
-      const cy = Math.cos(sy * RAD);
-      const sny = Math.sin(sy * RAD);
-      const sombra = 1 - Math.min(1, p * 1.6);
-      const perto = persp * 0.66;
-      const limiteFrente = R / Math.max(R + 1, persp - camZ);
-      const agora = performance.now();
-      let algumEntrando = false;
-      cards.forEach((c, i) => {
-        // rotateX e depois rotateY, como no transform do .world.
-        const z1 = c.y * snx + c.z * cx;
-        const zf = -c.x * sny + z1 * cy;
-        const base = 0.14 + 0.86 * Math.pow((zf + 1) / 2, 0.85);
-        const d = Math.round(sombra * (1 - base) * 100) / 100;
-        const zAbs = zf * R + camZ;
-        // Os cartões da frente ficam translúcidos ao passar pelo nome, para ele continuar legível.
-        const frente = 1 - 0.65 * Math.min(1, Math.max(0, (zf - 0.72) / 0.22));
-        // Progresso da entrada: x vai de 0 a 1; k passa de 1 (vai além do lugar) e volta.
-        let k = 1;
-        let surge = 1;
-        if (entrando) {
-          const x = inicio === null ? 0 : Math.min(1, Math.max(0, (agora - inicio - i * ONDA) / DURA));
-          if (x < 1) algumEntrando = true;
-          const q = x - 1;
-          k = Math.round((1 + 2.4 * q * q * q + 1.4 * q * q) * 1000) / 1000;
-          surge = Math.min(1, x * 3);
-        }
-        if (k !== c.k) c.el.style.setProperty('--k', String((c.k = k)));
-        const o = Math.round((zAbs > perto ? Math.max(0, 1 - (zAbs - perto) / 190) : 1) * frente * surge * 100) / 100;
-        // Brilho na cor do projeto, mais forte quanto mais de frente o cartão está.
-        const f = Math.round(Math.min(1, Math.max(0, (zf - limiteFrente - 0.2) / 0.45)) * 20) / 20;
-        if (f !== c.f) c.el.style.setProperty('--f', String((c.f = f)));
-        if (d !== c.d) c.el.style.setProperty('--d', String((c.d = d)));
-        if (o !== c.o) c.el.style.opacity = String((c.o = o));
-        // O cartão olha para fora da esfera; com a perspectiva, ele só fica de frente para a câmera
-        // quando zf passa de R / (distância da câmera ao centro).
-        const costas = zf < limiteFrente;
-        if (costas !== c.costas) c.el.classList.toggle('costas', (c.costas = costas));
-      });
-      if (entrando && inicio !== null && !algumEntrando) entrando = false;
-      quadro = visivel ? requestAnimationFrame(desenhar) : 0;
-    }
-
-    // Arraste: mouse gira na hora; no toque, só um gesto horizontal gira (o vertical rola a página).
-    const GRAU_PX = 0.13;
-    let id = -1;
-    let x0 = 0;
-    let y0 = 0;
-    let ux = 0;
-    let uy = 0;
-    let decidido = false;
-    let moveu = 0;
-    let alvo: HTMLAnchorElement | null = null;
-
-    stage.addEventListener('pointerdown', (e) => {
-      if (e.button !== 0 || id !== -1) return;
-      id = e.pointerId;
-      x0 = ux = e.clientX;
-      y0 = uy = e.clientY;
-      moveu = 0;
-      alvo = (e.target as Element).closest<HTMLAnchorElement>('.card');
-      decidido = e.pointerType !== 'touch';
-      if (decidido) iniciarArraste(e);
-    });
-    stage.addEventListener('pointermove', (e) => {
-      if (e.pointerId !== id) return;
-      const dx = e.clientX - ux;
-      const dy = e.clientY - uy;
-      moveu = Math.max(moveu, Math.hypot(e.clientX - x0, e.clientY - y0));
-      if (!decidido) {
-        if (moveu < 10) return;
-        if (Math.abs(e.clientY - y0) > Math.abs(e.clientX - x0) * 1.15) return soltar();
-        decidido = true;
-        iniciarArraste(e);
-      }
-      ux = e.clientX;
-      uy = e.clientY;
-      velX = dx * GRAU_PX;
-      velY = -dy * GRAU_PX;
-      dragX += velX;
-      dragY += velY;
-    });
-    const fim = (e: PointerEvent) => {
-      if (e.pointerId !== id) return;
-      const clique = moveu < (grosso ? 14 : 6) && alvo && e.type === 'pointerup';
-      const destino = alvo;
-      soltar();
-      if (clique && destino) {
-        if (e.ctrlKey || e.metaKey) open(destino.href, '_blank', 'noopener');
-        else location.assign(destino.href);
-      }
+    const resize = () => {
+      const bounds = hero.getBoundingClientRect();
+      const ratio = Math.min(devicePixelRatio || 1, 2);
+      width = bounds.width;
+      height = bounds.height;
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      context?.setTransform(ratio, 0, 0, ratio, 0, 0);
+      if (reduced) draw(0);
     };
-    stage.addEventListener('pointerup', fim);
-    stage.addEventListener('pointercancel', fim);
-    // A navegação sai do pointerup; o clique nativo nunca navega (ele também viria depois de um arraste).
-    stage.addEventListener('click', (e) => e.preventDefault());
+    const draw = (time: number) => {
+      if (!context) return;
+      context.clearRect(0, 0, width, height);
+      const positions = nodes.map((node) => ({
+        x: node.x * width + (reduced ? 0 : Math.sin(time * 0.00025 + node.phase) * 12) + (pointerX - 0.5) * (node.size === 2 ? 14 : 5),
+        y: node.y * height + (reduced ? 0 : Math.cos(time * 0.0003 + node.phase) * 10) + (pointerY - 0.5) * (node.size === 2 ? 14 : 5),
+      }));
+      for (let index = 0; index < positions.length; index++) {
+        const start = positions[index];
+        for (let otherIndex = index + 1; otherIndex < positions.length; otherIndex++) {
+          const end = positions[otherIndex];
+          const distance = Math.hypot(start.x - end.x, start.y - end.y);
+          if (distance > 150) continue;
+          context.strokeStyle = `rgba(242, 163, 58, ${((1 - distance / 150) * 0.11).toFixed(3)})`;
+          context.beginPath();
+          context.moveTo(start.x, start.y);
+          context.lineTo(end.x, end.y);
+          context.stroke();
+        }
+        context.fillStyle = nodes[index].size === 2 ? 'rgba(242, 163, 58, 0.6)' : 'rgba(236, 234, 228, 0.25)';
+        context.beginPath();
+        context.arc(start.x, start.y, nodes[index].size, 0, Math.PI * 2);
+        context.fill();
+      }
+      if (!reduced && visible) frame = requestAnimationFrame(draw);
+    };
 
-    function iniciarArraste(e: PointerEvent) {
-      arrastando = true;
-      velX = velY = 0;
-      stage.classList.add('arrastando');
-      hero.classList.add('girou');
-      stage.setPointerCapture(e.pointerId);
-      if (!quadro && visivel) quadro = requestAnimationFrame(desenhar);
-    }
-    function soltar() {
-      if (id !== -1 && stage.hasPointerCapture(id)) stage.releasePointerCapture(id);
-      id = -1;
-      arrastando = false;
-      decidido = false;
-      alvo = null;
-      stage.classList.remove('arrastando');
-    }
-    // No toque, um gesto horizontal não pode também rolar a página.
-    stage.addEventListener('touchmove', (e) => arrastando && e.cancelable && e.preventDefault(), { passive: false });
-
-    // Redimensionamento: ignora mudanças pequenas (barra de endereço do celular).
-    let w0 = innerWidth;
-    let h0 = innerHeight;
-    addEventListener(
-      'resize',
-      () => {
-        if (Math.abs(innerWidth - w0) < 20 && Math.abs(innerHeight - h0) < 20) return;
-        w0 = innerWidth;
-        h0 = innerHeight;
-        medir();
-      },
-      { passive: true },
-    );
-
-    // Fora da tela, a câmera para.
-    new IntersectionObserver(([e]) => {
-      visivel = e.isIntersecting;
-      if (visivel && !quadro) quadro = requestAnimationFrame(desenhar);
+    hero.addEventListener('pointermove', (event) => {
+      const bounds = hero.getBoundingClientRect();
+      pointerX = (event.clientX - bounds.left) / bounds.width;
+      pointerY = (event.clientY - bounds.top) / bounds.height;
+      hero.style.setProperty('--px', `${Math.round(pointerX * 100)}%`);
+      hero.style.setProperty('--py', `${Math.round(pointerY * 100)}%`);
+      if (reduced) draw(0);
+    }, { passive: true });
+    new ResizeObserver(resize).observe(hero);
+    new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible && !frame && !reduced) frame = requestAnimationFrame(draw);
+      if (!visible) { cancelAnimationFrame(frame); frame = 0; }
     }).observe(hero);
-
-    medir();
-    if (!comIntro) entrar();
-    desenhar();
+    resize();
+    if (!reduced) frame = requestAnimationFrame(draw);
   }
 </script>

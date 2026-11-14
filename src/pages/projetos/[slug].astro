@@ -113,18 +113,16 @@ const telasCore = [
   { src: coreHistorico, legenda: 'Histórico: progresso por eixo', alt: 'CoreUFABC, tela Histórico (histórico fictício).' },
   { src: coreGrade, legenda: 'Grade: horário do próximo quadrimestre', alt: 'CoreUFABC, tela Grade com quatro turmas (histórico fictício).' },
 ];
-const num = String(i + 1).padStart(2, '0');
 ---
 
-<Base title={`${c.nome} · ${s.nome}`} description={c.resumo} image={`/og/${c.slug}.png`}>
-  <div class="pg" style={`--cor:var(--c-${c.cor})`}>
+<Base title={`${c.nome} · ${s.nome}`} description={c.resumo} image={`/og/${c.slug}.png`} themeToggle={false}>
+  <div class="pg" style="--cor:#ff6a32">
     <nav class="barra" aria-label="Navegação">
       <a href="/">← {s.nome}</a>
       <a href="/#projetos">Todos os projetos</a>
     </nav>
 
     <header class="cab">
-      <p class="num" aria-hidden="true">{num}</p>
       <div class="tit">
         <p class="status">{c.status}</p>
         <h1>{c.nome}</h1>
@@ -991,4 +989,37 @@ const num = String(i + 1).padStart(2, '0');
       grid-template-columns: repeat(4, 1fr);
     }
   }
+
+  /* Identidade editorial da página inicial aplicada aos estudos de caso. */
+  .pg {
+    --paper: #151313;
+    --surface: #201d1d;
+    --ink: #fff;
+    --ink-2: #aaa6a6;
+    --rule: #343131;
+    --ink-soft: #4d4848;
+    --accent: #ff6a32;
+    --accent-text: #ff6a32;
+    max-width: calc(1140px + 2 * var(--gutter));
+    color: #fff;
+    font-family: 'DM Sans', Arial, sans-serif;
+  }
+  .barra { font-family: 'DM Sans', Arial, sans-serif; font-size: .8rem; font-weight: 700; }
+  .cab { grid-template-columns: 1fr; gap: .5rem; padding-block: clamp(4rem, 9vw, 8rem) clamp(2rem, 5vw, 3rem); }
+  .num { font: 800 1rem/1 'DM Sans', Arial, sans-serif; letter-spacing: .08em; }
+  .status { font: 700 .78rem/1 'DM Sans', Arial, sans-serif; color: var(--cor); }
+  h1 { font: 900 clamp(3.4rem, 8vw, 7.5rem)/.93 'DM Sans', Arial, sans-serif; letter-spacing: -.075em; text-transform: uppercase; overflow-wrap: anywhere; }
+  .lead { margin-top: 1.25rem; font: 400 clamp(1.1rem, 2vw, 1.5rem)/1.42 'DM Sans', Arial, sans-serif; color: #aaa6a6; }
+  .acoes { margin-top: 1rem; }
+  .link { border-radius: 7px; background: var(--cor); color: #111; font: 800 .82rem/1 'DM Sans', Arial, sans-serif; letter-spacing: .04em; }
+  .link:hover { color: #111; background: #ff8a5a; }
+  .acoes :global(.ghost) { border-radius: 7px; font-family: 'DM Sans', Arial, sans-serif; }
+  .video video, .moldura, .galeria :global(img), .telas :global(img), .celulares :global(img) { border: 0; border-radius: 12px; }
+  .nums { border: 1px solid var(--rule); border-radius: 12px; }
+  .proximo { border: 1px solid var(--rule); border-radius: 12px; }
+  .proximo a { font-family: 'DM Sans', Arial, sans-serif; font-weight: 800; letter-spacing: -.055em; }
+</style>
+
+<style is:global>
+  body:has(.pg) { background: #151313; }
 </style>

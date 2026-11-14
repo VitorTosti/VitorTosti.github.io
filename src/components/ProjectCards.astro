@@ -4,20 +4,14 @@
 import { Image, getImage } from 'astro:assets';
 import BigTitle from './BigTitle.astro';
 import CardapioJson from './CardapioJson.astro';
-import { avaliacao, cartoes } from '../data/cartoes';
+import { cartoes } from '../data/cartoes';
 import posterSrc from '../assets/mcp-poster.webp';
 import videoUrl from '../assets/infocaij-mcp-demo.mp4?url';
 import gif from '../assets/mcp-demo.gif';
 import maqEquipamento from '../assets/maq-equipamento.webp';
-import maqTeclado from '../assets/maq-teclado.webp';
-import maqEtiqueta from '../assets/maq-etiqueta.webp';
-import maqTestes from '../assets/maq-testes.webp';
 import kairoHoje from '../assets/kairo-painel-hoje.webp';
 import kairoPente from '../assets/kairo-cliente-pente.webp';
 import caijFluxo from '../assets/caij-fluxo.webp';
-import caijVenda from '../assets/caij-venda.webp';
-import caijEmbalagem from '../assets/caij-embalagem.webp';
-import caijEstoque from '../assets/caij-estoque.webp';
 import coreInicio from '../assets/core-inicio.webp';
 import coreNotas from '../assets/core-notas.webp';
 import coreHistorico from '../assets/core-historico.webp';
@@ -26,31 +20,6 @@ const poster = await getImage({ src: posterSrc, format: 'webp', width: 960, qual
 interface Props { featured?: boolean; }
 const { featured = false } = Astro.props;
 const lista = cartoes.filter((c) => featured ? c.slug === 'infocaij' : c.slug !== 'infocaij');
-
-// Carrosséis de capturas por projeto; `nota` aparece na etiqueta de cada slide.
-// `inteiro`: telas largas aparecem sem corte, em vez de preencher o quadro.
-const carrosseis: Record<string, { nota: string; inteiro?: boolean; capturas: { src: ImageMetadata; legenda: string; alt: string }[] }> = {
-  infomachine: {
-    nota: 'em uso na bancada',
-    inteiro: true,
-    capturas: [
-      { src: maqEquipamento, legenda: 'leitura do hardware', alt: 'InfoMachine: hardware lido de um Lenovo ThinkPad E14 e o andamento da bancada em 4 etapas.' },
-      { src: maqTeclado, legenda: 'teste de teclado', alt: 'InfoMachine: teste de teclado com o mapa das 104 teclas e as já reconhecidas em destaque.' },
-      { src: maqEtiqueta, legenda: 'etiqueta térmica', alt: 'InfoMachine: prévia da etiqueta térmica de 80 × 50 mm com serial, configuração, rastreador e QR Code.' },
-      { src: maqTestes, legenda: 'central de testes', alt: 'InfoMachine: central com os 5 testes de hardware e o resumo automático.' },
-    ],
-  },
-  infocaij: {
-    nota: 'em produção',
-    inteiro: true,
-    capturas: [
-      { src: caijFluxo, legenda: 'fluxo ao vivo', alt: 'InfoCAIJ no modo TV: pedidos do dia, fila da bancada e vendas por empresa.' },
-      { src: caijVenda, legenda: 'nova venda', alt: 'InfoCAIJ, tela Nova venda: dados da venda, produto e resumo do pedido.' },
-      { src: caijEmbalagem, legenda: 'embalagem', alt: 'InfoCAIJ, tela Embalagem: pedido com rastreador e nota fiscal aguardando embalagem.' },
-      { src: caijEstoque, legenda: 'estoque', alt: 'InfoCAIJ, tela Estoque: 1.609 máquinas em 166 modelos, com a quantidade por modelo.' },
-    ],
-  },
-};
 
 // CoreUFABC: três telas do app, com o histórico fictício do repositório.
 const celulares = [
@@ -62,10 +31,10 @@ const celulares = [
 
 <section class:list={['section', 'projetos', { destaque: featured }]} id={featured ? 'infocaij-destaque' : 'outros-projetos'} aria-label={featured ? 'InfoCAIJ em destaque' : 'Outros projetos'}>
   {!featured && <BigTitle text="Outros projetos" />}
-  <div class="pilha" data-pilha>
+  <div class="pilha">
     {
       lista.map((c, i) => (
-        <article class="cartao" id={c.slug} aria-labelledby={`h-${c.slug}`} style={`--i:${i};--cor:var(--c-${c.cor})`} data-cartao>
+        <article class="cartao" id={c.slug} aria-labelledby={`h-${c.slug}`} style={`--cor:var(--c-${c.cor})`}>
           <header class="topo">
             <span class="num" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
@@ -74,38 +43,18 @@ const celulares = [
               <p class="status">{c.status}</p>
               <h3 id={`h-${c.slug}`}>{c.nome}</h3>
             </div>
-            <div class="acoes">
-              <a class="detalhe" href={`/projetos/${c.slug}/`} aria-label={`Ver detalhes de ${c.nome}`}>
-                Ver detalhes <span aria-hidden="true">→</span>
-              </a>
-              {c.link.href ? (
-                <a class="ghost" href={c.link.href}>
-                  {c.link.rotulo} <span aria-hidden="true">↗</span>
-                </a>
-              ) : (
-                <span class="ghost todo">{c.link.rotulo}</span>
-              )}
-            </div>
           </header>
-          <div class:list={['corpo', { larga: c.midia === 'cardapio' }]}>
+          <div class="corpo">
             <div class="texto">
-              <p class="resumo">{c.resumo}</p>
-              <ul class="fatos">
-                {c.fatos.map((f) => (
-                  <li>{f}</li>
-                ))}
-              </ul>
-            </div>
-            {c.midia === 'cardapio' && (
-              <dl class="aval">
-                {avaliacao.map((a) => (
-                  <div title={a.t}>
-                    <dt>{a.v}</dt>
-                    <dd>{a.r}</dd>
-                  </div>
-                ))}
+              <dl class="leitura">
+                <div><dt>Problema</dt><dd>{c.problema}</dd></div>
+                <div><dt>Solução</dt><dd>{c.solucao}</dd></div>
+                <div><dt>Resultado</dt><dd>{c.resultado}</dd></div>
               </dl>
-            )}
+              <a class="detalhe" href={`/projetos/${c.slug}/`} aria-label={`Ver detalhes de ${c.nome}`}>
+                Ver projeto <span aria-hidden="true">→</span>
+              </a>
+            </div>
             <div class="midia">
               {c.midia === 'video' && (
                 <video controls muted playsinline preload="none" poster={poster.src} width="1908" height="986">
@@ -117,41 +66,16 @@ const celulares = [
                 <CardapioJson />
               )}
               {c.midia === 'carrossel' && (
-                <div
-                  class:list={['carrossel', { inteiro: carrosseis[c.slug].inteiro }]}
-                  data-carrossel
-                  role="group"
-                  aria-roledescription="carrossel"
-                  aria-label={`Capturas do ${c.nome}`}
-                >
-                  {carrosseis[c.slug].capturas.map((cap, k) => (
-                    <figure class:list={['slide', { ativo: k === 0 }]} aria-hidden={k === 0 ? undefined : 'true'}>
-                      <Image src={cap.src} alt={cap.alt} widths={[480, 800, 1200]} sizes="(min-width: 900px) 46vw, 100vw" loading="lazy" />
-                      <figcaption class="chip">
-                        {cap.legenda} · {carrosseis[c.slug].nota}
-                      </figcaption>
-                    </figure>
-                  ))}
-                  <div class="ctl">
-                    <button type="button" class="pausa" data-pausa aria-label="Pausar troca automática">
-                      <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
-                        <path class="i-pausa" d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        <path class="i-play" d="M5 3l8 5-8 5z" fill="currentColor" />
-                      </svg>
-                    </button>
-                    {carrosseis[c.slug].capturas.map((cap, k, todas) => (
-                      <button
-                        type="button"
-                        class="dot"
-                        data-ir={k}
-                        aria-label={`Mostrar ${cap.legenda} (${k + 1} de ${todas.length})`}
-                        aria-current={k === 0 ? 'true' : undefined}
-                      >
-                        <i />
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <figure class="captura">
+                  <Image
+                    src={c.slug === 'infocaij' ? caijFluxo : maqEquipamento}
+                    alt={c.slug === 'infocaij' ? 'InfoCAIJ: fila da bancada e pedidos do dia no painel operacional.' : 'InfoMachine: leitura de hardware e andamento da triagem.'}
+                    widths={[480, 800, 1200]}
+                    sizes="(min-width: 900px) 46vw, 100vw"
+                    loading="lazy"
+                  />
+                  <figcaption class="chip">{c.slug === 'infocaij' ? 'Painel operacional' : 'Triagem de hardware'}</figcaption>
+                </figure>
               )}
               {c.midia === 'telas' && (
                 <figure class="telas">
@@ -206,35 +130,27 @@ const celulares = [
     max-width: 78rem;
     margin-inline: auto;
     display: grid;
-    gap: 1.5rem;
+    gap: clamp(1.5rem, 4vw, 3rem);
   }
   .cartao {
     background: var(--paper);
-    /* Contorno claro, como um cartão recortado sobre o fundo. */
-    border: 2px solid var(--ink-soft);
+    border: 1px solid var(--rule);
     border-radius: clamp(1.75rem, 3.5vw, 3.25rem);
     padding: clamp(1.25rem, 3vw, 2.25rem);
-    transform-origin: 50% 0;
   }
   .topo {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas: 'num tit' 'link link';
-    gap: 0.75rem 1.25rem;
-    align-items: end;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
   .num {
-    grid-area: num;
-    font-size: clamp(3.5rem, 9vw, 7.5rem);
-    line-height: 0.8;
-    letter-spacing: -0.04em;
+    flex: none;
+    font-family: var(--mono);
+    font-size: 0.875rem;
+    line-height: 1;
     color: var(--cor);
-    font-variation-settings: 'opsz' 72;
   }
-  .tit {
-    grid-area: tit;
-    min-width: 0;
-  }
+  .tit { min-width: 0; }
   .status {
     margin: 0 0 0.375rem;
     font-family: var(--mono);
@@ -249,17 +165,6 @@ const celulares = [
     line-height: 1;
     letter-spacing: -0.02em;
   }
-  .acoes {
-    grid-area: link;
-    justify-self: start;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .ghost {
-    border-color: var(--cor);
-  }
-  /* Botão principal do cartão: leva à página do projeto, na cor dele. */
   .detalhe {
     display: inline-flex;
     align-items: center;
@@ -277,6 +182,7 @@ const celulares = [
     text-decoration: none;
     white-space: nowrap;
     transition: background-color var(--t-fast) var(--ease);
+    margin-top: 1.5rem;
   }
   .detalhe:hover {
     color: var(--paper);
@@ -285,25 +191,28 @@ const celulares = [
   .corpo {
     margin-top: clamp(1.5rem, 3vw, 2.25rem);
     display: grid;
-    gap: 1.5rem;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
   }
-  .resumo {
-    font-size: 1.1875rem;
-    line-height: 1.5;
-    margin-bottom: 1.25rem;
-  }
-  .fatos {
-    list-style: none;
+  .leitura {
     margin: 0;
-    padding: 0;
-    font-family: var(--mono);
-    font-size: 0.8125rem;
-    line-height: 1.55;
-    color: var(--ink-2);
+    display: grid;
   }
-  .fatos li {
-    padding: 0.625rem 0;
+  .leitura div {
+    padding: 0.85rem 0;
     border-top: 1px solid var(--rule);
+  }
+  .leitura dt {
+    margin-bottom: 0.45rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cor);
+  }
+  .leitura dd {
+    margin: 0;
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.45;
   }
   .midia {
     border-radius: clamp(1.25rem, 2.6vw, 2.25rem);
@@ -336,134 +245,19 @@ const celulares = [
     font-size: 0.6875rem;
     color: var(--ink-2);
   }
-  .aval {
-    margin: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-content: start;
-    column-gap: 1rem;
-  }
-  .aval div {
-    padding: 0.875rem 0;
-    border-top: 1px solid var(--rule);
-  }
-  .aval dt {
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    color: var(--cor);
-  }
-  .aval dd {
-    margin: 0.375rem 0 0;
-    font-family: var(--mono);
-    font-size: 0.6875rem;
-    line-height: 1.5;
-    color: var(--ink-2);
-  }
-
-  /* InfoMachine e InfoCAIJ: as capturas trocam sozinhas; a nova entra por cima e assenta devagar. */
-  .carrossel {
+  .captura {
     position: relative;
-    aspect-ratio: 16 / 10;
-    width: 100%;
-    align-self: center;
-  }
-  .slide {
-    position: absolute;
-    inset: 0;
     margin: 0;
-    opacity: 0;
-    transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .slide :global(img) {
-    transform: scale(1.05);
-    transition: transform 5s linear;
-  }
-  .slide.ativo {
-    opacity: 1;
-  }
-  .carrossel.inteiro .slide :global(img) {
-    object-fit: contain;
-    padding: clamp(0.75rem, 2vw, 1.5rem) clamp(0.75rem, 2vw, 1.5rem) clamp(3.25rem, 5vw, 3.75rem);
-  }
-  /* Celular: a etiqueta sobe para o topo, para não disputar o pé com os controles. */
-  @media (max-width: 899px) {
-    /* A foto vem logo depois do título; o texto longo fica para depois, e só os 2 primeiros fatos aparecem. */
-    .corpo > .midia {
-      order: -1;
-    }
-    .fatos li:nth-child(n + 3) {
-      display: none;
-    }
-    .resumo {
-      font-size: 1.0625rem;
-      margin-bottom: 0.75rem;
-    }
-    /* Capturas largas precisam de altura para não virarem uma tira: quadro mais alto e controles menores. */
-    .carrossel {
-      aspect-ratio: 5 / 4;
-    }
-    .carrossel.inteiro .slide :global(img) {
-      padding: 2.5rem 0.5rem 2.75rem;
-    }
-    .ctl button {
-      min-width: 28px;
-      height: 28px;
-    }
-    .carrossel.inteiro .slide :global(img) {
-      padding-top: 2.5rem;
-    }
-    .carrossel.inteiro .chip {
-      top: 0.75rem;
-      bottom: auto;
-    }
-  }
-  .slide.ativo :global(img) {
-    transform: none;
-  }
-  .ctl {
-    position: absolute;
-    right: 0.75rem;
-    bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-    padding: 0.125rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--paper) 88%, transparent);
-    border: 1px solid var(--rule);
-  }
-  .ctl button {
+    width: 100%;
     display: grid;
     place-items: center;
-    min-width: 32px;
-    height: 32px;
-    padding: 0 0.25rem;
-    border: 0;
-    border-radius: 999px;
-    background: none;
-    color: var(--ink);
-    cursor: pointer;
+    padding: clamp(0.75rem, 2vw, 1.5rem);
+    padding-bottom: 3rem;
   }
-  .dot i {
-    display: block;
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: var(--ink-2);
-    transition:
-      width var(--t-base) var(--ease),
-      background-color var(--t-base) var(--ease);
-  }
-  .dot[aria-current='true'] i {
-    width: 22px;
-    background: var(--cor);
-  }
-  .pausa .i-play,
-  :global(.parado) > .ctl .pausa .i-pausa {
-    display: none;
-  }
-  :global(.parado) > .ctl .pausa .i-play {
-    display: inline;
+  .captura :global(img) {
+    height: auto;
+    object-fit: contain;
+    border-radius: 0.5rem;
   }
 
   /* Kairo: o painel no computador, com a página pública no celular por cima, no canto. */
@@ -516,79 +310,12 @@ const celulares = [
   }
 
   @media (min-width: 900px) {
-    .topo {
-      grid-template-columns: auto 1fr auto;
-      grid-template-areas: 'num tit link';
-    }
-    .acoes {
-      justify-self: end;
-    }
     .corpo {
-      grid-template-columns: 2fr 3fr;
-      gap: clamp(1.5rem, 3vw, 2.5rem);
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      align-items: center;
     }
     .midia {
-      min-height: 20rem;
-      max-height: 26rem;
-    }
-    /* Cardápio: a mídia ocupa a linha de cima inteira; texto e avaliação dividem a de baixo. */
-    .corpo.larga {
-      grid-template-columns: 1.25fr 1fr 0.9fr;
-      row-gap: 1.5rem;
-      align-items: start;
-    }
-    /* Resumo, fatos e números viram três colunas abaixo da mídia. */
-    .corpo.larga .texto {
-      display: contents;
-    }
-    .corpo.larga .resumo {
-      margin: 0;
-      font-size: 1.0625rem;
-    }
-    .corpo.larga .fatos li:first-child {
-      border-top: 0;
-      padding-top: 0;
-    }
-    .corpo.larga .aval div {
-      padding-block: 0 0.75rem;
-      border-top: 0;
-    }
-    .corpo.larga .midia {
-      grid-column: 1 / -1;
-      grid-row: 1;
-      min-height: 0;
-      max-height: none;
-    }
-    .pilha {
-      gap: 22vh;
-      padding-bottom: 10vh;
-    }
-  }
-  /* Empilhamento em qualquer altura de tela. Quando o cartão não cabe, --topo (calculado em motion-client)
-     o prende pela base, para ele aparecer inteiro antes do próximo passar por cima. */
-  @media (min-width: 900px) {
-    /* Todos com a mesma altura: um cartão mais alto não aparece por baixo do seguinte. */
-    .cartao {
-      position: sticky;
-      top: var(--topo, calc(5rem + var(--i) * 1.75rem));
-      min-height: min(45.5rem, calc(100svh - 6rem - var(--i) * 1.75rem));
-    }
-    /* A mídia estica e ocupa a altura que sobra, sem vazio no pé do cartão. */
-    .cartao {
-      display: flex;
-      flex-direction: column;
-    }
-    .corpo {
-      flex: 1;
-    }
-    .midia {
-      max-height: none;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .slide,
-    .slide :global(img) {
-      transition: none;
+      min-height: 18rem;
     }
   }
 </style>

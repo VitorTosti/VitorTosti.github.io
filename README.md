@@ -1,8 +1,8 @@
 # vitortosti.github.io
 
-Site-portfólio de Vitor Tosti. Astro + TypeScript, estático, sem framework de UI no cliente.
+Site-portfólio de Vitor Tosti. Astro + TypeScript, estático, sem framework de UI no cliente. A página inicial segue a composição editorial do template Sawad, com cartão de perfil, projetos selecionados, experiência, ferramentas, notas e contato. O retrato editorial foi gerado a partir de fotos de referência de Vitor e deve ser revisado por ele antes da publicação.
 
-A identidade visual vem de como modelos de linguagem funcionam:
+Os estudos de caso ainda incluem visualizações técnicas sobre como modelos de linguagem funcionam:
 
 - **Geração token a token**: os títulos se escrevem como um modelo gerando. Passar o mouse (ou tocar, ou focar com o teclado) num token mostra o top-5 de alternativas daquela posição.
 - **Rastro de agente**: cada projeto é contado como uma execução: pergunta, chamadas de ferramenta, saída e avaliação, com os erros e correções como `✗ falhou → causa → ajuste → ✓ passou`.
@@ -17,15 +17,15 @@ npm test           # testes unitários (Vitest)
 npm run build      # gera dist/
 ```
 
-## Entre vias: simulador de mobilidade
+## Entre vias: código preservado, fora do portfólio
 
-A demonstração independente fica em `/projetos/entrevias/`. O modelo executa localmente no navegador, sem API, mapas externos ou dados de trânsito reais. Há cenários de demanda, participação de ônibus, semáforos, faixa exclusiva e uma obra com desvio das novas rotas. O mapa permite ampliar e inspecionar interseções por clique ou teclado.
+O projeto foi retirado da navegação e da publicação do portfólio. Seu código permanece no repositório para possível reaproveitamento. O modelo executa localmente no navegador, sem API, mapas externos ou dados de trânsito reais.
 
 O motor está em `src/lib/city-engine.ts`; renderização e controles, em `src/lib/city-client.ts`. A maquete 3D em `src/lib/city-3d.ts` usa Three.js, com geometrias compartilhadas, prédios, parques, veículos, sinalização e obras. O modelo e os indicadores são os mesmos nas duas visualizações. A câmera permite girar e aproximar; em celular, dois dedos controlam a maquete e um dedo preserva a rolagem. Sem suporte a WebGL, ou se o contexto for perdido, o mapa 2D assume automaticamente.
 
 Uma semente fixa torna as execuções reproduzíveis com a mesma sequência de ajustes e passos de tempo. O tempo médio contabiliza apenas viagens concluídas e não inclui espera anterior à entrada na rede. Os indicadores são educativos, não previsões de trânsito.
 
-`npm test` cobre caminhos, desvio, conservação de passageiros e reprodução do modelo. Com o servidor local rodando, `node tests/city-browser.mjs` verifica controles, movimento reduzido, cenários por URL, teclado, acessibilidade e ausência de erros em desktop e celular. `--capture-preview` atualiza a imagem da demonstração usada no portfólio.
+`npm test` cobre caminhos, desvio, conservação de passageiros e reprodução do modelo. Os testes de navegador do projeto dependem de uma rota de demonstração e não fazem mais parte da validação do portfólio publicado.
 
 `node tests/city-camera.mjs` valida o gesto de dois dedos para zoom, a rolagem com um dedo e o retorno ao mapa 2D com preservação de estado após perda do contexto WebGL.
 
@@ -33,7 +33,7 @@ Uma semente fixa torna as execuções reproduzíveis com a mesma sequência de a
 
 ### Introdução e desafio
 
-A seção principal do portfólio contém uma prévia 3D real em `CityPreview.astro` e `city-preview.ts`. O módulo gráfico carrega somente quando a seção entra na tela. Veículos usam o mesmo motor do app; a prévia tem giro, zoom e pausa, suspende fora da tela e respeita movimento reduzido. Sem WebGL, permanece a imagem com acesso ao app completo.
+Os componentes `CityPreview.astro` e `city-preview.ts` também foram preservados, mas não são carregados na página inicial.
 
 No primeiro acesso da sessão, uma introdução de seis etapas explica o propósito do laboratório e demonstra mudanças reais de demanda, ônibus, semáforos e obras. Há avanço automático, pausa, voltar, pular, Escape e repetição pelo botão “Ver introdução guiada”. Com movimento reduzido, a pessoa avança manualmente e os cenários aparecem sem animação espacial. Sair restaura o cenário anterior. Links com parâmetros abrem diretamente no cenário compartilhado.
 

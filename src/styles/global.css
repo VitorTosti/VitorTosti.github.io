@@ -59,10 +59,9 @@
   color-scheme: light;
 }
 
-/* A abertura (Terra, esfera de projetos) e a prévia 3D da cidade são feitas para o escuro: continuam escuras no tema claro. */
+/* A abertura usa uma composição escura nos dois temas. */
 :root[data-tema='claro'] .hero,
-:root[data-tema='claro'] .intro-terra,
-:root[data-tema='claro'] .city-preview {
+:root[data-tema='claro'] .intro-terra {
   --paper: #0e0e10;
   --surface: #17171a;
   --ink: #eceae4;

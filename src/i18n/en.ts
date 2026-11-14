@@ -19,7 +19,7 @@ export const en = {
   h1: 'I build AI-powered systems and apps that solve real problems.',
   intro:
     'Computer Science student at UFABC. From public sites to internal operations, I turn day-to-day problems into software that works.',
-  cta: { projects: 'See projects', city: 'Explore Entre vias', contact: 'Get in touch', cv: 'Résumé (PDF, Portuguese)' },
+  cta: { projects: 'See projects', contact: 'Get in touch', cv: 'Résumé (PDF, Portuguese)' },
   numbers: [
     { v: '~300', r: 'machines and orders per month on InfoCAIJ' },
     { v: '15', r: 'users across 4 roles' },
@@ -106,9 +106,6 @@ export const en = {
       link: { rotulo: 'GitHub', href: 'https://github.com/VitorTosti/CoreUFABC' },
     },
   ],
-  cityTitle: 'Entre vias, a mobility lab',
-  cityText:
-    'An interactive urban mobility simulator: experiment with demand, buses and traffic lights. Educational and local, with no real traffic data.',
   aboutTitle: 'About',
   about:
     'I am a Computer Science student at UFABC focused on applied AI: agents that use tools, structured data extraction from documents and, above all, evaluating models on real data to find where they fail before anyone depends on their answers. I aim to deliver reliable solutions that work in production and create value for the people who use them, while continuing to grow technically and contribute to teams that treat AI with rigor.',

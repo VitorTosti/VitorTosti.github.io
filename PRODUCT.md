@@ -9,7 +9,7 @@ web, aplicação estática em Astro já existente.
 Visitantes que querem conhecer o trabalho de Vitor Tosti e experimentar suas demonstrações.
 
 ## Product Purpose
-Apresentar projetos reais e tornar suas demonstrações acessíveis. O usuário definiu InfoCAIJ e um novo simulador de cidade independente como os destaques.
+Apresentar projetos reais de software e IA com acesso rápido ao trabalho de Vitor. A abertura destaca InfoCAIJ MCP, InfoCAIJ e Kairo; o projeto Entre vias foi retirado do portfólio.
 
 ## Capabilities and Constraints
-Preservar os projetos e a identidade existentes. A abertura explica o trabalho e oferece acesso aos projetos e ao contato. O simulador tem mapa interativo e permite experimentar trânsito e transporte. A primeira versão é educativa, local, sem dados de trânsito reais ou serviços externos. Não apresentar métricas simuladas como previsões ou resultados de uma cidade real. Não publicar sem autorização.
+Página inicial inspirada no template Sawad: cartão de perfil claro fixo na rolagem, conteúdo escuro, navegação por ícones, texto pessoal curto no lugar de métricas, três projetos selecionados com capturas reais, experiência, ferramentas com logotipos, notas e contato. Animações de entrada e interação respeitam movimento reduzido. Não publicar sem autorização.

@@ -3,9 +3,9 @@
 export const ptBR = {
   lang: 'pt-BR',
   meta: {
-    title: 'Vitor Tosti · AI Builder',
+    title: 'Vitor Tosti · Desenvolvedor de Software e IA',
     description:
-      'Vitor Tosti, estudante de Ciência da Computação na UFABC. Servidor MCP somente leitura, avaliação com dados reais e ferramentas internas em produção.',
+      'Vitor Tosti desenvolve sistemas e aplicações de IA para problemas reais. Conheça os projetos, a experiência e as ferramentas.',
   },
   nome: 'Vitor Tosti',
   nav: [

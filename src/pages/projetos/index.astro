@@ -1,0 +1,166 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { cartoes } from '../../data/cartoes';
+import caij from '../../assets/caij-fluxo.webp';
+import mcp from '../../assets/mcp-poster.webp';
+import kairo from '../../assets/kairo-painel-hoje.webp';
+import cardapio from '../../assets/cardapio_017.jpg';
+import maquina from '../../assets/maq-equipamento.webp';
+import core from '../../assets/core-inicio.webp';
+
+const ordem = ['infocaij', 'infocaij-mcp', 'kairo', 'infomachine', 'coreufabc', 'cardapio-em-1-minuto'];
+const visual = {
+  infocaij: { image: caij, alt: 'Painel do InfoCAIJ mostrando o fluxo operacional da bancada.', background: '#0b5361', label: 'Fluxo operacional', kind: 'screen' },
+  'infocaij-mcp': { image: mcp, alt: 'InfoCAIJ MCP respondendo a uma pergunta sobre a operação.', background: '#553280', label: 'IA sobre dados reais', kind: 'screen' },
+  kairo: { image: kairo, alt: 'Painel Hoje do Kairo com agenda e horários.', background: '#e46e3f', label: 'Painel do produto · dados fictícios', kind: 'screen' },
+  infomachine: { image: maquina, alt: 'Tela de triagem de hardware do InfoMachine.', background: '#6554a0', label: 'Triagem na bancada', kind: 'screen' },
+  coreufabc: { image: core, alt: 'Tela inicial do CoreUFABC com progresso acadêmico fictício.', background: '#416b57', label: 'Aplicativo · dados fictícios', kind: 'phone' },
+  'cardapio-em-1-minuto': { image: cardapio, alt: 'Foto de um cardápio usado na avaliação da extração de dados.', background: '#a9473b', label: 'Foto de entrada', kind: 'photo' },
+} as const;
+const lista = ordem.map((slug) => ({ card: cartoes.find((item) => item.slug === slug)!, visual: visual[slug as keyof typeof visual] }));
+---
+
+<Base title="Projetos · Vitor Tosti" description="Projetos de software e IA aplicada de Vitor Tosti." themeToggle={false}>
+  <div class="archive" data-archive>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <nav class="archive-nav" aria-label="Navegação">
+      <a class="brand" href="/">VITOR TOSTI<span>.</span></a>
+      <div><a href="/">← Início</a><a href="/#contato">Contato ↗</a></div>
+    </nav>
+
+    <header class="archive-head">
+      <p class="section-label">Trabalho selecionado</p>
+      <h1>Projetos<span>.</span></h1>
+      <div class="head-bottom">
+        <p>Sistemas e aplicações de IA construídos para resolver problemas reais.</p>
+        <span class="scroll-cue">Role para explorar <span aria-hidden="true">↓</span></span>
+      </div>
+    </header>
+
+    <section class="project-list" aria-label="Lista de projetos">
+      {lista.map(({ card, visual: artwork }, index) => (
+        <article class="project" data-project style={`--project-color:${artwork.background}`}>
+          <div class="project-copy">
+            <div class="project-meta"><span class="project-number">0{index + 1}</span><span class="project-status">{card.status}</span></div>
+            <h2>{card.nome}</h2>
+            <p>{card.solucao}</p>
+            <a class="project-link" href={`/projetos/${card.slug}/`} aria-label={`Ver projeto ${card.nome}`}>Ver projeto <span aria-hidden="true">↗</span></a>
+          </div>
+          <a class:list={['project-visual', artwork.kind]} href={`/projetos/${card.slug}/`} aria-label={`Abrir ${card.nome}`} data-project-visual>
+            <span class="visual-orbit" aria-hidden="true"></span>
+            <Image src={artwork.image} alt={artwork.alt} widths={[480, 800, 1200]} sizes="(min-width: 900px) 48vw, 100vw" loading="lazy" />
+            <span class="visual-caption">{artwork.label}</span>
+            <span class="visual-arrow" aria-hidden="true">↗</span>
+          </a>
+        </article>
+      ))}
+    </section>
+
+    <footer class="archive-foot">
+      <p>Tem uma ideia para construir?</p>
+      <a href="/#contato">Vamos conversar <span aria-hidden="true">↗</span></a>
+      <div class="foot-line"><a href="/">← Voltar ao início</a><span>© {new Date().getFullYear()} Vitor Tosti</span></div>
+    </footer>
+  </div>
+</Base>
+
+<style>
+  .archive { --orange: #ff6a32; min-height: 100vh; overflow: clip; background: #151313; color: #fff; font-family: 'DM Sans', Arial, sans-serif; }
+  .archive-nav, .archive-head, .project-list, .archive-foot { width: min(calc(100% - 40px), 1140px); margin-inline: auto; }
+  .scroll-progress { position: fixed; z-index: 20; top: 0; left: 0; width: 100%; height: 3px; background: var(--orange); transform: scaleX(0); transform-origin: left; pointer-events: none; }
+  .archive-nav { min-height: 96px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-right: 4rem; }
+  .archive-nav a { text-decoration: none; font-size: .76rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+  .archive-nav a:hover, .foot-line a:hover { color: var(--orange); }
+  .archive-nav .brand { font-size: 1.06rem; white-space: nowrap; }
+  .brand span { color: var(--orange); }
+  .archive-nav div { display: flex; gap: clamp(1rem, 3vw, 3rem); }
+  .archive-head { padding: clamp(4rem, 9vw, 8rem) 0 clamp(5rem, 10vw, 9rem); }
+  .section-label { color: var(--orange); font-size: .75rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; margin: 0 0 1.4rem; }
+  h1 { font: 900 clamp(5.5rem, 13vw, 12.5rem)/.78 'DM Sans', Arial, sans-serif; letter-spacing: -.09em; text-transform: uppercase; margin: 0; }
+  h1 span { color: var(--orange); }
+  .head-bottom { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-top: 2.8rem; }
+  .head-bottom p { max-width: 34rem; margin: 0; color: #aaa6a6; font-size: clamp(1.05rem, 1.9vw, 1.35rem); line-height: 1.45; }
+  .scroll-cue { white-space: nowrap; color: #aaa6a6; font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+  .scroll-cue span { color: var(--orange); font-size: 1.2rem; margin-left: .5rem; }
+  .project-list { border-top: 1px solid #454141; }
+  .project { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; min-height: 435px; padding: clamp(2.5rem, 5vw, 4.5rem) 0; border-bottom: 1px solid #454141; }
+  .project-copy { align-self: center; }
+  .project-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+  .project-number { color: var(--orange); font-size: 1rem; font-weight: 900; }
+  .project-status { color: #aaa6a6; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  h2 { font: 900 clamp(2.6rem, 5vw, 5.4rem)/.95 'DM Sans', Arial, sans-serif; letter-spacing: -.075em; margin: 0; overflow-wrap: anywhere; }
+  .project-copy p { max-width: 28rem; margin: 1.3rem 0 0; color: #aaa6a6; font-size: clamp(1rem, 1.5vw, 1.2rem); line-height: 1.45; }
+  .project-link { display: inline-flex; gap: 1.6rem; align-items: center; margin-top: 2rem; padding-bottom: .4rem; border-bottom: 2px solid var(--orange); color: #fff; font-size: .8rem; font-weight: 800; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; transition: gap .25s ease, color .25s ease; }
+  .project-link:hover { color: var(--orange); gap: 2rem; }
+  .project-visual { height: 315px; min-width: 0; display: block; position: relative; isolation: isolate; overflow: hidden; border-radius: 14px; background: radial-gradient(circle at var(--mx, 65%) var(--my, 35%), rgb(255 255 255 / .22), transparent 45%), var(--project-color); transition: transform .45s cubic-bezier(.16,1,.3,1), box-shadow .45s ease; }
+  .project-visual::after { content: ''; position: absolute; inset: 0; border: 1px solid rgb(255 255 255 / .18); border-radius: inherit; pointer-events: none; }
+  .project-visual:hover, .project-visual:focus-visible { transform: translateY(-6px); box-shadow: 0 24px 45px rgb(0 0 0 / .28); }
+  .visual-orbit { position: absolute; width: 400px; height: 400px; right: -110px; top: -240px; border: 1px solid rgb(255 255 255 / .28); border-radius: 50%; transition: transform .6s ease; }
+  .project-visual:hover .visual-orbit { transform: scale(1.12) translate(-15px, 12px); }
+  .project-visual :global(img) { display: block; position: absolute; z-index: 1; width: 88%; height: auto; max-height: 79%; object-fit: cover; object-position: top left; left: 9%; bottom: 13%; border: 1px solid rgb(255 255 255 / .25); border-radius: 8px; box-shadow: 0 22px 40px rgb(0 0 0 / .4); transform: rotate(-3deg) translateY(8px); transition: transform .55s cubic-bezier(.16,1,.3,1); }
+  .project-visual:hover :global(img), .project-visual:focus-visible :global(img) { transform: rotate(0) translateY(0) scale(1.035); }
+  .project-visual.phone :global(img) { width: auto; height: 88%; max-height: none; left: 50%; bottom: -4%; transform: translateX(-50%) rotate(-4deg); border-radius: 16px; }
+  .project-visual.phone:hover :global(img) { transform: translateX(-50%) rotate(0) translateY(-7px) scale(1.03); }
+  .project-visual.photo :global(img) { width: 55%; max-height: none; left: 26%; bottom: -22%; transform: rotate(-8deg); }
+  .project-visual.photo:hover :global(img) { transform: rotate(-2deg) translateY(-9px) scale(1.04); }
+  .visual-caption { position: absolute; z-index: 2; left: 1.25rem; bottom: 1.1rem; padding: .35rem .6rem; border-radius: 4px; background: rgb(15 14 14 / .8); color: #fff; font-size: .67rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .visual-arrow { position: absolute; z-index: 2; right: 1.25rem; top: 1.1rem; width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid rgb(255 255 255 / .8); border-radius: 7px; color: #fff; font-size: 1.2rem; transition: background .25s ease, color .25s ease, transform .25s ease; }
+  .project-visual:hover .visual-arrow { background: #fff; color: #151313; transform: translate(2px, -2px); }
+  .archive-foot { padding: clamp(6rem, 10vw, 10rem) 0 3rem; }
+  .archive-foot p { margin: 0 0 1rem; color: #aaa6a6; font-size: 1.1rem; }
+  .archive-foot > a { display: inline-block; font: 900 clamp(2.5rem, 6vw, 5rem)/1 'DM Sans', Arial, sans-serif; letter-spacing: -.065em; text-decoration: none; }
+  .archive-foot > a:hover { color: var(--orange); }
+  .archive-foot > a span { color: var(--orange); }
+  .foot-line { display: flex; justify-content: space-between; gap: 1rem; border-top: 1px solid #454141; margin-top: clamp(5rem, 8vw, 8rem); padding-top: 1.4rem; color: #aaa6a6; font-size: .76rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .foot-line a { text-decoration: none; }
+  @media (max-width: 850px) { .project { grid-template-columns: 1fr; gap: 1.8rem; } .project-visual { height: clamp(260px, 50vw, 360px); } .archive-head { padding-block: 5rem; } }
+  @media (max-width: 600px) { .archive-nav { min-height: 80px; padding-right: 4rem; } .archive-nav div { gap: .7rem; } .archive-nav a { font-size: .66rem; } .archive-nav div a:last-child { display: none; } .archive-head { padding-block: 4rem 4.5rem; } h1 { font-size: clamp(3.9rem, 15vw, 6rem); } .head-bottom { display: block; margin-top: 2rem; } .scroll-cue { display: inline-block; margin-top: 1.8rem; } .project { min-height: 0; padding-block: 2.75rem; } h2 { font-size: clamp(2.65rem, 11vw, 4.2rem); } .project-visual { height: 245px; } .project-visual.photo :global(img) { width: 45%; left: 29%; bottom: -2%; } .visual-caption { font-size: .6rem; } .archive-foot > a { font-size: clamp(2.35rem, 10vw, 3.5rem); } .foot-line { flex-direction: column; } }
+  @media (prefers-reduced-motion: reduce) { .scroll-progress { display: none; } .project-visual, .project-visual :global(img), .project-link, .visual-arrow, .visual-orbit { transition: none; } }
+</style>
+
+<script>
+  const archive = document.querySelector<HTMLElement>('[data-archive]');
+  if (archive) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduced && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          observer.unobserve(entry.target);
+          (entry.target as HTMLElement).animate([
+            { opacity: 0, transform: 'translateY(34px)' },
+            { opacity: 1, transform: 'translateY(0)' },
+          ], { duration: 680, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' });
+        });
+      }, { threshold: .08, rootMargin: '0px 0px -8% 0px' });
+      archive.querySelectorAll<HTMLElement>('.project').forEach((project) => observer.observe(project));
+    }
+
+    const progress = archive.querySelector<HTMLElement>('.scroll-progress');
+    if (progress && !reduced) {
+      let frame = 0;
+      const update = () => {
+        frame = 0;
+        const max = document.documentElement.scrollHeight - innerHeight;
+        progress.style.transform = `scaleX(${max > 0 ? Math.min(scrollY / max, 1) : 0})`;
+      };
+      const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+      addEventListener('scroll', schedule, { passive: true });
+      addEventListener('resize', schedule, { passive: true });
+      update();
+    }
+
+    if (!reduced) archive.querySelectorAll<HTMLElement>('[data-project-visual]').forEach((panel) => {
+      panel.addEventListener('pointermove', (event) => {
+        const bounds = panel.getBoundingClientRect();
+        panel.style.setProperty('--mx', `${Math.round((event.clientX - bounds.left) / bounds.width * 100)}%`);
+        panel.style.setProperty('--my', `${Math.round((event.clientY - bounds.top) / bounds.height * 100)}%`);
+      }, { passive: true });
+      panel.addEventListener('pointerleave', () => {
+        panel.style.removeProperty('--mx');
+        panel.style.removeProperty('--my');
+      });
+    });
+  }
+</script>

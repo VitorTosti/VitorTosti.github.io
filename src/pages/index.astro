@@ -1,41 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
-import Intro from '../components/Intro.astro';
-import Hero from '../components/Hero.astro';
-import Marquee from '../components/Marquee.astro';
-import About from '../components/About.astro';
-import ProjectCards from '../components/ProjectCards.astro';
-import Timeline from '../components/Timeline.astro';
-import Contact from '../components/Contact.astro';
-import BigTitle from '../components/BigTitle.astro';
-import CityFeature from '../components/CityFeature.astro';
-import Stack from '../components/Stack.astro';
-import Depoimentos from '../components/Depoimentos.astro';
-import NotasTeaser from '../components/NotasTeaser.astro';
+import SawadHome from '../components/SawadHome.astro';
 ---
 
-<Base pessoa alternates={{ 'pt-BR': '/', en: '/en/' }}>
-  <Intro />
-  <Hero />
-  <section id="projetos" class="destaques" aria-label="Projetos em destaque">
-    <BigTitle text="Projetos em destaque" />
-    <CityFeature />
-    <ProjectCards featured />
-  </section>
-  <ProjectCards />
-  <Marquee />
-  <About />
-  <Stack />
-  <Timeline />
-  <Depoimentos />
-  <NotasTeaser />
-  <Contact />
+<Base pessoa themeToggle={false} alternates={{ 'pt-BR': '/', en: '/en/' }}>
+  <SawadHome />
 </Base>
 
-<style>
-  .destaques { padding-top: 4.5rem; }
+<style is:global>
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
-
-<script>
-  import '../lib/motion-client';
-</script>
